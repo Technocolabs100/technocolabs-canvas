@@ -46,7 +46,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 // --------------------------- ROUTING & CONTEXT ------------------------------
-type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply';
+type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies';
 const NavContext = React.createContext<(t: Tab) => void>(() => {});
 const ServiceDetailContext = React.createContext<(slug: string | null) => void>(() => {});
 const ActiveServiceContext = React.createContext<string | null>(null);
@@ -1863,7 +1863,128 @@ ${payload.message}`);
     </div>
   );
 }
+// --------------------------- Top Bar Site--------------------------------------
+// --------------------------- LEGAL PAGES --------------------------------------
+function PrivacyPolicyPage() {
+  useEffect(() => { if (typeof document !== 'undefined') document.title = 'Privacy Policy | Technocolabs Softwares Inc.'; }, []);
+  return (
+    <div className="bg-white text-[#0a2540]">
+      <section className="bg-[#0a2540] text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Privacy Policy</h1>
+          <p className="mt-2 text-white/80">Last updated: October 23, 2025</p>
+        </div>
+      </section>
+      <section className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-10 space-y-6 text-sm leading-6">
+        <p>
+          This Privacy Policy explains how <strong>Technocolabs Softwares Inc.</strong> ("Technocolabs", "we", "us") collects, uses, and protects your information when you visit <strong>https://technocolabs.com</strong>, use our apps, or engage our services. By using our website or services, you agree to this Policy.
+        </p>
+        <h2 className="text-lg font-semibold">1. Information we collect</h2>
+        <ul className="list-disc pl-5 space-y-1">
+          <li><strong>Contact data</strong> (name, email, phone, company) when you submit forms or contact us.</li>
+          <li><strong>Usage data</strong> (pages viewed, clicks, device, approximate location) for analytics and security.</li>
+          <li><strong>Technical data</strong> (IP address, cookies, browser/OS) for functionality and fraud prevention.</li>
+          <li><strong>Application data</strong> for internships (resume links, portfolio, availability) only when you submit the form.</li>
+        </ul>
+        <h2 className="text-lg font-semibold">2. How we use information</h2>
+        <ul className="list-disc pl-5 space-y-1">
+          <li>Provide and improve our services, website, and customer support.</li>
+          <li>Respond to inquiries, proposals, and internship applications.</li>
+          <li>Security, fraud prevention, debugging, and compliance with legal obligations.</li>
+          <li>Analytics to understand site performance and interest in our offerings.</li>
+        </ul>
+        <h2 className="text-lg font-semibold">3. Legal bases (GDPR)</h2>
+        <p>We process personal data on the basis of <em>legitimate interests</em>, <em>contract</em>, and <em>consent</em> (where required).</p>
+        <h2 className="text-lg font-semibold">4. Sharing</h2>
+        <p>We do not sell personal data. We may share with trusted processors (e.g., hosting, analytics, email providers) under contracts that protect your data, or when required by law.</p>
+        <h2 className="text-lg font-semibold">5. Data retention</h2>
+        <p>We keep personal data only as long as necessary for the purposes above, then delete or anonymize it.</p>
+        <h2 className="text-lg font-semibold">6. Your rights</h2>
+        <p>You may request access, correction, deletion, or restriction of your personal data. EU/UK/EEA residents may also object to processing or request data portability. To exercise rights, contact us at <a className="text-[#1e90ff]" href="mailto:contact@technocolabs.com">contact@technocolabs.com</a>.</p>
+        <h2 className="text-lg font-semibold">7. International transfers</h2>
+        <p>We operate globally. Where data is transferred across borders, we use appropriate safeguards as required by law.</p>
+        <h2 className="text-lg font-semibold">8. Security</h2>
+        <p>We use reasonable administrative, technical, and physical safeguards. No method is 100% secure; please use the site responsibly.</p>
+        <h2 className="text-lg font-semibold">9. Children</h2>
+        <p>Our services are not directed to children under 13 (or 16 where applicable). We do not knowingly collect data from children.</p>
+        <h2 className="text-lg font-semibold">10. Contact</h2>
+        <p><strong>Technocolabs Softwares Inc.</strong><br/>J.P. Tower First Floor P1, Indore, India, 452002<br/>Email: <a className="text-[#1e90ff]" href="mailto:contact@technocolabs.com">contact@technocolabs.com</a></p>
+      </section>
+    </div>
+  );
+}
 
+function CookiePolicyPage() {
+  useEffect(() => { if (typeof document !== 'undefined') document.title = 'Cookie Policy | Technocolabs Softwares Inc.'; }, []);
+  return (
+    <div className="bg-white text-[#0a2540]">
+      <section className="bg-[#0a2540] text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Cookie Policy</h1>
+          <p className="mt-2 text-white/80">Last updated: October 23, 2025</p>
+        </div>
+      </section>
+      <section className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-10 space-y-6 text-sm leading-6">
+        <p>
+          This Cookie Policy explains how <strong>Technocolabs Softwares Inc.</strong> uses cookies and similar technologies on <strong>https://technocolabs.com</strong>.
+        </p>
+        <h2 className="text-lg font-semibold">1. What are cookies?</h2>
+        <p>Cookies are small text files stored on your device to make websites work, improve user experience, and provide analytics.</p>
+        <h2 className="text-lg font-semibold">2. Types of cookies we use</h2>
+        <ul className="list-disc pl-5 space-y-1">
+          <li><strong>Strictly necessary</strong>: essential for core functionality (e.g., page navigation, form submissions).</li>
+          <li><strong>Performance/analytics</strong>: help us understand usage to improve the site.</li>
+          <li><strong>Functional</strong>: remember choices (e.g., preferences).</li>
+        </ul>
+        <h2 className="text-lg font-semibold">3. Managing cookies</h2>
+        <p>You can set your browser to block or alert you about cookies, but some parts of the site may not work then.</p>
+        <h2 className="text-lg font-semibold">4. Third-party cookies</h2>
+        <p>Some third parties (e.g., analytics providers) may set cookies to deliver services. We do not control their cookies.</p>
+        <h2 className="text-lg font-semibold">5. Changes</h2>
+        <p>We may update this policy. Material changes will be posted on this page with an updated date.</p>
+        <h2 className="text-lg font-semibold">6. Contact</h2>
+        <p>Questions? Email us at <a className="text-[#1e90ff]" href="mailto:contact@technocolabs.com">contact@technocolabs.com</a>.</p>
+      </section>
+    </div>
+  );
+}
+
+function TermsPage() {
+  useEffect(() => { if (typeof document !== 'undefined') document.title = 'Terms of Use | Technocolabs Softwares Inc.'; }, []);
+  return (
+    <div className="bg-white text-[#0a2540]">
+      <section className="bg-[#0a2540] text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Terms of Use</h1>
+          <p className="mt-2 text-white/80">Last updated: October 23, 2025</p>
+        </div>
+      </section>
+      <section className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-10 space-y-6 text-sm leading-6">
+        <p>
+          These Terms of Use ("Terms") govern your access to and use of <strong>https://technocolabs.com</strong> and services provided by <strong>Technocolabs Softwares Inc.</strong> By using the Site or Services, you agree to these Terms.
+        </p>
+        <h2 className="text-lg font-semibold">1. Use of the site</h2>
+        <p>You agree not to misuse the Site, attempt unauthorized access, or interfere with its operation.</p>
+        <h2 className="text-lg font-semibold">2. Intellectual property</h2>
+        <p>All content, trademarks, and logos are the property of Technocolabs or its licensors. You may not copy, modify, or distribute content without permission.</p>
+        <h2 className="text-lg font-semibold">3. User content</h2>
+        <p>If you share or upload content (e.g., via forms), you represent you have the right to do so and grant us the necessary rights to use it to provide services.</p>
+        <h2 className="text-lg font-semibold">4. Disclaimers</h2>
+        <p>The site is provided "as is" without warranties of any kind. We disclaim implied warranties to the extent permitted by law.</p>
+        <h2 className="text-lg font-semibold">5. Limitation of liability</h2>
+        <p>To the maximum extent permitted by law, Technocolabs shall not be liable for indirect, incidental, special, or consequential damages, or lost profits arising from your use of the site.</p>
+        <h2 className="text-lg font-semibold">6. Third-party links</h2>
+        <p>The site may contain links to third-party websites. We are not responsible for their content or practices.</p>
+        <h2 className="text-lg font-semibold">7. Governing law</h2>
+        <p>These Terms are governed by the laws of India, without regard to conflict of law rules. Venue lies in Indore, India.</p>
+        <h2 className="text-lg font-semibold">8. Changes</h2>
+        <p>We may update these Terms. Continued use after changes constitutes acceptance.</p>
+        <h2 className="text-lg font-semibold">9. Contact</h2>
+        <p>Questions about these Terms? Contact <a className="text-[#1e90ff]" href="mailto:contact@technocolabs.com">contact@technocolabs.com</a>.</p>
+      </section>
+    </div>
+  );
+}
 // --------------------------- TOP BAR (site‑wide) ---------------------------
 function TopBar() {
   return (
@@ -1972,9 +2093,9 @@ function Footer() {
         <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-white/70">
           <div>© {new Date().getFullYear()} Technocolabs Softwares — All Rights Reserved</div>
           <div className="flex items-center gap-4">
-            <button className="hover:underline">Privacy Policy</button>
-            <button className="hover:underline">Terms of Use</button>
-            <button className="hover:underline">Cookie Policy</button>
+            <button onClick={() => navigate('privacy')} className="hover:underline">Privacy Policy</button>
+        <button onClick={() => navigate('terms')} className="hover:underline">Terms of Use</button>
+        <button onClick={() => navigate('cookies')} className="hover:underline">Cookie Policy</button>
           </div>
         </div>
       </div>
@@ -2029,6 +2150,9 @@ export default function App() {
   if (tab === 'contact') content = <ContactPage />;
   if (tab === 'apply') content = <ApplyPage />;
   if (tab === 'svc') content = <StandaloneServicePage />;
+  if (tab === 'privacy') content = <PrivacyPolicyPage />;
+  if (tab === 'terms') content = <TermsPage />;
+  if (tab === 'cookies') content = <CookiePolicyPage />;
   
   
 
