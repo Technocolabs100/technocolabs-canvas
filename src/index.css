@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* You can add any global CSS overrides below if needed. */
+select, option {
+  font-family: "Twemoji Country Flags", "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+}
+
+/* === Orbit animation keyframes (global) === */
+/* Subtle left-right wiggle (no full rotation) */
+/* smooth, infinite marquee */
+@keyframes tc-marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.tc-marquee-track {
+  animation: tc-marquee 22s linear infinite;
+  will-change: transform;
+}
+
+/* soft float for stacked cards */
+@keyframes tc-float {
+  0%,100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+.tc-float { animation: tc-float 6s ease-in-out infinite; }
+
+/* subtle gradient beams behind the cards */
+.tc-beam {
+  background: radial-gradient(120px 120px at 30% 30%, rgba(56,189,248,0.25), transparent 60%),
+              radial-gradient(160px 120px at 70% 60%, rgba(99,102,241,0.25), transparent 60%);
+  filter: blur(24px);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
