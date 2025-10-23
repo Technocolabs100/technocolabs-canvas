@@ -46,7 +46,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 // --------------------------- ROUTING & CONTEXT ------------------------------
-type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies';
+type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies'| 'bigdata' | 'data-architecture' | 'data-warehouse'| 'bi-visualization' | 'predictive-analytics-bd' | 'cloud-services';
 const NavContext = React.createContext<(t: Tab) => void>(() => {});
 const ServiceDetailContext = React.createContext<(slug: string | null) => void>(() => {});
 const ActiveServiceContext = React.createContext<string | null>(null);
@@ -1985,6 +1985,231 @@ function TermsPage() {
     </div>
   );
 }
+// --------------------------- TOP BAR (site-wide) ---------------------------
+// --------------------------- BIG DATA PAGES -----------------------------------
+function SectionShell({title, subtitle, children}:{title:string; subtitle:string; children:React.ReactNode}){
+  return (
+    <div className="bg-white text-[#0a2540]">
+      <section className="bg-[#0a2540] text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">{title}</h1>
+          {subtitle && <p className="mt-2 text-white/80">{subtitle}</p>}
+        </div>
+      </section>
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 grid gap-8">
+        {children}
+      </section>
+    </div>
+  );
+}
+
+function BigDataDevelopmentPage(){
+  useEffect(()=>{ if (typeof document!== 'undefined') document.title='Big Data Development | Technocolabs'; },[]);
+  return (
+    <SectionShell title="Big Data Development" subtitle="Enterprise-grade data platforms engineered for scale and reliability.">
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold">Overview</h2>
+          <p className="mt-2 text-sm text-[#0a2540]/80">We design and implement distributed data systems—batch and streaming—that ingest, process, and serve data with predictable SLAs. Our focus: durability, cost efficiency, and operational simplicity.</p>
+          <h3 className="mt-6 font-semibold">Capabilities</h3>
+          <ul className="mt-2 list-disc pl-5 text-sm space-y-1 text-[#0a2540]/80">
+            <li>Streaming ingestion (Kafka/Kinesis), micro-batch, CDC pipelines</li>
+            <li>Lakehouse architectures (Delta/Apache Iceberg/Hudi)</li>
+            <li>Quality, lineage, and governance built-in</li>
+            <li>Security, access controls, secrets management</li>
+          </ul>
+          <h3 className="mt-6 font-semibold">Use Cases</h3>
+          <ul className="mt-2 list-disc pl-5 text-sm space-y-1 text-[#0a2540]/80">
+            <li>Real-time analytics and observability</li>
+            <li>Customer 360 and product telemetry</li>
+            <li>Marketing attribution and campaign performance</li>
+          </ul>
+        </div>
+        <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+          <h3 className="font-semibold">Tech Stack</h3>
+          <div className="mt-3 flex flex-wrap gap-2 text-xs">
+            {['Kafka','Spark','Flink','dbt','Airflow','Delta','Iceberg','Hudi','Snowflake','BigQuery','S3/GCS','Terraform'].map(x=> (
+              <span key={x} className="rounded-full bg-[#0a2540]/5 px-3 py-1.5">{x}</span>
+            ))}
+          </div>
+          <div className="mt-6 font-semibold">Why Technocolabs</div>
+          <ul className="mt-2 list-disc pl-5 text-sm space-y-1 text-[#0a2540]/80">
+            <li>Operator mindset: SLAs, cost, reliability</li>
+            <li>Clear documentation and handover</li>
+            <li>Security-first implementation</li>
+          </ul>
+        </div>
+      </div>
+      <div className="rounded-2xl bg-[#0a2540] text-white p-6 flex items-start justify-between gap-4 flex-col sm:flex-row">
+        <div>
+          <div className="text-lg font-semibold">Discuss your data platform roadmap</div>
+          <div className="text-white/80">We’ll map current state → target architecture with milestones.</div>
+        </div>
+        <button onClick={()=>window.scrollTo({top:0, behavior:'smooth'})} className="rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold">Book Consultation</button>
+      </div>
+    </SectionShell>
+  );
+}
+
+function DataArchitecturePage(){
+  useEffect(()=>{ if (typeof document!== 'undefined') document.title='Data Architecture Engineering | Technocolabs'; },[]);
+  return (
+    <SectionShell title="Data Architecture Engineering" subtitle="Blueprints for scalable, governed, and cost-aware analytics.">
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold">Approach</h2>
+          <p className="mt-2 text-sm text-[#0a2540]/80">We define reference architectures, data models, and integration contracts that keep teams productive as data grows.</p>
+          <h3 className="mt-6 font-semibold">Deliverables</h3>
+          <ul className="mt-2 list-disc pl-5 text-sm space-y-1 text-[#0a2540]/80">
+            <li>Current-state assessment and risk register</li>
+            <li>Target architecture diagrams and ADRs</li>
+            <li>Data modeling (star/snowflake/semantic layer)</li>
+            <li>Security, RBAC, and compliance guardrails</li>
+          </ul>
+        </div>
+        <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+          <h3 className="font-semibold">Tools</h3>
+          <div className="mt-3 flex flex-wrap gap-2 text-xs">
+            {['dbt','Great Expectations','OpenLineage','Looker/Power BI','Terraform','GitHub Actions'].map(x=> (<span key={x} className="rounded-full bg-[#0a2540]/5 px-3 py-1.5">{x}</span>))}
+          </div>
+          <div className="mt-6 font-semibold">Outcomes</div>
+          <ul className="mt-2 list-disc pl-5 text-sm space-y-1 text-[#0a2540]/80">
+            <li>Consistent, trusted KPIs</li>
+            <li>Lower time-to-insight and change risk</li>
+            <li>Predictable costs and performance</li>
+          </ul>
+        </div>
+      </div>
+    </SectionShell>
+  );
+}
+
+function DataWarehousePage(){
+  useEffect(()=>{ if (typeof document!== 'undefined') document.title='Data Warehouse Engineering | Technocolabs'; },[]);
+  return (
+    <SectionShell title="Data Warehouse Engineering" subtitle="Design, build, and operate modern lakehouse/warehouse stacks.">
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold">What we build</h2>
+          <ul className="mt-2 list-disc pl-5 text-sm space-y-1 text-[#0a2540]/80">
+            <li>ELT/ETL pipelines with reliability SLAs</li>
+            <li>Semantic layers and governed access</li>
+            <li>Performance tuning and cost optimization</li>
+          </ul>
+          <h3 className="mt-6 font-semibold">Migration & Modernization</h3>
+          <p className="mt-2 text-sm text-[#0a2540]/80">From legacy warehouses to Snowflake/BigQuery/Databricks with minimal downtime and audited cutover.</p>
+        </div>
+        <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+          <h3 className="font-semibold">Platforms</h3>
+          <div className="mt-3 flex flex-wrap gap-2 text-xs">
+            {['Snowflake','BigQuery','Redshift','Databricks','PostgreSQL'].map(x=> (<span key={x} className="rounded-full bg-[#0a2540]/5 px-3 py-1.5">{x}</span>))}
+          </div>
+          <div className="mt-6 font-semibold">Quality & Governance</div>
+          <ul className="mt-2 list-disc pl-5 text-sm space-y-1 text-[#0a2540]/80">
+            <li>Tests, lineage, and documentation automated</li>
+            <li>Row-level security and PII protection</li>
+          </ul>
+        </div>
+      </div>
+    </SectionShell>
+  );
+}
+
+function BIVisualizationPage(){
+  useEffect(()=>{ if (typeof document!== 'undefined') document.title='BI & Data Visualizations | Technocolabs'; },[]);
+  return (
+    <SectionShell title="BI & Data Visualizations" subtitle="Executive-ready dashboards with adoption-focused design.">
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold">Approach</h2>
+          <p className="mt-2 text-sm text-[#0a2540]/80">We prioritize clarity, consistent metrics, and performance. Every dashboard has an owner, refresh SLA, and documented KPIs.</p>
+          <h3 className="mt-6 font-semibold">Workstreams</h3>
+          <ul className="mt-2 list-disc pl-5 text-sm space-y-1 text-[#0a2540]/80">
+            <li>Metric catalog and governance</li>
+            <li>Role-based dashboards and permissions</li>
+            <li>Performance tuning and adoption training</li>
+          </ul>
+        </div>
+        <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+          <h3 className="font-semibold">Tools</h3>
+          <div className="mt-3 flex flex-wrap gap-2 text-xs">
+            {['Power BI','Tableau','Looker','Metabase','Superset'].map(x=> (<span key={x} className="rounded-full bg-[#0a2540]/5 px-3 py-1.5">{x}</span>))}
+          </div>
+          <div className="mt-6 font-semibold">Outcomes</div>
+          <ul className="mt-2 list-disc pl-5 text-sm space-y-1 text-[#0a2540]/80">
+            <li>Single source of truth for decisions</li>
+            <li>Self-serve analytics without chaos</li>
+          </ul>
+        </div>
+      </div>
+    </SectionShell>
+  );
+}
+
+function PredictiveAnalyticsBDPage(){
+  useEffect(()=>{ if (typeof document!== 'undefined') document.title='Predictive Analytics | Technocolabs'; },[]);
+  return (
+    <SectionShell title="Predictive Analytics" subtitle="Forecasts and scoring models integrated with your operations.">
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold">Scope</h2>
+          <ul className="mt-2 list-disc pl-5 text-sm space-y-1 text-[#0a2540]/80">
+            <li>Time-series forecasting (hierarchical, multivariate)</li>
+            <li>Risk/churn/propensity scoring</li>
+            <li>What-if analysis and scenario planning</li>
+          </ul>
+          <h3 className="mt-6 font-semibold">Process</h3>
+          <ol className="mt-2 list-decimal pl-5 text-sm space-y-1 text-[#0a2540]/80">
+            <li>Business goal alignment and KPI definition</li>
+            <li>Feature engineering and baseline models</li>
+            <li>Backtesting, monitoring, and continuous improvement</li>
+          </ol>
+        </div>
+        <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+          <h3 className="font-semibold">Tech</h3>
+          <div className="mt-3 flex flex-wrap gap-2 text-xs">
+            {['Python','scikit-learn','XGBoost','LightGBM','Statsmodels','MLflow'].map(x=> (<span key={x} className="rounded-full bg-[#0a2540]/5 px-3 py-1.5">{x}</span>))}
+          </div>
+          <div className="mt-6 font-semibold">Business Outcomes</div>
+          <ul className="mt-2 list-disc pl-5 text-sm space-y-1 text-[#0a2540]/80">
+            <li>Inventory, staffing, and revenue improvements</li>
+            <li>Reduced manual effort with governed models</li>
+          </ul>
+        </div>
+      </div>
+    </SectionShell>
+  );
+}
+
+function CloudServicesPage(){
+  useEffect(()=>{ if (typeof document!== 'undefined') document.title='Cloud Services | Technocolabs'; },[]);
+  return (
+    <SectionShell title="Cloud Services" subtitle="Cost-optimized, secure cloud foundations for data and AI.">
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold">What we deliver</h2>
+          <ul className="mt-2 list-disc pl-5 text-sm space-y-1 text-[#0a2540]/80">
+            <li>Landing zones, networking, and IAM</li>
+            <li>Data platforms with IaC and GitOps</li>
+            <li>Observability, SLOs, and cost guardrails</li>
+          </ul>
+        </div>
+        <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+          <h3 className="font-semibold">Clouds & Tools</h3>
+          <div className="mt-3 flex flex-wrap gap-2 text-xs">
+            {['AWS','GCP','Azure','Terraform','ArgoCD','OpenCost'].map(x=> (<span key={x} className="rounded-full bg-[#0a2540]/5 px-3 py-1.5">{x}</span>))}
+          </div>
+          <div className="mt-6 font-semibold">Why Us</div>
+          <ul className="mt-2 list-disc pl-5 text-sm space-y-1 text-[#0a2540]/80">
+            <li>Security baselines without slowing teams</li>
+            <li>Real savings with before/after metrics</li>
+          </ul>
+        </div>
+      </div>
+    </SectionShell>
+  );
+}
+
 // --------------------------- TOP BAR (site‑wide) ---------------------------
 function TopBar() {
   return (
@@ -2052,12 +2277,12 @@ function Footer() {
           <div>
             <div className="text-base font-semibold">Big Data Solutions</div>
             <ul className="mt-4 space-y-2 text-sm text-white/80">
-              <li><button onClick={()=>navigate('services')} className="hover:underline">Big Data Development</button></li>
-              <li><button onClick={()=>navigate('services')} className="hover:underline">Data Architecture Engineering</button></li>
-              <li><button onClick={()=>navigate('services')} className="hover:underline">Data Warehouse Engineering</button></li>
-              <li><button onClick={()=>navigate('services')} className="hover:underline">BI & Data Visualizations</button></li>
-              <li><button onClick={()=>navigate('services')} className="hover:underline">Predictive Analytics</button></li>
-              <li><button onClick={()=>navigate('services')} className="hover:underline">Cloud Services</button></li>
+              <li><button onClick={()=>navigate('bigdata')} className="hover:underline">Big Data Development</button></li>
+              <li><button onClick={()=>navigate('data-architecture')} className="hover:underline">Data Architecture Engineering</button></li>
+              <li><button onClick={()=>navigate('data-warehouse')} className="hover:underline">Data Warehouse Engineering</button></li>
+              <li><button onClick={()=>navigate('bi-visualization')} className="hover:underline">BI & Data Visualizations</button></li>
+              <li><button onClick={()=>navigate('predictive-analytics-bd')} className="hover:underline">Predictive Analytics</button></li>
+              <li><button onClick={()=>navigate('cloud-services')} className="hover:underline">Cloud Services</button></li>
             </ul>
           </div>
           <div>
@@ -2153,6 +2378,12 @@ export default function App() {
   if (tab === 'privacy') content = <PrivacyPolicyPage />;
   if (tab === 'terms') content = <TermsPage />;
   if (tab === 'cookies') content = <CookiePolicyPage />;
+  if (tab === 'bigdata') content = <BigDataDevelopmentPage />;
+  if (tab === 'data-architecture') content = <DataArchitecturePage />;
+  if (tab === 'data-warehouse') content = <DataWarehousePage />;
+  if (tab === 'bi-visualization') content = <BIVisualizationPage />;
+  if (tab === 'predictive-analytics-bd') content = <PredictiveAnalyticsBDPage />;
+  if (tab === 'cloud-services') content = <CloudServicesPage />;
   
   
 
