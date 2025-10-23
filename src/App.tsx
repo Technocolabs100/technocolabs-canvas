@@ -1998,7 +1998,7 @@ function FloatingCTA() {
         <div className="mb-3 space-y-2">
           <button onClick={() => { setOpen(false); navigate('contact'); }} className="block w-full rounded-xl bg-[#1e90ff] text-white text-sm font-semibold px-4 py-2 shadow">Book Consultation</button>
           <button onClick={() => { setOpen(false); navigate('careers'); }} className="block w-full rounded-xl bg-white text-[#0a2540] text-sm font-semibold px-4 py-2 shadow">Apply for Internship</button>
-          <a href="https://wa.me/" className="block w-full text-center rounded-xl bg-[#25D366] text-white text-sm font-semibold px-4 py-2 shadow">WhatsApp</a>
+          <a href="https://wa.me/918319291391?text=Hello%20I%20am%20interested%20to%20apply%20for%20internship." className="block w-full text-center rounded-xl bg-[#25D366] text-white text-sm font-semibold px-4 py-2 shadow">WhatsApp</a>
         </div>
       )}
       <button aria-label="Open quick actions" onClick={() => setOpen(v => !v)} className="rounded-full h-14 w-14 shadow-lg bg-[#0a2540] text-white flex items-center justify-center border border-white/10">
