@@ -984,7 +984,7 @@ function ServicesPage() {
             </div>
             <div className="flex items-center gap-3">
               <button onClick={()=>window.scrollTo({top:0, behavior:'smooth'})} className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold text-white shadow-sm">Book Consultation <ArrowRight className="h-4 w-4"/></button>
-              <a href=""https://wa.me/918319291391?text=Hello%20I%20am%20interested%20in%20your%20services." className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold">Talk on WhatsApp</a>
+              <a href="https://wa.me/918319291391?text=Hello%20I%20am%20interested%20in%20your%20services." className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold">Talk on WhatsApp</a>
             </div>
           </div>
         </div>
