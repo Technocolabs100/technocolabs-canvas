@@ -984,7 +984,7 @@ function ServicesPage() {
             </div>
             <div className="flex items-center gap-3">
               <button onClick={()=>window.scrollTo({top:0, behavior:'smooth'})} className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold text-white shadow-sm">Book Consultation <ArrowRight className="h-4 w-4"/></button>
-              <a href="https://wa.me/" className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold">Talk on WhatsApp</a>
+              <a href=""https://wa.me/918319291391?text=Hello%20I%20am%20interested%20in%20your%20services." className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold">Talk on WhatsApp</a>
             </div>
           </div>
         </div>
@@ -1720,7 +1720,7 @@ ${payload.name}`);
             <div><label className="block text-sm font-medium">GitHub*</label><input name="portfolio" className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2"/></div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div><label className="block text-sm font-medium">Location / Time zone</label><input name="location" className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2"/></div>
+            <div><label className="block text-sm font-medium">Graduation Year</label><input name="Graduation" className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2"/></div>
             <div><label className="block text-sm font-medium">LinkedIn*</label><input name="portfolio" className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2"/></div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
