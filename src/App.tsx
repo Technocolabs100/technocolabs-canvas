@@ -2090,10 +2090,8 @@ function AboutPage(){
             <div className="text-white/80">Book a consultation or reach us at contact@technocolabs.com</div>
           </div>
           <div className="flex items-center gap-3">
-           <button onClick={()=>navigate('contact')} className="rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold">
-              Book Consultation
-            </button>
-            <button onClick={() => navigate('careers')} className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold hover:bg-white/10">Join Us</button>
+           <button onClick={()=>navigate('contact')} className="rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold">Book Consultation</button>
+           <button onClick={()=>navigate('careers')} className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold hover:bg-white/10">Join Us</button>
           </div>
         </div>
       </section>
