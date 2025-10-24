@@ -1902,7 +1902,7 @@ function SuccessStoriesPage(){
             <div className="text-lg font-semibold">Have a similar challenge?</div>
             <div className="text-white/80">We’ll map a path to outcomes aligned to your KPIs.</div>
           </div>
-          <a href="href="mailto:contact@technocolabs.com?subject=Project%Discussion%20Enquiry" className="rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold">Contact Us</a>
+          <a href="mailto:contact@technocolabs.com?subject=Project%Discussion%20Enquiry" className="rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold">Contact Us</a>
         </div>
       </section>
     </div>
