@@ -46,7 +46,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 // --------------------------- ROUTING & CONTEXT ------------------------------
-type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies'| 'bigdata' | 'data-architecture' | 'data-warehouse'| 'bi-visualization' | 'predictive-analytics-bd' | 'cloud-services';
+type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies'| 'bigdata' | 'data-architecture' | 'data-warehouse'| 'bi-visualization' | 'predictive-analytics-bd' | 'cloud-services'| 'about' | 'success-stories' | 'blog' | 'write-for-us';
 const NavContext = React.createContext<(t: Tab) => void>(() => {});
 const ServiceDetailContext = React.createContext<(slug: string | null) => void>(() => {});
 const ActiveServiceContext = React.createContext<string | null>(null);
@@ -1864,6 +1864,240 @@ ${payload.message}`);
   );
 }
 // --------------------------- Top Bar Site--------------------------------------
+// --------------------------- CONTENT PAGES (ABOUT SECTION) --------------------
+function SuccessStoriesPage(){
+  useEffect(()=>{
+    if (typeof document !== 'undefined') {
+      document.title = 'Success Stories | Technocolabs Softwares Inc.';
+      const m = document.querySelector('meta[name="description"]') || (()=>{ const x=document.createElement('meta'); x.setAttribute('name','description'); document.head.appendChild(x); return x; })();
+      m.setAttribute('content','Read how Technocolabs delivered measurable outcomes with AI, analytics, and software in production.');
+    }
+  },[]);
+  const stories = [
+    {t:'Retail Demand Forecasting', p:'High stockouts across stores', s:'Hierarchical forecasting + feature store', r:'↓ stockouts 32%, ↑ revenue 9%'},
+    {t:'Support Knowledge RAG', p:'Slow agent answers', s:'RAG over SOPs + product docs', r:'↓ handling time 40%, ↑ CSAT 18%'},
+    {t:'Vision Quality Inspection', p:'Manual defect detection', s:'Realtime CV inference on edge', r:'↓ inspection time 55%, ↑ accuracy 22%'}
+  ];
+  return (
+    <div className="bg-white text-[#0a2540]">
+      <section className="bg-[#0a2540] text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-10">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Success Stories</h1>
+          <p className="mt-2 text-white/80 max-w-3xl">Selected case studies demonstrating real business impact from our AI, analytics, and engineering work.</p>
+        </div>
+      </section>
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {stories.map((c)=> (
+            <div key={c.t} className="rounded-2xl border border-[#0a2540]/10 p-6 bg-white shadow-sm">
+              <div className="font-semibold">{c.t}</div>
+              <div className="mt-2 text-sm"><span className="font-medium">Problem:</span> {c.p}</div>
+              <div className="mt-1 text-sm"><span className="font-medium">Solution:</span> {c.s}</div>
+              <div className="mt-1 text-sm"><span className="font-medium">Result:</span> {c.r}</div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-10 rounded-2xl bg-[#0a2540] text-white p-6 sm:p-8 flex items-center justify-between">
+          <div>
+            <div className="text-lg font-semibold">Have a similar challenge?</div>
+            <div className="text-white/80">We’ll map a path to outcomes aligned to your KPIs.</div>
+          </div>
+          <a href="#contact" className="rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold">Contact Us</a>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function BlogPage(){
+  useEffect(()=>{
+    if (typeof document !== 'undefined') {
+      document.title = 'Blog | Technocolabs Softwares Inc.';
+      const m = document.querySelector('meta[name="description"]') || (()=>{ const x=document.createElement('meta'); x.setAttribute('name','description'); document.head.appendChild(x); return x; })();
+      m.setAttribute('content','Insights on AI, data engineering, BI, and cloud from Technocolabs engineers.');
+    }
+  },[]);
+  const posts = [
+    {title:'Designing Lakehouse Architectures with Governance', date:'Oct 2025', excerpt:'How we combine Delta/Iceberg with semantic layers and tests.'},
+    {title:'From POC to Production: A GenAI Checklist', date:'Sep 2025', excerpt:'Guardrails, evals, and data privacy you actually need.'},
+    {title:'Feature Stores: When and Why', date:'Aug 2025', excerpt:'Balancing reuse, lineage, and latency trade-offs.'}
+  ];
+  return (
+    <div className="bg-white text-[#0a2540]">
+      <section className="bg-[#0a2540] text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-10">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Blog</h1>
+          <p className="mt-2 text-white/80 max-w-3xl">Practitioner notes on building reliable AI and data platforms.</p>
+        </div>
+      </section>
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {posts.map((p)=> (
+            <article key={p.title} className="rounded-2xl border border-[#0a2540]/10 p-6 bg-white shadow-sm">
+              <div className="text-xs text-[#0a2540]/60">{p.date}</div>
+              <h3 className="mt-1 text-base font-semibold">{p.title}</h3>
+              <p className="mt-2 text-sm text-[#0a2540]/80">{p.excerpt}</p>
+              <button className="mt-3 text-sm font-semibold text-[#1e90ff] hover:underline" onClick={()=>alert('Hook this to your CMS or MDX routing later.')}>Read</button>
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function WriteForUsPage(){
+  useEffect(()=>{
+    if (typeof document !== 'undefined') {
+      document.title = 'Write for Us | Technocolabs Softwares Inc.';
+      const m = document.querySelector('meta[name="description"]') || (()=>{ const x=document.createElement('meta'); x.setAttribute('name','description'); document.head.appendChild(x); return x; })();
+      m.setAttribute('content','Pitch engineering articles to Technocolabs: topics, guidelines, and how to submit.');
+    }
+  },[]);
+  return (
+    <div className="bg-white text-[#0a2540]">
+      <section className="bg-[#0a2540] text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-10">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Write for Us</h1>
+          <p className="mt-2 text-white/80 max-w-3xl">Share practical insights on AI, data, BI, and cloud with our audience.</p>
+        </div>
+      </section>
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 grid gap-8">
+        <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold">Topics we love</h2>
+          <div className="mt-3 flex flex-wrap gap-2 text-xs">
+            {['GenAI & RAG','Feature stores','Lakehouse patterns','MLOps','Experimentation','Observability','Data governance','Case studies'].map(x=> (<span key={x} className="rounded-full bg-[#0a2540]/5 px-3 py-1.5">{x}</span>))}
+          </div>
+          <h3 className="mt-6 font-semibold">Editorial guidelines</h3>
+          <ul className="mt-2 list-disc pl-5 text-sm space-y-1 text-[#0a2540]/80">
+            <li>Original, practical, and technically accurate content</li>
+            <li>Code snippets, diagrams, and measurable outcomes where possible</li>
+            <li>Clear attribution for quotes, datasets, and images</li>
+            <li>Length: 1,000–2,000 words; include a short author bio</li>
+          </ul>
+        </div>
+        <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+          <h3 className="font-semibold">How to submit</h3>
+          <p className="mt-2 text-sm text-[#0a2540]/80">Email your pitch or draft to <a className="text-[#1e90ff]" href="mailto:contact@technocolabs.com?subject=Write%20for%20Us%20Pitch">contact@technocolabs.com</a> with:</p>
+          <ul className="mt-2 list-disc pl-5 text-sm space-y-1 text-[#0a2540]/80">
+            <li>Working title and 3–5 bullet outline</li>
+            <li>Intended audience and key takeaways</li>
+            <li>Links to prior writing or GitHub</li>
+          </ul>
+          <button className="mt-4 rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold text-white" onClick={()=>window.location.href='mailto:contact@technocolabs.com?subject=Write%20for%20Us%20Pitch'}>Submit a Pitch</button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+// --------------------------- ABOUT PAGE ---------------------------------------
+function AboutPage(){
+  useEffect(()=>{
+    if (typeof document !== 'undefined') {
+      document.title = 'About Us | Technocolabs Softwares Inc.';
+      const m = document.querySelector('meta[name="description"]') || (()=>{ 
+        const x=document.createElement('meta'); 
+        x.setAttribute('name','description'); 
+        document.head.appendChild(x); 
+        return x; 
+      })();
+      m.setAttribute('content','About Technocolabs Softwares Inc: mission, leadership, values, culture, and how we deliver reliable outcomes in AI, data, and cloud.');
+    }
+  },[]);
+
+  return (
+    <div className="bg-white text-[#0a2540]">
+      {/* Hero */}
+      <section className="bg-[#0a2540] text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-10">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">About Technocolabs</h1>
+          <p className="mt-2 text-white/80 max-w-3xl">
+            We are an engineering-first company delivering AI, analytics, automation, and cloud solutions
+            with measurable business outcomes — not just dashboards or prototypes.
+          </p>
+        </div>
+      </section>
+
+      {/* Who We Are */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 grid gap-8">
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2 rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+            <h2 className="text-xl font-semibold">Who we are</h2>
+            <p className="mt-2 text-sm text-[#0a2540]/80">
+              Founded in Central India, Technocolabs Softwares Inc. partners with organizations to design,
+              build, and operate production-grade AI and data systems. We align architecture, engineering,
+              and business goals into one measurable roadmap.
+            </p>
+            <div className="mt-6 grid gap-4 sm:grid-cols-3">
+              {[
+                ['10,000+','Interns Trained'],
+                ['100+','Projects Delivered'],
+                ['50+','Partner Companies']
+              ].map(([n,l])=> (
+                <div key={l} className="rounded-xl border border-[#0a2540]/10 p-4 text-center">
+                  <div className="text-2xl font-semibold">{n}</div>
+                  <div className="text-xs mt-1 text-[#0a2540]/70">{l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Leadership */}
+          <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+            <h3 className="font-semibold">Leadership</h3>
+            <div className="mt-3 flex items-center gap-3">
+              <img src="/yasin-profile.png" alt="Yasin Shah" className="h-12 w-12 rounded-full object-cover ring-2 ring-[#1e90ff]"/>
+              <div>
+                <div className="text-sm font-semibold">Yasin Shah</div>
+                <div className="text-xs text-[#0a2540]/70">Director & CEO</div>
+              </div>
+            </div>
+            <p className="mt-3 text-sm text-[#0a2540]/80">
+              "We operate with an owner’s mindset: reliability first, clarity in communication, and execution without excuses."
+            </p>
+          </div>
+        </div>
+
+        {/* Values + Delivery */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+            <h3 className="font-semibold">Our Values</h3>
+            <ul className="mt-2 list-disc pl-5 text-sm space-y-1 text-[#0a2540]/80">
+              <li>Outcomes over outputs</li>
+              <li>Security and governance by default</li>
+              <li>Transparency and accountability</li>
+              <li>Documentation and knowledge transfer</li>
+            </ul>
+          </div>
+
+          <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+            <h3 className="font-semibold">How We Deliver</h3>
+            <ol className="mt-2 list-decimal pl-5 text-sm space-y-1 text-[#0a2540]/80">
+              <li>Discovery & measurable KPI alignment</li>
+              <li>Architecture & data foundations</li>
+              <li>Iterative development with quality gates</li>
+              <li>Deployment, observability & SLAs</li>
+            </ol>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="rounded-2xl bg-[#0a2540] text-white p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <div className="text-lg font-semibold">Want to work with us?</div>
+            <div className="text-white/80">Book a consultation or reach us at contact@technocolabs.com</div>
+          </div>
+          <div className="flex items-center gap-3">
+            <button onClick={()=>window.scrollTo({top:0, behavior:'smooth'})} className="rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold">
+              Book Consultation
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
 // --------------------------- LEGAL PAGES --------------------------------------
 function PrivacyPolicyPage() {
   useEffect(() => { if (typeof document !== 'undefined') document.title = 'Privacy Policy | Technocolabs Softwares Inc.'; }, []);
@@ -2287,13 +2521,13 @@ function Footer() {
           </div>
           <div>
             <div className="text-base font-semibold">About Us</div>
-            <ul className="mt-4 space-y-2 text-sm text-white/80">
-              <li><button onClick={()=>navigate('services')} className="hover:underline">Success Stories</button></li>
-              <li><button onClick={()=>navigate('home')} className="hover:underline">Blog</button></li>
-              <li><button onClick={()=>navigate('careers')} className="hover:underline">Careers</button></li>
-              <li><button onClick={()=>navigate('home')} className="hover:underline">About</button></li>
-              <li><button onClick={()=>navigate('careers')} className="hover:underline">Write for Us</button></li>
-            </ul>
+<ul className="mt-4 space-y-2 text-sm text-white/80">
+  <li><button onClick={()=>navigate('success-stories')} className="hover:underline">Success Stories</button></li>
+  <li><button onClick={()=>navigate('blog')} className="hover:underline">Blog</button></li>
+  <li><button onClick={()=>navigate('careers')} className="hover:underline">Careers</button></li>
+  <li><button onClick={()=>navigate('about')} className="hover:underline">About</button></li>
+  <li><button onClick={()=>navigate('write-for-us')} className="hover:underline">Write for Us</button></li>
+</ul>
           </div>
           {/* Contact + Social */}
           <div className="space-y-4">
@@ -2384,6 +2618,10 @@ export default function App() {
   if (tab === 'bi-visualization') content = <BIVisualizationPage />;
   if (tab === 'predictive-analytics-bd') content = <PredictiveAnalyticsBDPage />;
   if (tab === 'cloud-services') content = <CloudServicesPage />;
+  if (tab === 'about') content = <AboutPage />;
+  if (tab === 'success-stories') content = <SuccessStoriesPage />;
+  if (tab === 'blog') content = <BlogPage />;
+  if (tab === 'write-for-us') content = <WriteForUsPage />;
   
   
 
