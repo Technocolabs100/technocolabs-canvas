@@ -1993,6 +1993,7 @@ function WriteForUsPage(){
 
 // --------------------------- ABOUT PAGE ---------------------------------------
 function AboutPage(){
+  const navigate = useContext(NavContext);
   useEffect(()=>{
     if (typeof document !== 'undefined') {
       document.title = 'About Us | Technocolabs Softwares Inc.';
