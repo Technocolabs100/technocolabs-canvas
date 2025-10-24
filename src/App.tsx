@@ -1902,7 +1902,7 @@ function SuccessStoriesPage(){
             <div className="text-lg font-semibold">Have a similar challenge?</div>
             <div className="text-white/80">We’ll map a path to outcomes aligned to your KPIs.</div>
           </div>
-          <a href="#contact" className="rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold">Contact Us</a>
+          <a href="href="mailto:contact@technocolabs.com?subject=Project%Discussion%20Enquiry" className="rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold">Contact Us</a>
         </div>
       </section>
     </div>
@@ -2089,9 +2089,10 @@ function AboutPage(){
             <div className="text-white/80">Book a consultation or reach us at contact@technocolabs.com</div>
           </div>
           <div className="flex items-center gap-3">
-            <button onClick={()=>window.scrollTo({top:0, behavior:'smooth'})} className="rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold">
+           <button onClick={()=>navigate('contact')} className="rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold">
               Book Consultation
             </button>
+            <button onClick={() => navigate('careers')} className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold hover:bg-white/10">Join Us</button>
           </div>
         </div>
       </section>
