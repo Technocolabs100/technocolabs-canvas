@@ -342,7 +342,55 @@ innovate with AI, enrich customer insights, automate processes, and operate more
           </div>
         </div>
       </section>
+      
+   {/* Beneficial Results / Impact Stats */}
+<section className="relative bg-white text-[#0a2540]">
+{/* dotted decorative background */}
+<div
+className="absolute inset-0 -z-10"
+aria-hidden
+style={{
+backgroundImage:
+'radial-gradient(rgba(255,163,77,0.25) 1.6px, transparent 1.6px)',
+backgroundSize: '20px 20px',
+maskImage:
+'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 20%, rgba(0,0,0,0.6) 80%, rgba(0,0,0,0) 100%)'
+}}
+/>
+<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+<h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">Beneficial Results of Artificial Intelligence in Business</h2>
+<p className="mt-3 max-w-3xl mx-auto text-center text-[#0a2540]/70">Real outcomes teams see after adopting AI and data-driven workflows.</p>
 
+
+<div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+{[{
+value:'83%',
+label:'of companies claim AI as a strategic business priority'
+},{
+value:'85%',
+label:'of customer service interactions are responded to by chatbots'
+},{
+value:'40%',
+label:'improvement in business efficiency with AI'
+}].map((item)=> (
+<div key={item.value} className="group rounded-2xl border border-[#0a2540]/10 bg-white p-8 shadow-sm hover:shadow-lg transition-all duration-300">
+<div className="text-5xl font-semibold text-[#1e90ff] tracking-tight text-center">{item.value}</div>
+<div className="mx-auto mt-3 h-[2px] w-20 bg-[#1e90ff]/50" />
+<p className="mt-4 text-center text-sm sm:text-base text-[#0a2540]/80 leading-relaxed">{item.label}</p>
+</div>
+))}
+</div>
+
+
+{/* extra row (optional) — easy to enable later */}
+{/* <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+{['↓ time-to-insight','↑ revenue per user','↓ operational cost','↑ CSAT'].map((b)=> (
+<div key={b} className="rounded-xl border border-[#0a2540]/10 bg-white/80 backdrop-blur p-4 text-center text-sm">{b}</div>
+))}
+</div> */}
+</div>
+</section>
+  
        {/* ✅ New Orbit Section */}
 <AIServicePremiumGrid />
 
