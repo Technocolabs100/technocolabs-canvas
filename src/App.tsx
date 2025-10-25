@@ -119,67 +119,84 @@ const SERVICES_DATA = [
 const TAGS = ["All","AI","ML","Data","Analytics","BI","Cloud","DevOps","Apps","Web","Mobile","Software","Consulting","Training","Internships"];
 
 // --------------------------- Animated Network BG ----------------------------
-function MissionNetworkBG({count=70, linkDistance=140, speed=0.25, dotRadius=2}:{count?:number; linkDistance?:number; speed?:number; dotRadius?:number;}) {
+function MissionNetworkBG(
+  {
+    count = 35,          // fewer dots (was 70)
+    linkDistance = 95,   // shorter link range (was 140)
+    speed = 0.18,        // calmer movement (was 0.25)
+    dotRadius = 1.8      // smaller dots (was 2)
+  }: {
+    count?: number; linkDistance?: number; speed?: number; dotRadius?: number;
+  }
+) {
   const ref = React.useRef<HTMLCanvasElement | null>(null);
   const rafRef = React.useRef<number | null>(null);
   const pausedRef = React.useRef<boolean>(false);
-  const prefersReduced = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const prefersReduced =
+    typeof window !== 'undefined' &&
+    window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     const canvas = ref.current!;
     const ctx = canvas.getContext('2d')!;
-    let w = canvas.width = canvas.offsetWidth * (window.devicePixelRatio||1);
-    let h = canvas.height = canvas.offsetHeight * (window.devicePixelRatio||1);
-    ctx.scale(window.devicePixelRatio||1, window.devicePixelRatio||1);
+    let w = (canvas.width = canvas.offsetWidth * (window.devicePixelRatio || 1));
+    let h = (canvas.height = canvas.offsetHeight * (window.devicePixelRatio || 1));
+    ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
 
-    type P = {x:number;y:number;vx:number;vy:number};
-    const rand = (min:number, max:number)=> Math.random()*(max-min)+min;
-    const pts: P[] = Array.from({length: count}, ()=>({
-      x: rand(0, w/(window.devicePixelRatio||1)),
-      y: rand(0, h/(window.devicePixelRatio||1)),
+    type P = { x: number; y: number; vx: number; vy: number };
+    const rand = (min: number, max: number) => Math.random() * (max - min) + min;
+
+    const pts: P[] = Array.from({ length: count }, () => ({
+      x: rand(0, w / (window.devicePixelRatio || 1)),
+      y: rand(0, h / (window.devicePixelRatio || 1)),
       vx: rand(-speed, speed),
-      vy: rand(-speed, speed)
+      vy: rand(-speed, speed),
     }));
 
-    const draw = ()=>{
+    const draw = () => {
       if (pausedRef.current) return;
-      const pixelRatio = window.devicePixelRatio||1;
+
+      const pixelRatio = window.devicePixelRatio || 1;
       w = canvas.width = canvas.offsetWidth * pixelRatio;
       h = canvas.height = canvas.offsetHeight * pixelRatio;
-      ctx.setTransform(pixelRatio,0,0,pixelRatio,0,0);
-      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // Move points
-      for (const p of pts){
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < 0 || p.x > canvas.width/pixelRatio) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height/pixelRatio) p.vy *= -1;
+      for (const p of pts) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > canvas.width / pixelRatio) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height / pixelRatio) p.vy *= -1;
       }
 
-      // Lines (darker, high contrast)
-      ctx.lineWidth = 1;
-      for (let i=0;i<pts.length;i++){
-        for (let j=i+1;j<pts.length;j++){
+      // Lines — light blue, fewer/shorter due to linkDistance
+      ctx.lineWidth = 0.9;
+      for (let i = 0; i < pts.length; i++) {
+        for (let j = i + 1; j < pts.length; j++) {
           const a = pts[i], b = pts[j];
-          const dx = a.x-b.x, dy = a.y-b.y;
-          const d = Math.hypot(dx,dy);
-          if (d < linkDistance){
-            const alpha = 1 - d/linkDistance;
-            ctx.strokeStyle = `rgba(38,93,160,${0.95*alpha})`;
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const d = Math.hypot(dx, dy);
+          if (d < linkDistance) {
+            const alpha = 1 - d / linkDistance;
+            ctx.strokeStyle = `rgba(102,178,255,${0.55 * alpha})`; // light blue
             ctx.beginPath();
-            ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
           }
         }
       }
 
-      // Dots (glowing)
-      for (const p of pts){
+      // Dots — light blue with soft glow
+      for (const p of pts) {
         ctx.save();
-        ctx.fillStyle = 'rgba(255,255,255,1)';
-        ctx.shadowColor = 'rgba(80,160,255,0.45)';
-        ctx.shadowBlur = 6;
+        ctx.fillStyle = 'rgba(153,204,255,1)';     // light blue dot
+        ctx.shadowColor = 'rgba(153,204,255,0.45)'; // soft blue glow
+        ctx.shadowBlur = 5;
         ctx.beginPath();
-        ctx.arc(p.x,p.y,dotRadius,0,Math.PI*2);
+        ctx.arc(p.x, p.y, dotRadius, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
       }
@@ -187,26 +204,40 @@ function MissionNetworkBG({count=70, linkDistance=140, speed=0.25, dotRadius=2}:
       rafRef.current = requestAnimationFrame(draw);
     };
 
-    const onVisibility = ()=>{ pausedRef.current = document.hidden; if (!document.hidden && rafRef.current===null) rafRef.current = requestAnimationFrame(draw); };
+    const onVisibility = () => {
+      pausedRef.current = document.hidden;
+      if (!document.hidden && rafRef.current === null) {
+        rafRef.current = requestAnimationFrame(draw);
+      }
+    };
     document.addEventListener('visibilitychange', onVisibility);
 
-    if (!prefersReduced){ rafRef.current = requestAnimationFrame(draw); }
-    else {
-      ctx.fillStyle = 'rgba(255,255,255,1)';
-      for (const p of pts){ ctx.beginPath(); ctx.arc(p.x,p.y,dotRadius,0,Math.PI*2); ctx.fill(); }
+    if (!prefersReduced) {
+      rafRef.current = requestAnimationFrame(draw);
+    } else {
+      // Reduced motion: static dots, same light-blue color
+      ctx.fillStyle = 'rgba(153,204,255,1)';
+      for (const p of pts) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, dotRadius, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
 
-    window.addEventListener('resize', ()=>{});
-    return ()=>{
+    const onResize = () => {};
+    window.addEventListener('resize', onResize);
+
+    return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
+      window.removeEventListener('resize', onResize);
       document.removeEventListener('visibilitychange', onVisibility);
     };
   }, [count, linkDistance, speed, dotRadius, prefersReduced]);
 
   return (
     <div className="absolute inset-0 pointer-events-none select-none" aria-hidden>
-      <canvas ref={ref} className="w-full h-full"/>
+      <canvas ref={ref} className="w-full h-full" />
     </div>
   );
 }
@@ -279,10 +310,10 @@ function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* Insert Mission Section */}
-<section className="relative overflow-hidden bg-gradient-to-br from-[#0b1f3a] via-[#123a70] to-[#1b4d8a]">
-  <MissionNetworkBG count={110} linkDistance={190} speed={0.28} dotRadius={2.4}/>
+     
+       {/* Insert Mission Section */}
+<section className="relative overflow-hidden bg-[#06213C]">
+  <MissionNetworkBG count={100} linkDistance={95} speed={0.18} dotRadius={1.8} />
  <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-16 text-center text-white">
 <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">Our Mission is to Bring the Power of AI to Every Business</h2>
 <p className="mt-5 text-base sm:text-lg text-white/85">
