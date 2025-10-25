@@ -290,26 +290,37 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Leadership quote (3-line, author bottom-left) */}
-      <section className="bg-white text-[#0a2540]">
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
-          <div className="pointer-events-none absolute -top-2 right-6 hidden select-none text-[#1e90ff]/20 lg:block" aria-hidden>
-            <svg width="120" height="100" viewBox="0 0 120 100" fill="none">
-              <path d="M30 10h30v30H40c0 11 9 20 20 20v30C37 90 20 70 20 45V10h10Z" fill="currentColor"/>
-              <path d="M80 10h30v30H90c0 11 9 20 20 20v30C87 90 70 70 70 45V10h10Z" fill="currentColor"/>
-            </svg>
-          </div>
-          <div className="w-full h-[1px] bg-[#1e90ff]/30 mb-6"></div>
-          <blockquote className="text-lg sm:text-xl leading-relaxed font-medium max-w-3xl mx-auto text-center">“AI is transforming how modern businesses learn, adapt, and innovate. It empowers organizations to turn data into intelligence, deliver personalized experiences, and drive meaningful change across every function.”</blockquote>
-          <div className="mt-6 mx-auto max-w-3xl flex items-center gap-4 justify-start">
-            <img src="/yasin-profile.png" alt="Yasin Shah" className="h-14 w-14 rounded-full object-cover ring-2 ring-[#1e90ff]" />
-            <div>
-              <div className="text-base font-semibold">Yasin Shah</div>
-              <div className="text-sm text-[#0a2540]/70">Director and CEO, Technocolabs Softwares Inc.</div>
-            </div>
-          </div>
-        </div>
-      </section>
+     {/* Leadership quote (3-line, author centered) */}
+<section className="bg-white text-[#0a2540]">
+  <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
+    <div className="pointer-events-none absolute -top-2 right-6 hidden select-none text-[#1e90ff]/20 lg:block" aria-hidden>
+      <svg width="120" height="100" viewBox="0 0 120 100" fill="none">
+        <path d="M30 10h30v30H40c0 11 9 20 20 20v30C37 90 20 70 20 45V10h10Z" fill="currentColor"/>
+        <path d="M80 10h30v30H90c0 11 9 20 20 20v30C87 90 70 70 70 45V10h10Z" fill="currentColor"/>
+      </svg>
+    </div>
+    <div className="w-full h-[1px] bg-[#1e90ff]/30 mb-6"></div>
+
+    <blockquote className="text-lg sm:text-xl leading-relaxed font-medium max-w-3xl mx-auto text-center">
+      “AI is transforming how modern businesses learn, adapt, and innovate. It empowers organizations to turn data into intelligence, deliver personalized experiences, and drive meaningful change across every function.”
+    </blockquote>
+
+    {/* Centered Author Info */}
+  <div className="mt-6 mx-auto max-w-3xl flex items-center gap-4 justify-center">
+  <img
+    src="/yasin-profile.png"
+    alt="Yasin Shah"
+    className="h-14 w-14 rounded-full object-cover ring-2 ring-[#1e90ff]"
+  />
+  <div className="text-left">
+    <div className="text-base font-semibold">Yasin Shah</div>
+    <div className="text-sm text-[#0a2540]/70">
+      Director and CEO, Technocolabs Softwares Inc.
+    </div>
+  </div>
+</div>
+  </div>
+</section>
      
        {/* Insert Mission Section */}
 <section className="relative overflow-hidden bg-[#06213C]">
