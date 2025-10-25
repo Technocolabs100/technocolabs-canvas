@@ -290,7 +290,7 @@ function HomePage() {
         </div>
       </section>
 
-   {/* Leadership quote (3-line, author centered) */}
+{/* Leadership quote (3-line, author centered) */}
 <section className="bg-white text-[#0a2540]">
   <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
 
@@ -303,7 +303,7 @@ function HomePage() {
 
       {/* Top quote icon: slightly above, small gap from text, near end of first line */}
       <div
-        className="hidden sm:block absolute -top-2 right-3 text-[#1e90ff]/20 select-none pointer-events-none"
+        className="hidden sm:block absolute -top-2 right-3 text-[#1e90ff]/20 select-none pointer-events-none transform scale-x-[-1]"
         aria-hidden
       >
         <svg width="65" height="55" viewBox="0 0 120 100" fill="none">
@@ -335,6 +335,7 @@ function HomePage() {
         </div>
       </div>
     </div>
+
   </div>
 </section>
      
