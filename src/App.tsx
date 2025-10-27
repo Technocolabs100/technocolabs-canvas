@@ -259,37 +259,87 @@ function HomePage() {
   ];
   return (
     <div className="bg-[#0a2540] text-white" id="home">
-       {/* Hero */}
+      {/* Hero */}
+   {/* Hero */}
 <section className="relative overflow-clip">
   <div className="pointer-events-none absolute inset-0">
     <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-[#1e90ff]/20 blur-3xl" />
     <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-blue-300/10 blur-3xl" />
   </div>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-16 lg:pt-28 lg:pb-24">
-          <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.3 }} className="max-w-3xl">
-            
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/80">Central India’s AI Solutions & Strategic Consulting Company</span>
-            <p className="text-sm md:text-base font-medium text-blue-300 mt-4 flex items-center gap-2">
-  <span role="img" aria-label="award">🏆</span>
-  Proudly ranked #1 in Indore, India & awarded HackerNoon’s Startup of the Year 2024</p>
-            <h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight sm:text-5xl">Empowering the Next Generation of Innovators 🚀</h1>
-            <p className="mt-5 text-lg text-white/80">We are Central India's leading IT Development and Consulting Company - building AI, Data Science, and Software solutions that transform industries.</p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <button onClick={() => navigate('services')} className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold shadow-sm hover:shadow-lg">Explore Our Services <ArrowRight className="h-4 w-4" /></button>
-              <button onClick={() => navigate('careers')} className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold hover:bg-white/10">Join Our Internship</button>
-              
-            </div>
-          </motion.div>
-          <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-4">
-            {stats.map((s) => (
-              <div key={s.label} className="rounded-2xl border border-white/10 bg-white/5 p-5 text-center shadow-sm">
-                <div className="text-2xl font-semibold">{s.value}</div>
-                <div className="mt-1 text-xs uppercase tracking-wide text-white/70">{s.label}</div>
-              </div>
-            ))}
-          </motion.div>
+
+  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-16 lg:pt-28 lg:pb-24">
+    {/* NEW: two-column layout (left = your text, right = orbit core) */}
+    <div className="grid items-center gap-10 lg:grid-cols-2">
+
+      {/* LEFT — your original content (unchanged) */}
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.3 }}
+        className="max-w-3xl"
+      >
+        <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/80">
+          Central India’s AI Solutions & Strategic Consulting Company
+        </span>
+        <p className="text-sm md:text-base font-medium text-blue-300 mt-4 flex items-center gap-2">
+          <span role="img" aria-label="award">🏆</span>
+          Proudly ranked #1 in Indore, India & awarded HackerNoon’s Startup of the Year 2024
+        </p>
+        <h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
+          Empowering the Next Generation of Innovators 🚀
+        </h1>
+        <p className="mt-5 text-lg text-white/80">
+          We are Central India's leading IT Development and Consulting Company - building AI, Data Science, and Software solutions that transform industries.
+        </p>
+        <div className="mt-8 flex flex-wrap items-center gap-3">
+          <button
+            onClick={() => navigate('services')}
+            className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold shadow-sm hover:shadow-lg"
+          >
+            Explore Our Services <ArrowRight className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => navigate('careers')}
+            className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold hover:bg-white/10"
+          >
+            Join Our Internship
+          </button>
         </div>
-      </section>
+      </motion.div>
+
+      {/* RIGHT — orbit core (center logo + two static rings, no transforms on container) */}
+      <motion.div
+  variants={fadeUp}
+  initial="hidden"
+  whileInView="show"
+  viewport={{ once: true, amount: 0.3 }}
+  className="flex justify-center lg:justify-end"
+      >
+        {/* keep inner box transform-free so circle math is perfect */}
+        <div className="[transform:none]">
+          <TechCluster size={440} centerSize={84} badge={56} />
+        </div>
+      </motion.div>
+    </div>
+
+    {/* STATS — unchanged */}
+    <motion.div
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.2 }}
+      className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-4"
+    >
+      {stats.map((s) => (
+        <div key={s.label} className="rounded-2xl border border-white/10 bg-white/5 p-5 text-center shadow-sm">
+          <div className="text-2xl font-semibold">{s.value}</div>
+          <div className="mt-1 text-xs uppercase tracking-wide text-white/70">{s.label}</div>
+        </div>
+      ))}
+    </motion.div>
+  </div>
+</section>
 
 {/* Leadership quote (3-line, author centered) */}
 <section className="bg-white text-[#0a2540]">
@@ -304,7 +354,7 @@ function HomePage() {
 
       {/* Top quote icon: slightly above, small gap from text, near end of first line */}
       <div
-        className="hidden sm:block absolute -top-2 right-3 text-[#1e90ff]/20 select-none pointer-events-none transform scale-x-[-1]"
+        className="hidden sm:block absolute -top-2 right-3 text-[#1e90ff]/20 select-none pointer-events-none  transform scale-x-[-1]"
         aria-hidden
       >
         <svg width="65" height="55" viewBox="0 0 120 100" fill="none">
@@ -339,10 +389,12 @@ function HomePage() {
 
   </div>
 </section>
-     
+
        {/* Insert Mission Section */}
 <section className="relative overflow-hidden bg-[#06213C]">
+
   <MissionNetworkBG count={100} linkDistance={95} speed={0.18} dotRadius={1.8} />
+
  <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-16 text-center text-white">
 <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">Our Mission is to Bring the Power of AI to Every Business</h2>
 <p className="mt-5 text-base sm:text-lg text-white/85">
@@ -402,8 +454,8 @@ innovate with AI, enrich customer insights, automate processes, and operate more
           </div>
         </div>
       </section>
-      
-   {/* Beneficial Results / Impact Stats */}
+
+      {/* Beneficial Results / Impact Stats */}
 <section className="relative bg-white text-[#0a2540]">
 {/* dotted decorative background */}
 <div
@@ -450,7 +502,7 @@ label:'improvement in business efficiency with AI'
 </div> */}
 </div>
 </section>
-  
+
        {/* ✅ New Orbit Section */}
 <AIServicePremiumGrid />
 
@@ -497,7 +549,7 @@ label:'improvement in business efficiency with AI'
     </div>
   );
 }
-
+  
 function IndustriesSection() {
   const navigate = useContext(NavContext);
   return (
