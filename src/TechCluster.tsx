@@ -14,7 +14,7 @@ const ICONS = [
 ] as const;
 type IconName = typeof ICONS[number];
 
-// Exact Simple Icons slugs
+// Exact slugs for SimpleIcons
 const SLUG: Record<IconName, string> = {
   aws: "amazonaws",
   docker: "docker",
@@ -26,16 +26,13 @@ const SLUG: Record<IconName, string> = {
   pytorch: "pytorch",
 };
 
-// White icon with robust fallbacks (fixes AWS/Azure hiccups)
+// White Icon + 2-step CDN fallback + final placeholder
 function Icon({ name, size = 26 }: { name: IconName; size?: number }) {
   const s = SLUG[name];
-  const v = "v=3"; // tiny cache-buster
+  const v = "v=3"; // cache buster
 
-  // 1) Simple Icons (preferred) — path style color
   const primary = `https://cdn.simpleicons.org/${s}/ffffff?${v}`;
-  // 2) Simple Icons (alt) — query style color
   const fallback1 = `https://cdn.simpleicons.org/${s}?color=ffffff&${v}`;
-  // 3) Iconify — alternate CDN
   const fallback2 = `https://api.iconify.design/simple-icons:${s}.svg?color=%23ffffff&${v}`;
 
   const onError: React.ReactEventHandler<HTMLImageElement> = (e) => {
@@ -51,12 +48,12 @@ function Icon({ name, size = 26 }: { name: IconName; size?: number }) {
       img.src = fallback2;
       return;
     }
-    // final tiny white dot so you never see a broken icon
+    // final white dot as safe fallback
     img.src =
       `data:image/svg+xml;utf8,` +
       encodeURIComponent(
-        `<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}' viewBox='0 0 24 24' fill='none'>
-           <circle cx='12' cy='12' r='9' fill='white'/>
+        `<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}' viewBox='0 0 24 24' fill='white'>
+           <circle cx='12' cy='12' r='9' />
          </svg>`
       );
   };
@@ -82,26 +79,25 @@ export default function TechCluster({
 }: Props) {
   return (
     <div className="relative [transform:none]" style={{ width: size, height: size }}>
-      {/* subtle ambient backdrop */}
-      <div
-        className="absolute inset-0 rounded-3xl blur-3xl"
-        style={{ background: "radial-gradient(closest-side, rgba(255,255,255,0.08), transparent 65%)" }}
-      />
-
-      {/* motions: S2 float + CL3 center pulse */}
+      {/* floating + center pulse */}
       <style>{`
         @keyframes clusterFloat {
           0%, 100% { transform: translateY(0px); }
           50%      { transform: translateY(-8px); }
         }
-        /* CL3: tiny heartbeat scale on center logo */
         @keyframes centerPulse {
           0%, 100% { transform: scale(1); }
           50%      { transform: scale(1.06); }
         }
       `}</style>
 
-      {/* cluster grid */}
+      {/* soft background glow */}
+      <div
+        className="absolute inset-0 rounded-3xl blur-3xl"
+        style={{ background: "radial-gradient(closest-side, rgba(255,255,255,0.08), transparent 65%)" }}
+      />
+
+      {/* icon grid */}
       <div
         className="absolute left-1/2 top-1/2 grid -translate-x-1/2 -translate-y-1/2"
         style={{
@@ -124,13 +120,14 @@ export default function TechCluster({
         <Badge name="azure"      badge={badge} col={1} row={2} delay={0.5} />
         <Badge name="gcp"        badge={badge} col={5} row={2} delay={1.1} />
 
-        {/* Center logo — clean, no circle bg, CL3 pulse */}
+        {/* Center Logo — clean + UP1 shift + CL3 pulse */}
         <div
           style={{
             gridColumn: "3 / span 1",
             gridRow: "3 / span 1",
             display: "grid",
             placeItems: "center",
+            transform: "translateY(-8px)", // UP1 lift
           }}
         >
           <img
@@ -142,7 +139,7 @@ export default function TechCluster({
               width: centerSize,
               height: centerSize,
               display: "block",
-              animation: "centerPulse 5.2s ease-in-out infinite", // gentle pulse
+              animation: "centerPulse 5.2s ease-in-out infinite",
               transformOrigin: "50% 50%",
             }}
           />
