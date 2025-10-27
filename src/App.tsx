@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useContext, useEffect } from "react";
 import AIServicePremiumGrid from "./AIServicePremiumGrid";
+import TechCluster from "./TechCluster";
 
 import {
   ArrowRight,
@@ -258,12 +259,12 @@ function HomePage() {
   ];
   return (
     <div className="bg-[#0a2540] text-white" id="home">
-      {/* Hero */}
-      <section className="relative overflow-clip">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-[#1e90ff]/20 blur-3xl" />
-          <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-blue-300/10 blur-3xl" />
-        </div>
+       {/* Hero */}
+<section className="relative overflow-clip">
+  <div className="pointer-events-none absolute inset-0">
+    <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-[#1e90ff]/20 blur-3xl" />
+    <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-blue-300/10 blur-3xl" />
+  </div>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-16 lg:pt-28 lg:pb-24">
           <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.3 }} className="max-w-3xl">
             
