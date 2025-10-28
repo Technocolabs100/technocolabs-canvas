@@ -9,14 +9,17 @@ const SUGGESTED = [
   "Share your contact email",
 ];
 
-// change this to move the launcher up/down
-const LAUNCHER_BOTTOM_REM = 2; // 7rem ≈ tailwind bottom-28
+const LAUNCHER_BOTTOM_REM =2; // how high the floating button sits
 
 export default function ChatbotWidget() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { id: id(), role: "bot", text: "Hi! I’m your assistant from Technocolabs 👋\nHow can I help today?" },
+    {
+      id: id(),
+      role: "bot",
+      text: "Hi! I’m your assistant from Technocolabs 👋\nHow can I help you today?",
+    },
   ]);
   const [typing, setTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -30,18 +33,11 @@ export default function ChatbotWidget() {
   const botReply = useMemo(
     () => (qRaw: string) => {
       const q = qRaw.toLowerCase();
-      if (q.includes("service") || q.includes("offer"))
-        return "We build AI/ML, Data Science, Web & Mobile apps, BI dashboards, plus consulting & training. Want a quick link to our services?";
-      if (q.includes("time") || q.includes("start"))
-        return "We can usually kick off within 1–2 weeks after scope alignment. For urgent timelines, we can often start sooner.";
-      if (q.includes("price") || q.includes("cost") || q.includes("budget"))
-        return "Pricing depends on scope. We do fixed-bid for well-defined projects and retainers for long-term work. Share a bit about your project?";
-      if (q.includes("email") || q.includes("contact"))
-        return "You can reach us at contact@technocolabs.com — or leave your details here and we’ll reply in 1–2 business days.";
-      if (q.includes("intern") || q.includes("career"))
-        return "We run mentored internships and full-time roles. Check the Careers page or tell me your skillset to suggest a track.";
-      if (q.includes("hello") || q.includes("hi")) return "Hello! How can I help you today?";
-      return "Got it. Could you share a tiny bit more detail so I can point you to the best next step?";
+      if (q.includes("service")) return "We offer AI/ML, Data Science, Web & Mobile Development, BI dashboards & consulting.";
+      if (q.includes("time") || q.includes("start")) return "We typically start in 1–2 weeks after scope alignment.";
+      if (q.includes("email") || q.includes("contact")) return "You can reach us at contact@technocolabs.com anytime.";
+      if (q.includes("intern")) return "We offer internships in AI, ML, Data Science, and Web Development.";
+      return "Thanks! Could you share a bit more so I can guide you better?";
     },
     []
   );
@@ -49,9 +45,11 @@ export default function ChatbotWidget() {
   async function handleSend(text?: string) {
     const value = (text ?? input).trim();
     if (!value) return;
-    setInput("");
+
     push({ role: "user", text: value });
+    setInput("");
     setTyping(true);
+
     await new Promise((r) => setTimeout(r, 500));
     push({ role: "bot", text: botReply(value) });
     setTyping(false);
@@ -62,30 +60,32 @@ export default function ChatbotWidget() {
   }
 
   function id() {
-    return Math.random().toString(36).slice(2) + Date.now().toString(36);
+    return Math.random().toString(36).slice(2);
   }
 
   return (
     <>
-      {/* Floating launcher (uses inline bottom style so it's always positioned) */}
+      {/* ✅ Floating Launcher — LEFT SIDE */}
       <button
-  onClick={() => setOpen(true)}
-  className="fixed left-5 z-[1000] inline-flex items-center gap-2 rounded-full bg-[#1e90ff] px-4 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white/40"
-  style={{ bottom: `${LAUNCHER_BOTTOM_REM}rem` }}
-  aria-label="Open chat"
->
-  <MessageCircle className="h-5 w-5" />
-  <span className="hidden sm:block">Chat</span>
-</button>
+        onClick={() => setOpen(true)}
+        className="fixed left-5 z-[1000] inline-flex items-center gap-2 rounded-full bg-[#1e90ff] px-4 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl"
+        style={{ bottom: `${LAUNCHER_BOTTOM_REM}rem` }}
+      >
+        <MessageCircle className="h-5 w-5" />
+        <span className="hidden sm:block">Chat</span>
+      </button>
 
-      {/* Chat panel */}
+      {/* ✅ Chat Window — LEFT SIDE */}
       {open && (
-        <div className="fixed inset-0 z-[1100] flex items-end sm:items-center sm:justify-end">
+        <div className="fixed inset-0 z-[1100] flex items-end sm:items-center sm:justify-start">
           {/* backdrop */}
-          <div className="absolute inset-0 bg-black/30" onClick={() => setOpen(false)} aria-hidden />
+          <div
+            className="absolute inset-0 bg-black/30"
+            onClick={() => setOpen(false)}
+          />
 
-          {/* card */}
-          <div className="relative m-3 sm:m-6 w-[min(100%,420px)] rounded-2xl border border-white/10 bg-[#0a2540] text-white shadow-2xl">
+          {/* panel */}
+          <div className="relative m-3 sm:ml-6 w-[min(100%,420px)] rounded-2xl border border-white/10 bg-[#0a2540] text-white shadow-2xl">
             {/* header */}
             <div className="flex items-center justify-between gap-4 rounded-t-2xl border-b border-white/10 bg-[#0e2a4c] px-4 py-3">
               <div className="flex items-center gap-3">
@@ -97,10 +97,10 @@ export default function ChatbotWidget() {
                   <div className="text-xs text-white/70">Typically replies instantly</div>
                 </div>
               </div>
+
               <button
                 onClick={() => setOpen(false)}
-                className="rounded-lg p-1.5 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/30"
-                aria-label="Close chat"
+                className="rounded-lg p-1.5 hover:bg-white/10"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -109,11 +109,14 @@ export default function ChatbotWidget() {
             {/* messages */}
             <div ref={scrollRef} className="max-h-[55vh] overflow-y-auto px-4 py-4 space-y-3">
               {messages.map((m) => (
-                <div key={m.id} className={m.role === "user" ? "flex justify-end" : "flex justify-start"}>
+                <div
+                  key={m.id}
+                  className={m.role === "user" ? "flex justify-end" : "flex justify-start"}
+                >
                   <div
                     className={
                       "max-w-[80%] whitespace-pre-wrap rounded-2xl px-3 py-2 text-sm shadow " +
-                      (m.role === "user" ? "bg-[#1e90ff] text-white" : "bg-white/10 text-white")
+                      (m.role === "user" ? "bg-[#1e90ff]" : "bg-white/10")
                     }
                   >
                     {m.text}
@@ -123,16 +126,14 @@ export default function ChatbotWidget() {
 
               {typing && (
                 <div className="flex justify-start">
-                  <div className="rounded-2xl bg-white/10 px-3 py-2 text-sm text-white">
-                    <span className="inline-flex items-center gap-1 opacity-80">
-                      <Dot /> <Dot /> <Dot />
-                    </span>
+                  <div className="rounded-2xl bg-white/10 px-3 py-2 text-sm text-white flex gap-1 opacity-80">
+                    <Dot /> <Dot /> <Dot />
                   </div>
                 </div>
               )}
             </div>
 
-            {/* quick suggestions */}
+            {/* suggested */}
             <div className="flex flex-wrap gap-2 px-4 pb-2">
               {SUGGESTED.map((q) => (
                 <button
@@ -147,11 +148,11 @@ export default function ChatbotWidget() {
 
             {/* input */}
             <form
-              className="flex items-center gap-2 border-t border-white/10 px-3 py-3"
               onSubmit={(e) => {
                 e.preventDefault();
                 handleSend();
               }}
+              className="flex items-center gap-2 border-t border-white/10 px-3 py-3"
             >
               <input
                 value={input}
@@ -163,7 +164,6 @@ export default function ChatbotWidget() {
                 type="submit"
                 className="inline-flex items-center justify-center rounded-xl bg-[#1e90ff] px-3 py-2 text-sm font-semibold shadow hover:shadow-lg disabled:opacity-60"
                 disabled={!input.trim()}
-                aria-label="Send"
               >
                 <Send className="h-4 w-4" />
               </button>
