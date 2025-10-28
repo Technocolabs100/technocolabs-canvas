@@ -243,7 +243,6 @@ function MissionNetworkBG(
   );
 }
 
-// --------------------------- HOME PAGE --------------------------------------
 function HomePage() {
   const navigate = useContext(NavContext);
   const stats = [
@@ -260,192 +259,186 @@ function HomePage() {
   return (
     <div className="bg-[#0a2540] text-white" id="home">
       {/* Hero */}
-   {/* Hero */}
-<section className="relative overflow-clip">
-  <div className="pointer-events-none absolute inset-0">
-    <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-[#1e90ff]/20 blur-3xl" />
-    <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-blue-300/10 blur-3xl" />
-  </div>
+      <section className="relative overflow-clip">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-[#1e90ff]/20 blur-3xl" />
+          <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-blue-300/10 blur-3xl" />
+        </div>
 
-  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-16 lg:pt-28 lg:pb-24">
-    {/* NEW: two-column layout (left = your text, right = orbit core) */}
-    <div className="grid items-center gap-10 lg:grid-cols-2">
+        {/* tightened padding on mobile; desktop unchanged */}
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 pb-12 lg:pt-28 lg:pb-24">
+          <div className="grid items-center gap-10 lg:grid-cols-2">
+            {/* LEFT — original content */}
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.3 }}
+              className="max-w-3xl"
+            >
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/80">
+                Central India’s AI Solutions & Strategic Consulting Company
+              </span>
+              <p className="text-sm md:text-base font-medium text-blue-300 mt-4 flex items-center gap-2">
+                <span role="img" aria-label="award">🏆</span>
+                Proudly ranked #1 in Indore, India & awarded HackerNoon’s Startup of the Year 2024
+              </p>
+              <h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
+                Empowering the Next Generation of Innovators 🚀
+              </h1>
+              <p className="mt-5 text-lg text-white/80">
+                We are Central India's leading IT Development and Consulting Company - building AI, Data Science, and Software solutions that transform industries.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <button
+                  onClick={() => navigate('services')}
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold shadow-sm hover:shadow-lg"
+                >
+                  Explore Our Services <ArrowRight className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => navigate('careers')}
+                  className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold hover:bg-white/10"
+                >
+                  Join Our Internship
+                </button>
+              </div>
+            </motion.div>
 
-      {/* LEFT — your original content (unchanged) */}
-      <motion.div
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.3 }}
-        className="max-w-3xl"
-      >
-        <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/80">
-          Central India’s AI Solutions & Strategic Consulting Company
-        </span>
-        <p className="text-sm md:text-base font-medium text-blue-300 mt-4 flex items-center gap-2">
-          <span role="img" aria-label="award">🏆</span>
-          Proudly ranked #1 in Indore, India & awarded HackerNoon’s Startup of the Year 2024
-        </p>
-        <h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
-          Empowering the Next Generation of Innovators 🚀
-        </h1>
-        <p className="mt-5 text-lg text-white/80">
-          We are Central India's leading IT Development and Consulting Company - building AI, Data Science, and Software solutions that transform industries.
-        </p>
-        <div className="mt-8 flex flex-wrap items-center gap-3">
-          <button
-            onClick={() => navigate('services')}
-            className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold shadow-sm hover:shadow-lg"
+            {/* RIGHT — TechCluster responsive (mobile compact, desktop full) */}
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.3 }}
+              className="mt-10 flex justify-center lg:mt-0 lg:justify-end"
+            >
+              {/* mobile/tablet */}
+              <div className="block lg:hidden [transform:none]">
+                <TechCluster size={300} centerSize={64} badge={44} />
+              </div>
+              {/* desktop */}
+              <div className="hidden lg:block [transform:none]">
+                <TechCluster size={440} centerSize={84} badge={56} />
+              </div>
+            </motion.div>
+          </div>
+
+          {/* STATS — unchanged */}
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-4"
           >
-            Explore Our Services <ArrowRight className="h-4 w-4" />
-          </button>
-          <button
-            onClick={() => navigate('careers')}
-            className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold hover:bg-white/10"
-          >
-            Join Our Internship
-          </button>
+            {stats.map((s) => (
+              <div key={s.label} className="rounded-2xl border border-white/10 bg-white/5 p-5 text-center shadow-sm">
+                <div className="text-2xl font-semibold">{s.value}</div>
+                <div className="mt-1 text-xs uppercase tracking-wide text-white/70">{s.label}</div>
+              </div>
+            ))}
+          </motion.div>
         </div>
-      </motion.div>
+      </section>
 
-      {/* RIGHT — orbit core (center logo + two static rings, no transforms on container) */}
-      <motion.div
-  variants={fadeUp}
-  initial="hidden"
-  whileInView="show"
-  viewport={{ once: true, amount: 0.3 }}
-  className="flex justify-center lg:justify-end"
-      >
-        {/* keep inner box transform-free so circle math is perfect */}
-        <div className="[transform:none]">
-          <TechCluster size={440} centerSize={84} badge={56} />
+      {/* Leadership quote (3-line, author centered) */}
+      <section className="bg-white text-[#0a2540]">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
+          <div className="max-w-4xl mx-auto relative flex justify-center">
+            <blockquote className="text-lg sm:text-xl leading-relaxed font-medium text-center pr-20 sm:pr-24">
+              “AI is transforming how modern businesses learn, adapt, and innovate. It empowers organizations to turn data into intelligence, deliver personalized experiences, and drive meaningful change across every function.”
+            </blockquote>
+            <div
+              className="hidden sm:block absolute -top-2 right-3 text-[#1e90ff]/20 select-none pointer-events-none  transform scale-x-[-1]"
+              aria-hidden
+            >
+              <svg width="65" height="55" viewBox="0 0 120 100" fill="none">
+                <path d="M30 10h30v30H40c0 11 9 20 20 20v30C37 90 20 70 20 45V10h10Z" fill="currentColor"/>
+                <path d="M80 10h30v30H90c0 11 9 20 20 20v30C87 90 70 70 70 45V10h10Z" fill="currentColor"/>
+              </svg>
+            </div>
+          </div>
+
+          <div className="mt-6 mx-auto max-w-4xl flex items-center gap-4 justify-center relative">
+            <div className="pointer-events-none absolute -left-12 bottom-0 hidden select-none text-[#1e90ff]/20 lg:block" aria-hidden>
+              <svg width="65" height="115" viewBox="0 0 120 100" fill="none">
+                <path d="M30 10h30v30H40c0 11 9 20 20 20v30C37 90 20 70 20 45V10h10Z" fill="currentColor"/>
+                <path d="M80 10h30v30H90c0 11 9 20 20 20v30C87 90 70 70 70 45V10h10Z" fill="currentColor"/>
+              </svg>
+            </div>
+
+            <img
+              src="/yasin-profile.png"
+              alt="Yasin Shah"
+              className="h-14 w-14 rounded-full object-cover ring-2 ring-[#1e90ff]"
+            />
+            <div className="text-left">
+              <div className="text-base font-semibold">Yasin Shah</div>
+              <div className="text-sm text-[#0a2540]/70">
+                Director and CEO, Technocolabs Softwares Inc.
+              </div>
+            </div>
+          </div>
         </div>
-      </motion.div>
-    </div>
+      </section>
 
-    {/* STATS — unchanged */}
-    <motion.div
-      variants={fadeUp}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, amount: 0.2 }}
-      className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-4"
-    >
-      {stats.map((s) => (
-        <div key={s.label} className="rounded-2xl border border-white/10 bg-white/5 p-5 text-center shadow-sm">
-          <div className="text-2xl font-semibold">{s.value}</div>
-          <div className="mt-1 text-xs uppercase tracking-wide text-white/70">{s.label}</div>
+      {/* Mission */}
+      <section className="relative overflow-hidden bg-[#06213C]">
+        <MissionNetworkBG count={100} linkDistance={95} speed={0.18} dotRadius={1.8} />
+        <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-16 text-center text-white">
+          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">Our Mission is to Bring the Power of AI to Every Business</h2>
+          <p className="mt-5 text-base sm:text-lg text-white/85">
+            We are a data science and analytics consulting firm delivering AI-powered solutions to companies that want to
+            leverage data and machine learning algorithms for business value.
+          </p>
+          <p className="mt-4 text-base sm:text-lg text-white/85">
+            As an artificial intelligence company, we focus on AI and Big Data software development. We help businesses
+            innovate with AI, enrich customer insights, automate processes, and operate more cost-efficiently.
+          </p>
         </div>
-      ))}
-    </motion.div>
-  </div>
-</section>
+      </section>
 
-{/* Leadership quote (3-line, author centered) */}
-<section className="bg-white text-[#0a2540]">
-  <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
-
-    {/* Quote + Top icon aligned to end of first line */}
-    <div className="max-w-4xl mx-auto relative flex justify-center">
-      {/* Add right padding so the icon doesn't overlap the text */}
-      <blockquote className="text-lg sm:text-xl leading-relaxed font-medium text-center pr-20 sm:pr-24">
-        “AI is transforming how modern businesses learn, adapt, and innovate. It empowers organizations to turn data into intelligence, deliver personalized experiences, and drive meaningful change across every function.”
-      </blockquote>
-
-      {/* Top quote icon: slightly above, small gap from text, near end of first line */}
-      <div
-        className="hidden sm:block absolute -top-2 right-3 text-[#1e90ff]/20 select-none pointer-events-none  transform scale-x-[-1]"
-        aria-hidden
-      >
-        <svg width="65" height="55" viewBox="0 0 120 100" fill="none">
-          <path d="M30 10h30v30H40c0 11 9 20 20 20v30C37 90 20 70 20 45V10h10Z" fill="currentColor"/>
-          <path d="M80 10h30v30H90c0 11 9 20 20 20v30C87 90 70 70 70 45V10h10Z" fill="currentColor"/>
-        </svg>
-      </div>
-    </div>
-
-    {/* Author Row + Bottom-left Quote Icon */}
-    <div className="mt-6 mx-auto max-w-4xl flex items-center gap-4 justify-center relative">
-      {/* Bottom-left icon (kept) */}
-      <div className="pointer-events-none absolute -left-12 bottom-0 hidden select-none text-[#1e90ff]/20 lg:block" aria-hidden>
-        <svg width="65" height="115" viewBox="0 0 120 100" fill="none">
-          <path d="M30 10h30v30H40c0 11 9 20 20 20v30C37 90 20 70 20 45V10h10Z" fill="currentColor"/>
-          <path d="M80 10h30v30H90c0 11 9 20 20 20v30C87 90 70 70 70 45V10h10Z" fill="currentColor"/>
-        </svg>
-      </div>
-
-      <img
-        src="/yasin-profile.png"
-        alt="Yasin Shah"
-        className="h-14 w-14 rounded-full object-cover ring-2 ring-[#1e90ff]"
-      />
-      <div className="text-left">
-        <div className="text-base font-semibold">Yasin Shah</div>
-        <div className="text-sm text-[#0a2540]/70">
-          Director and CEO, Technocolabs Softwares Inc.
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-       {/* Insert Mission Section */}
-<section className="relative overflow-hidden bg-[#06213C]">
-
-  <MissionNetworkBG count={100} linkDistance={95} speed={0.18} dotRadius={1.8} />
-
- <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-16 text-center text-white">
-<h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">Our Mission is to Bring the Power of AI to Every Business</h2>
-<p className="mt-5 text-base sm:text-lg text-white/85">
-We are a data science and analytics consulting firm delivering AI‑powered solutions to companies that want to
-leverage data and machine learning algorithms for business value.
-</p>
-<p className="mt-4 text-base sm:text-lg text-white/85">
-As an artificial intelligence company, we focus on AI and Big Data software development. We help businesses
-innovate with AI, enrich customer insights, automate processes, and operate more cost‑efficiently.
-</p>
-</div>
-</section>
-
-      {/* How We Can Help You (replaces Featured Services) */}
+      {/* How We Can Help You */}
       <section className="bg-white text-[#0a2540]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
           <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">How We Can Help You</h2>
-          <p className="mt-4 max-w-3xl mx-auto text-center text-[#0a2540]/70">We welcome opportunities to work alongside different teams over projects of any complexity. By working together, we will develop new systems, solutions, and products to separate you from your competition.</p>
+          <p className="mt-4 max-w-3xl mx-auto text-center text-[#0a2540]/70">
+            We welcome opportunities to work alongside different teams over projects of any complexity. By working together, we will develop new systems, solutions, and products to separate you from your competition.
+          </p>
 
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {/* Card 1 */}
+            {/* Cards unchanged */}
             <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm hover:shadow-lg transition">
               <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[#1e90ff]/10 text-[#1e90ff]"><MessageSquareText className="h-6 w-6" /></div>
               <h3 className="mt-4 text-lg font-semibold">AI/ML Strategy & Consulting</h3>
               <p className="mt-2 text-sm text-[#0a2540]/70">Have a project idea and need help implementing it? We're here to consult you and share our knowledge to help you avoid all unnecessary pitfalls.</p>
             </div>
-            {/* Card 2 */}
+
             <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm hover:shadow-lg transition">
               <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 text-amber-500"><Sparkles className="h-6 w-6" /></div>
               <h3 className="mt-4 text-lg font-semibold">PoC of AI-Based Solution</h3>
               <p className="mt-2 text-sm text-[#0a2540]/70">POC is an essential step before adopting any AI solution. If you have a project idea, our data science consultants will verify that your concept has potential.</p>
             </div>
-            {/* Card 3 */}
+
             <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm hover:shadow-lg transition">
               <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-green-100 text-green-600"><Rocket className="h-6 w-6" /></div>
               <h3 className="mt-4 text-lg font-semibold">MVP of AI-Based Product</h3>
               <p className="mt-2 text-sm text-[#0a2540]/70">Need a breakthrough AI product? We'll start with a version of just enough features to satisfy early customers and provide feedback for product development.</p>
             </div>
-            {/* Card 4 */}
+
             <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm hover:shadow-lg transition">
               <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-teal-100 text-teal-600"><Database className="h-6 w-6" /></div>
               <h3 className="mt-4 text-lg font-semibold">Custom Model Development</h3>
               <p className="mt-2 text-sm text-[#0a2540]/70">We can build and train custom models for your business needs, or retrain your existing ones (open-source and proprietary) for better efficiency and scalability.</p>
             </div>
-            {/* Card 5 */}
+
             <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm hover:shadow-lg transition">
               <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-orange-100 text-orange-600"><Settings2 className="h-6 w-6" /></div>
               <h3 className="mt-4 text-lg font-semibold">AI Software Development</h3>
               <p className="mt-2 text-sm text-[#0a2540]/70">If you need to develop an innovative web application from scratch, or empower the existing one with AI capabilities, let our experts help you.</p>
             </div>
-            {/* Card 6 */}
+
             <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm hover:shadow-lg transition">
               <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-600"><Smartphone className="h-6 w-6" /></div>
               <h3 className="mt-4 text-lg font-semibold">AI-Driven Mobile App Development</h3>
@@ -456,82 +449,63 @@ innovate with AI, enrich customer insights, automate processes, and operate more
       </section>
 
       {/* Beneficial Results / Impact Stats */}
-<section className="relative bg-white text-[#0a2540]">
-{/* dotted decorative background */}
-<div
-className="absolute inset-0 -z-10"
-aria-hidden
-style={{
-backgroundImage:
-'radial-gradient(rgba(255,163,77,0.25) 1.6px, transparent 1.6px)',
-backgroundSize: '20px 20px',
-maskImage:
-'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 20%, rgba(0,0,0,0.6) 80%, rgba(0,0,0,0) 100%)'
-}}
-/>
-<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
-<h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">Beneficial Results of Artificial Intelligence in Business</h2>
-<p className="mt-3 max-w-3xl mx-auto text-center text-[#0a2540]/70">Real outcomes teams see after adopting AI and data-driven workflows.</p>
+      <section className="relative bg-white text-[#0a2540]">
+        <div
+          className="absolute inset-0 -z-10"
+          aria-hidden
+          style={{
+            backgroundImage: 'radial-gradient(rgba(255,163,77,0.25) 1.6px, transparent 1.6px)',
+            backgroundSize: '20px 20px',
+            maskImage: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 20%, rgba(0,0,0,0.6) 80%, rgba(0,0,0,0) 100%)'
+          }}
+        />
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">Beneficial Results of Artificial Intelligence in Business</h2>
+          <p className="mt-3 max-w-3xl mx-auto text-center text-[#0a2540]/70">Real outcomes teams see after adopting AI and data-driven workflows.</p>
 
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              { value: '83%', label: 'of companies claim AI as a strategic business priority' },
+              { value: '85%', label: 'of customer service interactions are responded to by chatbots' },
+              { value: '40%', label: 'improvement in business efficiency with AI' }
+            ].map((item) => (
+              <div key={item.value} className="group rounded-2xl border border-[#0a2540]/10 bg-white p-8 shadow-sm hover:shadow-lg transition-all duration-300">
+                <div className="text-5xl font-semibold text-[#1e90ff] tracking-tight text-center">{item.value}</div>
+                <div className="mx-auto mt-3 h-[2px] w-20 bg-[#1e90ff]/50" />
+                <p className="mt-4 text-center text-sm sm:text-base text-[#0a2540]/80 leading-relaxed">{item.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-<div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-{[{
-value:'83%',
-label:'of companies claim AI as a strategic business priority'
-},{
-value:'85%',
-label:'of customer service interactions are responded to by chatbots'
-},{
-value:'40%',
-label:'improvement in business efficiency with AI'
-}].map((item)=> (
-<div key={item.value} className="group rounded-2xl border border-[#0a2540]/10 bg-white p-8 shadow-sm hover:shadow-lg transition-all duration-300">
-<div className="text-5xl font-semibold text-[#1e90ff] tracking-tight text-center">{item.value}</div>
-<div className="mx-auto mt-3 h-[2px] w-20 bg-[#1e90ff]/50" />
-<p className="mt-4 text-center text-sm sm:text-base text-[#0a2540]/80 leading-relaxed">{item.label}</p>
-</div>
-))}
-</div>
-
-
-{/* extra row (optional) — easy to enable later */}
-{/* <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-{['↓ time-to-insight','↑ revenue per user','↓ operational cost','↑ CSAT'].map((b)=> (
-<div key={b} className="rounded-xl border border-[#0a2540]/10 bg-white/80 backdrop-blur p-4 text-center text-sm">{b}</div>
-))}
-</div> */}
-</div>
-</section>
-
-       {/* ✅ New Orbit Section */}
-<AIServicePremiumGrid />
+      {/* ✅ New Orbit Section */}
+      <AIServicePremiumGrid />
 
       {/* Why Partner With Us */}
       <section className="bg-white text-[#0a2540]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
           <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">Why Partner with Technocolabs</h2>
-          <p className="mt-4 max-w-4xl mx-auto text-center text-[#0a2540]/70">With years of AI software development behind us, we keep learning and strengthening our expertise. We’re innovation‑driven and help our clients adopt disruptive technologies that create real business value.</p>
+          <p className="mt-4 max-w-4xl mx-auto text-center text-[#0a2540]/70">
+            With years of AI software development behind us, we keep learning and strengthening our expertise. We’re innovation-driven and help our clients adopt disruptive technologies that create real business value.
+          </p>
 
           <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {/* 1 */}
             <div className="text-center">
               <div className="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#1e90ff]/10 text-[#1e90ff]"><Brain className="h-7 w-7"/></div>
               <div className="mt-4 text-base font-semibold">Strong AI Service Company</div>
               <p className="mt-2 text-sm text-[#0a2540]/70">Broad experience in AI development services and a diverse portfolio.</p>
             </div>
-            {/* 2 */}
             <div className="text-center">
               <div className="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#1e90ff]/10 text-[#1e90ff]"><BadgeCheck className="h-7 w-7"/></div>
               <div className="mt-4 text-base font-semibold">Utmost Quality</div>
               <p className="mt-2 text-sm text-[#0a2540]/70">Focused on quality, intended to create exceptional value for our clients.</p>
             </div>
-            {/* 3 */}
             <div className="text-center">
               <div className="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#1e90ff]/10 text-[#1e90ff]"><Star className="h-7 w-7"/></div>
               <div className="mt-4 text-base font-semibold">Customer Orientation</div>
               <p className="mt-2 text-sm text-[#0a2540]/70">Meeting your needs and suggesting improvements that move the project forward.</p>
             </div>
-            {/* 4 */}
             <div className="text-center">
               <div className="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#1e90ff]/10 text-[#1e90ff]"><Handshake className="h-7 w-7"/></div>
               <div className="mt-4 text-base font-semibold">Transparency & Accountability</div>
@@ -544,7 +518,7 @@ label:'improvement in business efficiency with AI'
       {/* Industries section */}
       <IndustriesSection />
 
-      {/* Contact preview (kept on Home) */}
+      {/* Contact preview */}
       <ContactPreview />
     </div>
   );
