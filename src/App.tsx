@@ -1,6 +1,8 @@
 import React, { useMemo, useState, useContext, useEffect } from "react";
 import AIServicePremiumGrid from "./AIServicePremiumGrid";
 import TechCluster from "./TechCluster";
+import ChatbotWidget from "./ChatbotWidget";
+
 
 import {
   ArrowRight,
@@ -303,6 +305,7 @@ function MissionNetworkBG(
   );
 }
 
+// --------------------------- HOME PAGE --------------------------------------
 function HomePage() {
   const navigate = useContext(NavContext);
   const stats = [
@@ -344,7 +347,7 @@ function HomePage() {
                 Proudly ranked #1 in Indore, India & awarded HackerNoon’s Startup of the Year 2024
               </p>
               <h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
-                Empowering the Next Generation of Innovators 🚀
+                Empowering the Next Generation of Innovators
               </h1>
               <p className="mt-5 text-lg text-white/80">
                 We are Central India's leading IT Development and Consulting Company - building AI, Data Science, and Software solutions that transform industries.
@@ -578,11 +581,14 @@ function HomePage() {
       {/* Industries section */}
       <IndustriesSection />
 
-       {/* Trusted preview */}
+      {/* Trusted preview */}
       <TrustedBySection />
-      
+       
       {/* Contact preview */}
       <ContactPreview />
+
+      {/* ✅ Floating Chatbot Widget (Home page only) */}
+      <ChatbotWidget />
     </div>
   );
 }
