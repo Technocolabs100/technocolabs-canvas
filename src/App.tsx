@@ -119,6 +119,66 @@ const SERVICES_DATA = [
 
 const TAGS = ["All","AI","ML","Data","Analytics","BI","Cloud","DevOps","Apps","Web","Mobile","Software","Consulting","Training","Internships"];
 
+function TrustedBySection() {
+  return (
+    <section className="bg-white text-[#0a2540] py-14">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+
+        {/* Heading */}
+        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+          Approved & Trusted By
+        </h2>
+        <p className="mt-3 text-[#0a2540]/60 text-sm sm:text-base">
+          Recognized by India’s leading government authorities
+        </p>
+
+        {/* Logo Grid */}
+        <div className="mt-10 grid gap-6 sm:grid-cols-3">
+
+          {/* Startup India */}
+          <div className="rounded-2xl border border-[#0a2540]/10 bg-white shadow-sm 
+                          p-6 flex flex-col items-center justify-center hover:shadow-md transition">
+            <img
+              src="startup.png"
+              alt="Startup India"
+              className="h-20 sm:h-24 w-auto object-contain"
+            />
+            <p className="mt-4 font-semibold text-sm sm:text-base text-[#0a2540]">
+              Startup India Recognized
+            </p>
+          </div>
+
+          {/* MSME */}
+          <div className="rounded-2xl border border-[#0a2540]/10 bg-white shadow-sm 
+                          p-6 flex flex-col items-center justify-center hover:shadow-md transition">
+            <img
+              src="msme-1.png"
+              alt="MSME Registered"
+              className="h-20 sm:h-24 w-auto object-contain"
+            />
+            <p className="mt-4 font-semibold text-sm sm:text-base text-[#0a2540]">
+              MSME Registered
+            </p>
+          </div>
+
+          {/* MCA */}
+          <div className="rounded-2xl border border-[#0a2540]/10 bg-white shadow-sm 
+                          p-6 flex flex-col items-center justify-center hover:shadow-md transition">
+            <img
+              src="mca.png"
+              alt="MCA Govt. of India"
+              className="h-20 sm:h-24 w-auto object-contain"
+            />
+            <p className="mt-4 font-semibold text-sm sm:text-base text-[#0a2540]">
+              MCA (Ministry of Corporate Affairs)
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
+}
 // --------------------------- Animated Network BG ----------------------------
 function MissionNetworkBG(
   {
@@ -518,6 +578,9 @@ function HomePage() {
       {/* Industries section */}
       <IndustriesSection />
 
+       {/* Trusted preview */}
+      <TrustedBySection />
+      
       {/* Contact preview */}
       <ContactPreview />
     </div>
