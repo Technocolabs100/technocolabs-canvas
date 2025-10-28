@@ -10,7 +10,7 @@ const SUGGESTED = [
 ];
 
 // change this to move the launcher up/down
-const LAUNCHER_BOTTOM_REM = 14; // 7rem ≈ tailwind bottom-28
+const LAUNCHER_BOTTOM_REM = 2; // 7rem ≈ tailwind bottom-28
 
 export default function ChatbotWidget() {
   const [open, setOpen] = useState(false);
@@ -69,14 +69,14 @@ export default function ChatbotWidget() {
     <>
       {/* Floating launcher (uses inline bottom style so it's always positioned) */}
       <button
-        onClick={() => setOpen(true)}
-        className="fixed right-5 z-[1000] inline-flex items-center gap-2 rounded-full bg-[#1e90ff] px-4 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white/40"
-        style={{ bottom: `${LAUNCHER_BOTTOM_REM}rem` }}
-        aria-label="Open chat"
-      >
-        <MessageCircle className="h-5 w-5" />
-        <span className="hidden sm:block">Chat</span>
-      </button>
+  onClick={() => setOpen(true)}
+  className="fixed left-5 z-[1000] inline-flex items-center gap-2 rounded-full bg-[#1e90ff] px-4 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white/40"
+  style={{ bottom: `${LAUNCHER_BOTTOM_REM}rem` }}
+  aria-label="Open chat"
+>
+  <MessageCircle className="h-5 w-5" />
+  <span className="hidden sm:block">Chat</span>
+</button>
 
       {/* Chat panel */}
       {open && (
