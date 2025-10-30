@@ -52,7 +52,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 // --------------------------- ROUTING & CONTEXT ------------------------------
-type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies'| 'bigdata' | 'data-architecture' | 'data-warehouse'| 'bi-visualization' | 'predictive-analytics-bd' | 'cloud-services'| 'about' | 'success-stories' | 'blog' | 'write-for-us'|'verify';
+type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies'| 'bigdata' | 'data-architecture' | 'data-warehouse'| 'bi-visualization' | 'predictive-analytics-bd' | 'cloud-services'| 'about' | 'success-stories' | 'blog' | 'write-for-us'|'verify'|'applications-closed';
 const NavContext = React.createContext<(t: Tab) => void>(() => {});
 const ServiceDetailContext = React.createContext<(slug: string | null) => void>(() => {});
 const ActiveServiceContext = React.createContext<string | null>(null);
@@ -1619,7 +1619,6 @@ function ServiceDetailPage() {
     </div>
   );
 }
-
 // --------------------------- CAREERS (upgraded) ----------------------------
 function CareersPage() {
   const navigate = useContext(NavContext);
@@ -1636,7 +1635,7 @@ function CareersPage() {
     requirements: string[];
   };
 
-  // ✅ Map each role → its Google Form link
+  // ✅ Map each role → its Google Form link ( "#" = closed )
   const APPLY_FORM_BY_ID: Record<string, string> = {
     genai: "#",
     py: "#",
@@ -1659,8 +1658,6 @@ function CareersPage() {
     { id: 'dl', title: 'Deep Learning Engineer Intern', domain: 'Machine Learning', duration: '8–12 weeks', mode: 'Remote', jd: 'Prototype and train deep learning models for CV/NLP tasks. You will run experiments, tune models, and profile/optimize inference.', responsibilities: ['Prepare datasets; implement training loops and evaluation','Experiment with CNNs/Transformers; track metrics','Optimize models (quantization/distillation) for deployment','Create clear experiment reports and dashboards','Collaborate with MLOps for reproducibility'], requirements: ['Python + PyTorch or TensorFlow','Linear algebra, optimization, and DL basics','GPU workflows (Colab/Kaggle/Local CUDA) basics','Version control with Git; clean coding habits','Good math/analysis and curiosity'] },
     { id: 'cv', title: 'Computer Vision Engineer Intern', domain: 'Computer Vision', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Build CV pipelines: detection, segmentation, OCR, and visual search. You will work with datasets, augmentations, training, and deployment.', responsibilities: ['Collect/clean/augment image/video datasets','Train and evaluate models (YOLO/Detectron/Segmentation)','Deploy inference services and measure accuracy/latency','Write reusable preprocessing and visualization tools','Document results and share learnings with the team'], requirements: ['Python; PyTorch/TensorFlow; OpenCV basics','Understanding of CNNs and metrics (mAP/IoU)','Experience with one CV framework (e.g., YOLO family)','Basics of Docker; comfort with Linux/CLI','Strong problem-solving and communication'] },
     { id: 'ba', title: 'Business Analyst Intern', domain: 'Analytics', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Translate business questions into analysis plans, build dashboards, and communicate insights that drive decisions.', responsibilities: ['Gather requirements and define KPIs','Explore and clean data; build analyses and reports','Create dashboards (Power BI/Tableau) for stakeholders','Write concise docs: findings, risks, recommendations','Collaborate with engineering to instrument events'], requirements: ['SQL proficiency; spreadsheet skills','Experience with Power BI/Tableau/Looker (any)','Comfort with basic statistics and A/B testing concepts','Clear written/verbal communication','Attention to detail and business empathy'] },
-
-    // previous roles
     { id: 'ds', title: 'Data Science Intern', domain: 'Data Science', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Explore data, build features, and deliver predictive insights with robust evaluation and reporting.', responsibilities: ['EDA and feature engineering','Train/evaluate baseline models','Visualize and communicate insights','Write clean notebooks and reports','Collaborate with cross-functional teams'], requirements: ['Python & pandas/scikit-learn','Statistics & ML basics','Data visualization (Matplotlib/Plotly)','SQL fundamentals','Git & documentation'] },
     { id: 'ml', title: 'Machine Learning Intern', domain: 'Machine Learning', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Implement ML pipelines from data prep to model evaluation and iterate to improve performance.', responsibilities: ['Feature pipelines & model training','Hyperparameter tuning','Model evaluation and reporting','Collaborate on deployment readiness','Maintain experiment logs'], requirements: ['Python, scikit-learn','Basic ML theory','Version control (Git)','Jupyter/Notebooks','Clear communication'] },
     { id: 'web', title: 'Web Development Intern', domain: 'Web Development', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Build responsive frontends and simple backends using modern JavaScript frameworks and REST APIs.', responsibilities: ['Implement UI from designs','Connect to REST APIs','Write reusable components','Fix bugs and improve UX','Participate in reviews'], requirements: ['HTML/CSS/JavaScript','React basics','Git & npm','Understanding of HTTP/REST','Attention to UI detail'] },
@@ -1673,6 +1670,7 @@ function CareersPage() {
 
   return (
     <div className="bg-[#0a2540] text-white">
+
       {/* Hero */}
       <section className="relative overflow-clip">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-10">
@@ -1681,7 +1679,7 @@ function CareersPage() {
         </div>
       </section>
 
-      {/* Why Join Technocolabs */}
+      {/* Why Join */}
       <section className="bg-white text-[#0a2540]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
           <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">Why Join Technocolabs?</h2>
@@ -1708,7 +1706,7 @@ function CareersPage() {
         </div>
       </section>
 
-      {/* Growth Roadmap */}
+      {/* Growth */}
       <section className="bg-white text-[#0a2540]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
           <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">Career Growth Roadmap</h2>
@@ -1723,7 +1721,7 @@ function CareersPage() {
         </div>
       </section>
 
-      {/* Open Internships */}
+      {/* Open Roles */}
       <section className="bg-white text-[#0a2540]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
           <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">Open Internship Roles</h2>
@@ -1731,7 +1729,7 @@ function CareersPage() {
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
             {ROLES.map((r) => (
               <div key={r.id} id={`intern-${r.id}`} className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm hover:shadow-lg">
-                
+
                 <div className="text-sm font-semibold text-[#1e90ff]">{r.domain}</div>
                 <h3 className="mt-1 text-lg font-semibold">{r.title}</h3>
                 <p className="mt-2 text-sm text-[#0a2540]/70">{r.jd}</p>
@@ -1756,37 +1754,37 @@ function CareersPage() {
                   <span className="inline-flex items-center rounded-xl bg-[#0a2540]/5 px-3 py-1 text-xs font-medium">Mode: {r.mode}</span>
                 </div>
 
-                {/* ✅ UPDATED APPLY BUTTON BLOCK */}
+                {/* ✅ APPLY BUTTON (updated with Applications Closed logic) */}
                 <div className="mt-5 flex items-center gap-2">
-
                   {(() => {
                     const link = APPLY_FORM_BY_ID[r.id];
-                    if (link) {
+
+                    // CLOSED → Show "Applications Closed" page
+                    if (!link || link.trim() === "#") {
                       return (
                         <a
-                          href={link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md"
+                          href={`/applications-closed?role=${encodeURIComponent(r.title)}`}
+                          className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md"
                         >
-                          Apply Now
+                          Applications Closed
                         </a>
                       );
                     }
 
+                    // OPEN → Google Form
                     return (
-                      <button
-                        onClick={() => {
-                          setApplyRoleCtx(r.title);
-                          navigate('apply');
-                        }}
+                      <a
+                        href={link}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md"
                       >
                         Apply Now
-                      </button>
+                      </a>
                     );
                   })()}
 
+                  {/* ✅ Email Now */}
                   <button
                     onClick={() => {
                       const subject = encodeURIComponent(`Application: ${r.title}`);
@@ -1794,27 +1792,27 @@ function CareersPage() {
 
 I would like to apply for the ${r.title} internship.
 
-Name: 
-Email: 
-Phone: 
-Country: 
-University: 
-Location/Time zone: 
-Portfolio/GitHub/LinkedIn: 
-Resume link: 
-Start date & availability: 
+Name:
+Email:
+Phone:
+Country:
+University:
+Location/Time zone:
+Portfolio/GitHub/LinkedIn:
+Resume link:
+Start date & availability:
 
 About me:
 
 Thanks,`);
-                      window.location.href = `mailto:technocollabs@gmail.com?subject=${subject}&body=${body}`;
+                      window.location.href = `mailto:technocolabs@gmail.com?subject=${subject}&body=${body}`;
                     }}
                     className="text-sm font-medium text-[#1e90ff] hover:underline"
                   >
                     Email Now
                   </button>
-
                 </div>
+
               </div>
             ))}
           </div>
@@ -1877,7 +1875,7 @@ Thanks,`);
         </div>
       </section>
 
-      {/* CTA Strip */}
+      {/* CTA */}
       <section className="bg-[#0a2540] text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
@@ -1885,14 +1883,20 @@ Thanks,`);
             <div className="text-white/80">View open roles or talk to our recruiter.</div>
           </div>
           <div className="flex items-center gap-3">
-            <button onClick={()=>window.scrollTo({top:0, behavior:'smooth'})} className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold text-white">View Roles</button>
-            <button onClick={()=>navigate('contact')} className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold">Contact Us</button>
+            <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold text-white">
+              View Roles
+            </button>
+            <button onClick={() => navigate('contact')} className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold">
+              Contact Us
+            </button>
           </div>
         </div>
       </section>
+
     </div>
   );
 }
+
 
 // --------------------------- APPLY ----------------------------------------- -----------------------------------------
 function ApplyPage() {
@@ -3062,6 +3066,41 @@ function FloatingCTA() {
   );
 }
 
+// --------------------------- APPLICATIONS CLOSED ----------------------------
+function ApplicationsClosedPage() {
+  const params = new URLSearchParams(window.location.search);
+  const role = params.get("role") || "this position";
+
+  return (
+    <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
+      <h1 className="text-3xl font-bold text-red-600">Applications Closed</h1>
+
+      <p className="mt-4 text-lg text-gray-700 max-w-xl">
+        The <strong>{role}</strong> role is currently not accepting applications.
+      </p>
+
+      <p className="mt-3 text-gray-700 max-w-xl">
+        You may send your resume to{" "}
+        <a
+          href="mailto:technocolabs@gmail.com"
+          className="text-blue-600 underline"
+        >
+          technocollabs@gmail.com or contact@technocolabs.com
+        </a>
+        . We will inform you when the position opens again.
+      </p>
+
+      <a
+        href="/careers"
+        className="mt-6 inline-block bg-blue-600 text-white px-5 py-2 rounded-lg shadow"
+      >
+        Back to Careers
+      </a>
+    </div>
+  );
+}
+
+
 // --------------------------- APP -------------------------------------------
 export default function App() {
   // 🔗 Read the ":tab" from the URL ("/", "/services", "/careers", "/contact", etc.)
@@ -3072,7 +3111,7 @@ export default function App() {
   const VALID_TABS = new Set<Tab>([
     'home','services','service','careers','contact','apply','svc','privacy','terms','cookies',
     'bigdata','data-architecture','data-warehouse','bi-visualization','predictive-analytics-bd',
-    'cloud-services','about','success-stories','blog','write-for-us','verify'
+    'cloud-services','about','success-stories','blog','write-for-us','verify',"applications-closed",
   ]);
 
   // 🧭 Normalize the URL param into a valid Tab (fallback to 'home')
@@ -3136,6 +3175,9 @@ export default function App() {
   if (tab === 'blog') content = <BlogPage />;
   if (tab === 'write-for-us') content = <WriteForUsPage />;
   if (tab === 'verify') content = <VerifyInternshipPage />;
+  if (tab === 'applications-closed') content = <ApplicationsClosedPage />;
+
+
 
 
   return (
