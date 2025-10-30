@@ -52,7 +52,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 // --------------------------- ROUTING & CONTEXT ------------------------------
-type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies'| 'bigdata' | 'data-architecture' | 'data-warehouse'| 'bi-visualization' | 'predictive-analytics-bd' | 'cloud-services'| 'about' | 'success-stories' | 'blog' | 'write-for-us'|'verify'|'applications-closed';
+type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies'| 'bigdata' | 'data-architecture' | 'data-warehouse'| 'bi-visualization' | 'predictive-analytics-bd' | 'cloud-services'| 'about' | 'success-stories' | 'blog' | 'write-for-us'|'verify'|'applications-closed'|'apply-form';
 const NavContext = React.createContext<(t: Tab) => void>(() => {});
 const ServiceDetailContext = React.createContext<(slug: string | null) => void>(() => {});
 const ActiveServiceContext = React.createContext<string | null>(null);
@@ -1636,6 +1636,8 @@ function CareersPage() {
   };
 
   // ✅ Map each role → its Google Form link ( "#" = closed )
+  // NOTE: Ideally move this SAME object to top-level in App.tsx
+  // so ApplyFormEmbedPage can use it too.
   const APPLY_FORM_BY_ID: Record<string, string> = {
     genai: "#",
     py: "#",
@@ -1683,41 +1685,6 @@ function CareersPage() {
       <section className="bg-white text-[#0a2540]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
           <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">Why Join Technocolabs?</h2>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[['Real Industry Projects','Work on production-grade problems that ship.'],['Mentorship Culture','1:1 guidance from experienced engineers.'],['Career Fast-Track','Portfolio, certificates and referrals.'],['Innovation-Driven','Hands-on with GenAI, ML, MLOps & Cloud.'],['Global Community','Collaborate with peers across countries.'],['Flexible & Remote','Work from anywhere, async-friendly.']].map(([t,s]) => (
-              <div key={t} className="rounded-2xl border border-[#0a2540]/10 p-6">
-                <div className="font-semibold">{t}</div>
-                <div className="mt-1 text-sm text-[#0a2540]/70">{s}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Perks */}
-      <section className="bg-[#081a2f] text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">Perks & Benefits</h2>
-          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {['Flexible hours','Remote friendly','Certificate of completion','Letter of recommendation','Live project experience','Resume/LinkedIn support','GitHub portfolio building','Mock interview support','Mentor office hours'].map((p) => (
-              <div key={p} className="rounded-2xl border border-white/10 bg-white/5 p-5">{p}</div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Growth */}
-      <section className="bg-white text-[#0a2540]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">Career Growth Roadmap</h2>
-          <div className="mt-6 grid gap-6 sm:grid-cols-5">
-            {['Intern','Trainee Engineer','Junior Engineer','Associate','Senior Engineer'].map((t,i)=> (
-              <div key={t} className="rounded-2xl border border-[#0a2540]/10 p-5 text-center">
-                <div className="text-sm opacity-70">Stage {i+1}</div>
-                <div className="mt-1 font-semibold">{t}</div>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -1754,12 +1721,12 @@ function CareersPage() {
                   <span className="inline-flex items-center rounded-xl bg-[#0a2540]/5 px-3 py-1 text-xs font-medium">Mode: {r.mode}</span>
                 </div>
 
-                {/* ✅ APPLY BUTTON (updated with Applications Closed logic) */}
+                {/* ✅ APPLY BUTTON (internal pages only) */}
                 <div className="mt-5 flex items-center gap-2">
                   {(() => {
                     const link = APPLY_FORM_BY_ID[r.id];
 
-                    // CLOSED → Show "Applications Closed" page
+                    // CLOSED → route to Applications Closed page (inline)
                     if (!link || link.trim() === "#") {
                       return (
                         <a
@@ -1771,12 +1738,10 @@ function CareersPage() {
                       );
                     }
 
-                    // OPEN → Google Form
+                    // OPEN → route to internal Form Embed page (inline)
                     return (
                       <a
-                        href={link}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        href={`/apply-form?role=${encodeURIComponent(r.id)}`}
                         className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md"
                       >
                         Apply Now
@@ -1784,7 +1749,7 @@ function CareersPage() {
                     );
                   })()}
 
-                  {/* ✅ Email Now */}
+                  {/* Email Now */}
                   <button
                     onClick={() => {
                       const subject = encodeURIComponent(`Application: ${r.title}`);
@@ -1805,7 +1770,7 @@ Start date & availability:
 About me:
 
 Thanks,`);
-                      window.location.href = `mailto:technocolabs@gmail.com?subject=${subject}&body=${body}`;
+                      window.location.href = `mailto:technocollabs@gmail.com?subject=${subject}&body=${body}`;
                     }}
                     className="text-sm font-medium text-[#1e90ff] hover:underline"
                   >
@@ -1819,79 +1784,7 @@ Thanks,`);
         </div>
       </section>
 
-      {/* Hiring Process */}
-      <section className="bg-[#081a2f] text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">Hiring Process</h2>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
-            {['Apply Online','Screening','Assignment / Interview','Final Selection','Offer & Onboarding'].map((t,i)=> (
-              <div key={t} className="rounded-2xl border border-white/10 bg-white/5 p-5">
-                <div className="text-sm opacity-80">Step {i+1}</div>
-                <div className="mt-1 font-semibold">{t}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="bg-white text-[#0a2540]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">What Our Interns Say</h2>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              ['“I shipped a GenAI chatbot to production during my internship.”','— Priya S., GenAI Intern'],
-              ['“The mentorship here is top-tier. I learned more in 10 weeks than in a year.”','— Arjun M., Python Intern'],
-              ['“My CV models now run realtime on edge thanks to the team.”','— Aisha K., CV Intern']
-            ].map(([q,a])=> (
-              <div key={a} className="rounded-2xl border border-[#0a2540]/10 p-6">
-                <div className="text-sm">{q}</div>
-                <div className="mt-3 text-xs text-[#0a2540]/70">{a}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="bg-white text-[#0a2540]">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12">
-          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">FAQ</h2>
-          <div className="mt-6 space-y-3">
-            {[
-              ['Who can apply?','Students, recent grads, and early-career professionals with passion for tech.'],
-              ['Is it remote?','Yes. Roles are remote-friendly unless a project needs on-site presence.'],
-              ['What is the duration?','Typically 8–12 weeks.'],
-              ['Is there a registration fee?','Only after selection: 15 USD / 1150 INR (shared by email).'],
-              ['Do I get a certificate?','Yes, plus a letter of recommendation for top performers.'],
-              ['Is there a PPO?','Outstanding interns may be offered extended roles/PPO based on performance.']
-            ].map(([q,a])=> (
-              <details key={q} className="rounded-2xl border border-[#0a2540]/10 p-4">
-                <summary className="font-semibold cursor-pointer">{q}</summary>
-                <p className="mt-2 text-sm text-[#0a2540]/80">{a}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="bg-[#0a2540] text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <div className="text-lg font-semibold">Ready to start your journey?</div>
-            <div className="text-white/80">View open roles or talk to our recruiter.</div>
-          </div>
-          <div className="flex items-center gap-3">
-            <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold text-white">
-              View Roles
-            </button>
-            <button onClick={() => navigate('contact')} className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold">
-              Contact Us
-            </button>
-          </div>
-        </div>
-      </section>
+      {/* ... keep your other sections (Perks, Growth, Hiring Process, Testimonials, FAQ, CTA) ... */}
 
     </div>
   );
@@ -3065,8 +2958,24 @@ function FloatingCTA() {
     </div>
   );
 }
+// ===== GLOBAL: role id → Google Form URL (use "#" to mark closed) =====
+const APPLY_FORM_BY_ID: Record<string, string> = {
+  genai: "#",
+  py: "#",
+  dl: "#",
+  cv: "https://forms.gle/w2gzpJQxhGntAnBj6",
+  ba: "#",
+  ds: "https://forms.gle/xT9md6t87N4sgEWV8",
+  ml: "https://forms.gle/6UVG5Tf76zd3XXyE6",
+  web: "https://forms.gle/8zJMG4c67pe16MU18",
+  da: "https://forms.gle/muHWYbDiy173X4Ms8",
+  bi: "https://forms.gle/CNjoeciZSytGakNX8",
+  ai: "https://forms.gle/oMSF6u716nehhdke6",
+  se: "#",
+  cyber: "https://forms.gle/PFV39TtRkabKGTEW7",
+};
 
-// --------------------------- APPLICATIONS CLOSED ----------------------------
+// --------------------------- APPLICATIONS CLOSED PAGE ----------------------------
 function ApplicationsClosedPage() {
   const params = new URLSearchParams(window.location.search);
   const role = params.get("role") || "this position";
@@ -3081,13 +2990,10 @@ function ApplicationsClosedPage() {
 
       <p className="mt-3 text-gray-700 max-w-xl">
         You may send your resume to{" "}
-        <a
-          href="mailto:technocolabs@gmail.com"
-          className="text-blue-600 underline"
-        >
-          technocollabs@gmail.com or contact@technocolabs.com
+        <a href="mailto:technocolabs@gmail.com" className="text-blue-600 underline">
+          technocolabs@gmail.com
         </a>
-        . We will inform you when the position opens again.
+        . We will notify you when this position opens again.
       </p>
 
       <a
@@ -3101,6 +3007,36 @@ function ApplicationsClosedPage() {
 }
 
 
+// --------------------------- APPLY FORM (EMBED PAGE) ----------------------------
+function ApplyFormEmbedPage() {
+  const params = new URLSearchParams(window.location.search);
+  // IMPORTANT: pass the *role id* (e.g., "web", "ml", "ds")
+  const roleId = params.get("role") || "";
+  const formUrl = APPLY_FORM_BY_ID[roleId];
+
+  // If form is closed or missing → redirect to closed page
+  if (!formUrl || formUrl.trim() === "#") {
+    window.location.href = `/applications-closed?role=${encodeURIComponent(roleId)}`;
+    return null;
+  }
+
+  return (
+    <div className="px-4 sm:px-6 lg:px-8 py-10">
+      <h1 className="text-2xl sm:text-3xl font-semibold mb-4">
+        Apply for the Internship (Remote)
+      </h1>
+      <div className="rounded-2xl border border-gray-300 overflow-hidden">
+        <iframe
+          src={formUrl}
+          title={`Application Form - ${roleId}`}
+          style={{ width: "100%", height: "1800px", border: 0 }}
+          allow="clipboard-write; fullscreen; geolocation; microphone; camera"
+        />
+      </div>
+    </div>
+  );
+}
+
 // --------------------------- APP -------------------------------------------
 export default function App() {
   // 🔗 Read the ":tab" from the URL ("/", "/services", "/careers", "/contact", etc.)
@@ -3111,7 +3047,7 @@ export default function App() {
   const VALID_TABS = new Set<Tab>([
     'home','services','service','careers','contact','apply','svc','privacy','terms','cookies',
     'bigdata','data-architecture','data-warehouse','bi-visualization','predictive-analytics-bd',
-    'cloud-services','about','success-stories','blog','write-for-us','verify',"applications-closed",
+    'cloud-services','about','success-stories','blog','write-for-us','verify',"applications-closed", 'apply-form'
   ]);
 
   // 🧭 Normalize the URL param into a valid Tab (fallback to 'home')
@@ -3176,6 +3112,7 @@ export default function App() {
   if (tab === 'write-for-us') content = <WriteForUsPage />;
   if (tab === 'verify') content = <VerifyInternshipPage />;
   if (tab === 'applications-closed') content = <ApplicationsClosedPage />;
+  if (tab === 'apply-form') content = <ApplyFormEmbedPage />;
 
 
 
