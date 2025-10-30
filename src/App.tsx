@@ -2883,11 +2883,15 @@ function NavBar() {
           <span className="font-semibold hidden sm:inline">Technocolabs Softwares Inc.</span>
         </button>
         <nav className="flex items-center gap-4 text-sm">
-          {(['home','services','careers','contact'] as Tab[]).map((t) => (
-            <button key={t} onClick={() => navigate(t)}
-              className={`px-3 py-1.5 rounded-lg ${tab===t?'bg-white/10':'hover:bg-white/5'}`}
-            >{t[0].toUpperCase()+t.slice(1)}</button>
-          ))}
+          {(['home','services','careers','contact'] as const).map((t) => (
+  <Link
+    key={t}
+    to={t === "home" ? "/" : `/${t}`}
+    className={`px-3 py-1.5 rounded-lg ${tab===t ? 'bg-white/10' : 'hover:bg-white/5'}`} >
+    {t[0].toUpperCase() + t.slice(1)}
+  </Link>
+))}
+
         </nav>
       </div>
     </header>
@@ -3093,7 +3097,6 @@ export default function App() {
       </NavContext.Provider>
     </CurrentTabContext.Provider>
   );
-}
 }
 
 // --------------------------- ROUTER MOUNT ---------------------------
