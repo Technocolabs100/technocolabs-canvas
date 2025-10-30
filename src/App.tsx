@@ -1636,6 +1636,23 @@ function CareersPage() {
     requirements: string[];
   };
 
+  // ✅ Map each role → its Google Form link
+  const APPLY_FORM_BY_ID: Record<string, string> = {
+    genai: "#",
+    py: "#",
+    dl: "#",
+    cv: "https://forms.gle/w2gzpJQxhGntAnBj6",
+    ba: "#",
+    ds: "https://forms.gle/xT9md6t87N4sgEWV8",
+    ml: "https://forms.gle/6UVG5Tf76zd3XXyE6",
+    web: "https://forms.gle/8zJMG4c67pe16MU18",
+    da: "https://forms.gle/muHWYbDiy173X4Ms8",
+    bi: "https://forms.gle/CNjoeciZSytGakNX8",
+    ai: "https://forms.gle/oMSF6u716nehhdke6",
+    se: "#",
+    cyber: "https://forms.gle/PFV39TtRkabKGTEW7",
+  };
+
   const ROLES: Role[] = [
     { id: 'genai', title: 'Generative AI Engineer Intern', domain: 'Generative AI', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Work on LLM-powered features: prompt engineering, embeddings, RAG pipelines, and evaluation. You will prototype, measure, and iterate with mentors to ship features into real apps.', responsibilities: ['Build and evaluate LLM pipelines (chat, Q&A, summarization)','Implement retrieval with vector stores and embeddings','Design/evaluate prompts; collect feedback and improve outputs','Integrate models with web backends/APIs','Document experiments and results'], requirements: ['Strong Python; basics of JS/TypeScript a plus','NLP/LLM concepts (tokenization, embeddings, context windows)','Hands-on with HuggingFace/LangChain/LlamaIndex (any)','Familiar with OpenAI/transformer models; basic CI/Git','Good communication and curiosity to experiment'] },
     { id: 'py', title: 'Python Developer Intern', domain: 'Software Development', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Contribute to backend services, APIs, automation scripts, and internal tools built with Python. Focus on clean code, testing, and shipping maintainable features.', responsibilities: ['Build REST APIs and background jobs','Write reusable, tested modules and CLI tools','Work with databases (SQL/ORM) and caching','Instrument logging and basic monitoring','Participate in code reviews and sprint rituals'], requirements: ['Solid Python fundamentals (typing, packaging, venv)','Experience with FastAPI/Flask or Django (any one)','SQL knowledge (Postgres/MySQL) and Git','Basics of Docker and HTTP/REST','Clear communication and documentation'] },
@@ -1643,15 +1660,15 @@ function CareersPage() {
     { id: 'cv', title: 'Computer Vision Engineer Intern', domain: 'Computer Vision', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Build CV pipelines: detection, segmentation, OCR, and visual search. You will work with datasets, augmentations, training, and deployment.', responsibilities: ['Collect/clean/augment image/video datasets','Train and evaluate models (YOLO/Detectron/Segmentation)','Deploy inference services and measure accuracy/latency','Write reusable preprocessing and visualization tools','Document results and share learnings with the team'], requirements: ['Python; PyTorch/TensorFlow; OpenCV basics','Understanding of CNNs and metrics (mAP/IoU)','Experience with one CV framework (e.g., YOLO family)','Basics of Docker; comfort with Linux/CLI','Strong problem-solving and communication'] },
     { id: 'ba', title: 'Business Analyst Intern', domain: 'Analytics', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Translate business questions into analysis plans, build dashboards, and communicate insights that drive decisions.', responsibilities: ['Gather requirements and define KPIs','Explore and clean data; build analyses and reports','Create dashboards (Power BI/Tableau) for stakeholders','Write concise docs: findings, risks, recommendations','Collaborate with engineering to instrument events'], requirements: ['SQL proficiency; spreadsheet skills','Experience with Power BI/Tableau/Looker (any)','Comfort with basic statistics and A/B testing concepts','Clear written/verbal communication','Attention to detail and business empathy'] },
 
-    // Previous roles
-    { id: 'ds', title: 'Data Science Intern', domain: 'Data Science', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Explore data, build features, and deliver predictive insights with robust evaluation and reporting.', responsibilities: ['EDA and feature engineering','Train/evaluate baseline models','Visualize and communicate insights','Write clean notebooks and reports','Collaborate with cross‑functional teams'], requirements: ['Python & pandas/scikit-learn','Statistics & ML basics','Data visualization (Matplotlib/Plotly)','SQL fundamentals','Git & documentation'] },
+    // previous roles
+    { id: 'ds', title: 'Data Science Intern', domain: 'Data Science', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Explore data, build features, and deliver predictive insights with robust evaluation and reporting.', responsibilities: ['EDA and feature engineering','Train/evaluate baseline models','Visualize and communicate insights','Write clean notebooks and reports','Collaborate with cross-functional teams'], requirements: ['Python & pandas/scikit-learn','Statistics & ML basics','Data visualization (Matplotlib/Plotly)','SQL fundamentals','Git & documentation'] },
     { id: 'ml', title: 'Machine Learning Intern', domain: 'Machine Learning', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Implement ML pipelines from data prep to model evaluation and iterate to improve performance.', responsibilities: ['Feature pipelines & model training','Hyperparameter tuning','Model evaluation and reporting','Collaborate on deployment readiness','Maintain experiment logs'], requirements: ['Python, scikit-learn','Basic ML theory','Version control (Git)','Jupyter/Notebooks','Clear communication'] },
     { id: 'web', title: 'Web Development Intern', domain: 'Web Development', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Build responsive frontends and simple backends using modern JavaScript frameworks and REST APIs.', responsibilities: ['Implement UI from designs','Connect to REST APIs','Write reusable components','Fix bugs and improve UX','Participate in reviews'], requirements: ['HTML/CSS/JavaScript','React basics','Git & npm','Understanding of HTTP/REST','Attention to UI detail'] },
     { id: 'da', title: 'Data Analytics Intern', domain: 'Analytics', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Turn raw data into insight with SQL, dashboards, and clear narratives for stakeholders.', responsibilities: ['Clean/transform datasets','Create reports & dashboards','Define and track KPIs','Present findings to teams','Document data sources'], requirements: ['SQL proficiency','Power BI/Tableau','Spreadsheet skills','Basic statistics','Communication'] },
-    { id: 'bi', title: 'Business Intelligence Intern', domain: 'BI & Reporting', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Build and maintain BI models and dashboards for self‑serve analytics and decision‑making.', responsibilities: ['Model data for BI','Build reports/dashboards','Ensure data quality','Optimize refresh & performance','Write documentation'], requirements: ['Power BI/Tableau/Looker (any)','SQL & data modeling','DAX/LookML basics (any)','Versioning & governance','Stakeholder comms'] },
+    { id: 'bi', title: 'Business Intelligence Intern', domain: 'BI & Reporting', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Build and maintain BI models and dashboards for self-serve analytics and decision-making.', responsibilities: ['Model data for BI','Build reports/dashboards','Ensure data quality','Optimize refresh & performance','Write documentation'], requirements: ['Power BI/Tableau/Looker (any)','SQL & data modeling','DAX/LookML basics (any)','Versioning & governance','Stakeholder comms'] },
     { id: 'ai', title: 'Artificial Intelligence Intern', domain: 'AI', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Research and prototype AI solutions across NLP/CV/recommendation tasks with mentorship.', responsibilities: ['Literature review & baselines','Train & evaluate models','Data preparation and labeling','Write experiment reports','Share demos with team'], requirements: ['Python + ML libraries','NLP/CV basics','Math for ML (probability)','Git & notebooks','Curiosity to learn'] },
     { id: 'se', title: 'Software Engineering Intern', domain: 'Software Engineering', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Assist with backend/frontend tasks, tests, CI and documentation on production projects.', responsibilities: ['Implement features/bugfixes','Write unit/integration tests','Participate in code reviews','Improve app performance','Document changes clearly'], requirements: ['One backend or frontend stack','Git & testing basics','Clean code habits','Understanding of CI/CD','Team communication'] },
-    { id: 'cyber', title: 'CyberSecurity Engineer Intern', domain: 'Security', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Support security reviews, vulnerability scanning, and secure‑by‑design practices.', responsibilities: ['Run vulnerability scans','Assist in threat modeling','Fix/track security issues','Document security policies','Raise security awareness'], requirements: ['Security fundamentals (OWASP)','Scripting (Python/JS) basics','Linux/Networking basics','Understanding of auth/identity','Attention to detail'] },
+    { id: 'cyber', title: 'CyberSecurity Engineer Intern', domain: 'Security', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Support security reviews, vulnerability scanning, and secure-by-design practices.', responsibilities: ['Run vulnerability scans','Assist in threat modeling','Fix/track security issues','Document security policies','Raise security awareness'], requirements: ['Security fundamentals (OWASP)','Scripting (Python/JS) basics','Linux/Networking basics','Understanding of auth/identity','Attention to detail'] },
   ];
 
   return (
@@ -1669,7 +1686,7 @@ function CareersPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
           <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">Why Join Technocolabs?</h2>
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[['Real Industry Projects','Work on production‑grade problems that ship.'],['Mentorship Culture','1:1 guidance from experienced engineers.'],['Career Fast‑Track','Portfolio, certificates and referrals.'],['Innovation‑Driven','Hands‑on with GenAI, ML, MLOps & Cloud.'],['Global Community','Collaborate with peers across countries.'],['Flexible & Remote','Work from anywhere, async‑friendly.']].map(([t,s]) => (
+            {[['Real Industry Projects','Work on production-grade problems that ship.'],['Mentorship Culture','1:1 guidance from experienced engineers.'],['Career Fast-Track','Portfolio, certificates and referrals.'],['Innovation-Driven','Hands-on with GenAI, ML, MLOps & Cloud.'],['Global Community','Collaborate with peers across countries.'],['Flexible & Remote','Work from anywhere, async-friendly.']].map(([t,s]) => (
               <div key={t} className="rounded-2xl border border-[#0a2540]/10 p-6">
                 <div className="font-semibold">{t}</div>
                 <div className="mt-1 text-sm text-[#0a2540]/70">{s}</div>
@@ -1679,12 +1696,12 @@ function CareersPage() {
         </div>
       </section>
 
-      {/* Perks & Benefits */}
+      {/* Perks */}
       <section className="bg-[#081a2f] text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
           <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">Perks & Benefits</h2>
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {['Flexible hours','Remote friendly','Certificate of completion','Letter of recommendation','Live project experience','Resume/LinkedIn support','GitHub portfolio building','Mock interview support','Mentor office hours'].map((p)=>(
+            {['Flexible hours','Remote friendly','Certificate of completion','Letter of recommendation','Live project experience','Resume/LinkedIn support','GitHub portfolio building','Mock interview support','Mentor office hours'].map((p) => (
               <div key={p} className="rounded-2xl border border-white/10 bg-white/5 p-5">{p}</div>
             ))}
           </div>
@@ -1710,29 +1727,70 @@ function CareersPage() {
       <section className="bg-white text-[#0a2540]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
           <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">Open Internship Roles</h2>
+
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
             {ROLES.map((r) => (
               <div key={r.id} id={`intern-${r.id}`} className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm hover:shadow-lg">
+                
                 <div className="text-sm font-semibold text-[#1e90ff]">{r.domain}</div>
                 <h3 className="mt-1 text-lg font-semibold">{r.title}</h3>
                 <p className="mt-2 text-sm text-[#0a2540]/70">{r.jd}</p>
+
                 <div className="mt-4 grid gap-4 sm:grid-cols-2">
                   <div>
                     <div className="text-sm font-semibold">Responsibilities</div>
-                    <ul className="mt-1 list-disc pl-5 space-y-1 text-sm text-[#0a2540]/80">{r.responsibilities.map((x,i)=>(<li key={i}>{x}</li>))}</ul>
+                    <ul className="mt-1 list-disc pl-5 space-y-1 text-sm text-[#0a2540]/80">
+                      {r.responsibilities.map((x,i)=>(<li key={i}>{x}</li>))}
+                    </ul>
                   </div>
                   <div>
                     <div className="text-sm font-semibold">Requirements</div>
-                    <ul className="mt-1 list-disc pl-5 space-y-1 text-sm text-[#0a2540]/80">{r.requirements.map((x,i)=>(<li key={i}>{x}</li>))}</ul>
+                    <ul className="mt-1 list-disc pl-5 space-y-1 text-sm text-[#0a2540]/80">
+                      {r.requirements.map((x,i)=>(<li key={i}>{x}</li>))}
+                    </ul>
                   </div>
                 </div>
+
                 <div className="mt-5 flex items-center gap-3">
                   <span className="inline-flex items-center rounded-xl bg-[#0a2540]/5 px-3 py-1 text-xs font-medium">Duration: {r.duration}</span>
                   <span className="inline-flex items-center rounded-xl bg-[#0a2540]/5 px-3 py-1 text-xs font-medium">Mode: {r.mode}</span>
                 </div>
+
+                {/* ✅ UPDATED APPLY BUTTON BLOCK */}
                 <div className="mt-5 flex items-center gap-2">
-                  <button onClick={() => { setApplyRoleCtx(r.title); navigate('apply'); }} className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md">Apply Now</button>
-                  <button onClick={() => { const subject = encodeURIComponent(`Application: ${r.title}`); const body = encodeURIComponent(`Hello Technocolabs Team,
+
+                  {(() => {
+                    const link = APPLY_FORM_BY_ID[r.id];
+                    if (link) {
+                      return (
+                        <a
+                          href={link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md"
+                        >
+                          Apply Now
+                        </a>
+                      );
+                    }
+
+                    return (
+                      <button
+                        onClick={() => {
+                          setApplyRoleCtx(r.title);
+                          navigate('apply');
+                        }}
+                        className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md"
+                      >
+                        Apply Now
+                      </button>
+                    );
+                  })()}
+
+                  <button
+                    onClick={() => {
+                      const subject = encodeURIComponent(`Application: ${r.title}`);
+                      const body = encodeURIComponent(`Hello Technocolabs Team,
 
 I would like to apply for the ${r.title} internship.
 
@@ -1748,7 +1806,14 @@ Start date & availability:
 
 About me:
 
-Thanks,`); window.location.href = `mailto:technocollabs@gmail.com?subject=${subject}&body=${body}`; }} className="text-sm font-medium text-[#1e90ff] hover:underline">Email Now</button>
+Thanks,`);
+                      window.location.href = `mailto:technocollabs@gmail.com?subject=${subject}&body=${body}`;
+                    }}
+                    className="text-sm font-medium text-[#1e90ff] hover:underline"
+                  >
+                    Email Now
+                  </button>
+
                 </div>
               </div>
             ))}
@@ -1778,7 +1843,7 @@ Thanks,`); window.location.href = `mailto:technocollabs@gmail.com?subject=${subj
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[
               ['“I shipped a GenAI chatbot to production during my internship.”','— Priya S., GenAI Intern'],
-              ['“The mentorship here is top‑tier. I learned more in 10 weeks than in a year.”','— Arjun M., Python Intern'],
+              ['“The mentorship here is top-tier. I learned more in 10 weeks than in a year.”','— Arjun M., Python Intern'],
               ['“My CV models now run realtime on edge thanks to the team.”','— Aisha K., CV Intern']
             ].map(([q,a])=> (
               <div key={a} className="rounded-2xl border border-[#0a2540]/10 p-6">
@@ -1796,8 +1861,8 @@ Thanks,`); window.location.href = `mailto:technocollabs@gmail.com?subject=${subj
           <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">FAQ</h2>
           <div className="mt-6 space-y-3">
             {[
-              ['Who can apply?','Students, recent grads, and early‑career professionals with passion for tech.'],
-              ['Is it remote?','Yes. Roles are remote‑friendly unless a project needs on‑site presence.'],
+              ['Who can apply?','Students, recent grads, and early-career professionals with passion for tech.'],
+              ['Is it remote?','Yes. Roles are remote-friendly unless a project needs on-site presence.'],
               ['What is the duration?','Typically 8–12 weeks.'],
               ['Is there a registration fee?','Only after selection: 15 USD / 1150 INR (shared by email).'],
               ['Do I get a certificate?','Yes, plus a letter of recommendation for top performers.'],
