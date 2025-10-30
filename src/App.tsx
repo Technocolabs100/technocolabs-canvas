@@ -4,6 +4,7 @@ import TechCluster from "./TechCluster";
 import ChatbotWidget from "./ChatbotWidget";
 import { Link } from "react-router-dom";
 import { useParams, useNavigate } from "react-router-dom";
+import { CheckCircle2, Info } from "lucide-react";
 
 
 import {
@@ -183,6 +184,95 @@ function TrustedBySection() {
     </section>
   );
 }
+
+// ---- VerifyInternshipPage (inline) ----
+
+function VerifyInternshipPage() {
+  return (
+    <section className="relative min-h-[100vh] bg-[#061427] text-white">
+      {/* Background Accents */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-1/2 top-16 h-[22rem] w-[22rem] -translate-x-1/2 rounded-full bg-emerald-400/15 blur-3xl" />
+        <div className="absolute -left-24 bottom-24 h-40 w-40 rounded-full bg-[#1e90ff]/15 blur-2xl" />
+        <div className="absolute -right-24 top-40 h-44 w-44 rounded-full bg-blue-300/10 blur-2xl" />
+      </div>
+
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+        {/* Header */}
+        <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/80">
+          <Shield className="h-3.5 w-3.5" /> Technocolabs Verification Portal
+        </div>
+
+        {/* Success Panel */}
+        <div className="mt-8 rounded-3xl border border-emerald-400/30 bg-emerald-500/10 p-6 sm:p-8">
+          <div className="flex items-start gap-4">
+            <div className="mt-1 grid h-10 w-10 place-items-center rounded-xl bg-emerald-400/15">
+              <CheckCircle2 className="h-6 w-6 text-emerald-300" />
+            </div>
+            <div>
+              <h1 className="text-xl sm:text-2xl font-semibold text-emerald-200">Certificate Verified Successfully</h1>
+              <p className="mt-2 text-sm sm:text-base text-emerald-100/90">
+                This internship credential is valid and issued by
+                <span className="font-medium text-white"> Technocolabs Softwares Inc.</span>
+              </p>
+            </div>
+          </div>
+
+          {/* Watermark */}
+          <div className="mt-6 select-none text-center text-5xl sm:text-6xl font-black tracking-widest text-white/5">
+            VERIFIED
+          </div>
+        </div>
+
+        {/* Info Trio */}
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="rounded-2xl border border-white/15 bg-white/5 p-5">
+            <div className="mb-2 flex items-center gap-2 text-sm text-white/80"><Info className="h-4 w-4" /> About this credential</div>
+            <ul className="list-disc pl-5 text-sm text-white/80 space-y-2">
+              <li>Issued officially by Technocolabs Softwares Inc.</li>
+              <li>Represents completion of a mentored internship program.</li>
+              <li>Each certificate contains a unique secure ID.</li>
+            </ul>
+          </div>
+
+          <div className="rounded-2xl border border-white/15 bg-white/5 p-5">
+            <div className="mb-2 flex items-center gap-2 text-sm text-white/80"><FileText className="h-4 w-4" /> For employers & universities</div>
+            <ul className="list-disc pl-5 text-sm text-white/80 space-y-2">
+              <li>Matches candidate’s official internship completion.</li>
+              <li>Verification link is unique and tamper-proof.</li>
+              <li>Contact us for official confirmation letters.</li>
+            </ul>
+          </div>
+
+          <div className="rounded-2xl border border-white/15 bg-white/5 p-5">
+            <div className="mb-2 flex items-center gap-2 text-sm text-white/80"><BadgeCheck className="h-4 w-4" /> Integrity & tips</div>
+            <ul className="list-disc pl-5 text-sm text-white/80 space-y-2">
+              <li>All genuine certificates contain QR verification.</li>
+              <li>Use browser’s print option if you need a hard copy.</li>
+              <li>Report suspicious certificates immediately.</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Contact Info */}
+        <div className="mt-8 rounded-3xl border border-white/15 bg-white/5 p-6">
+          <div className="text-sm text-white/80 mb-3">Need help or official confirmation?</div>
+          <div className="flex flex-wrap items-center gap-4 text-sm text-white/90">
+            <span className="inline-flex items-center gap-2"><Mail className="h-4 w-4" /> contact@technocolabs.com</span>
+            <span className="inline-flex items-center gap-2"><Phone className="h-4 w-4" /> +91-XXXXXXXXXX</span>
+            <a href="/" className="inline-flex items-center gap-2 hover:underline"><Globe className="h-4 w-4" /> technocolabs.com</a>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-8 text-center text-xs text-white/60">
+          © {new Date().getFullYear()} Technocolabs Softwares Inc. • Credential Verification Portal
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // --------------------------- Animated Network BG ----------------------------
 function MissionNetworkBG(
   {
@@ -2912,7 +3002,7 @@ export default function App() {
   const VALID_TABS = new Set<Tab>([
     'home','services','service','careers','contact','apply','svc','privacy','terms','cookies',
     'bigdata','data-architecture','data-warehouse','bi-visualization','predictive-analytics-bd',
-    'cloud-services','about','success-stories','blog','write-for-us'
+    'cloud-services','about','success-stories','blog','write-for-us','verify'
   ]);
 
   // 🧭 Normalize the URL param into a valid Tab (fallback to 'home')
@@ -2975,6 +3065,8 @@ export default function App() {
   if (tab === 'success-stories') content = <SuccessStoriesPage />;
   if (tab === 'blog') content = <BlogPage />;
   if (tab === 'write-for-us') content = <WriteForUsPage />;
+  if (tab === 'verify') content = <VerifyInternshipPage />;
+
 
   return (
     <CurrentTabContext.Provider value={tab}>
@@ -3001,6 +3093,7 @@ export default function App() {
       </NavContext.Provider>
     </CurrentTabContext.Provider>
   );
+}
 }
 
 // --------------------------- ROUTER MOUNT ---------------------------
