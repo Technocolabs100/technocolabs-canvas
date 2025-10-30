@@ -2,6 +2,8 @@ import React, { useMemo, useState, useContext, useEffect } from "react";
 import AIServicePremiumGrid from "./AIServicePremiumGrid";
 import TechCluster from "./TechCluster";
 import ChatbotWidget from "./ChatbotWidget";
+import { Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 
 import {
@@ -2902,16 +2904,55 @@ function FloatingCTA() {
 
 // --------------------------- APP -------------------------------------------
 export default function App() {
-  const [tab, setTab] = useState<Tab>('home');
+  // 🔗 Read the ":tab" from the URL ("/", "/services", "/careers", "/contact", etc.)
+  const { tab: tabParam } = useParams();
+  const routerNavigate = useNavigate();
+
+  // ✅ List of tabs your app understands (must match your existing Tab union)
+  const VALID_TABS = new Set<Tab>([
+    'home','services','service','careers','contact','apply','svc','privacy','terms','cookies',
+    'bigdata','data-architecture','data-warehouse','bi-visualization','predictive-analytics-bd',
+    'cloud-services','about','success-stories','blog','write-for-us'
+  ]);
+
+  // 🧭 Normalize the URL param into a valid Tab (fallback to 'home')
+  const routeTab: Tab = (tabParam && VALID_TABS.has(tabParam as Tab))
+    ? (tabParam as Tab)
+    : 'home';
+
+  // 🧠 State stays the same, but initializes from the URL
+  const [tab, setTab] = useState<Tab>(routeTab);
   const [activeService, setActiveService] = useState<string | null>(null);
   const [activeServicePage, setActiveServicePage] = useState<string | null>(null);
-      const [applyRole, setApplyRole] = useState<string>('Data Science Internship');
+  const [applyRole, setApplyRole] = useState<string>('Data Science Internship');
 
-  const navigate = (t: Tab) => setTab(t);
+  // 🔁 Keep state in sync if user changes the URL (or clicks a Link)
+  useEffect(() => {
+    if (tab !== routeTab) setTab(routeTab);
+  }, [routeTab]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // 🧭 Your existing navigate, but now it also updates the URL
+  const navigate = (t: Tab) => {
+    setTab(t);
+    routerNavigate(t === 'home' ? '/' : `/${t}`); // updates the address bar
+  };
+
+  // (Optional) If you want detail pages to update the URL too, uncomment:
+  // const openDetail = (slug: string | null) => { 
+  //   setActiveService(slug); 
+  //   setTab('service'); 
+  //   routerNavigate('/service'); 
+  // };
+
+  // const openServicePage = (slug: string) => { 
+  //   setActiveServicePage(slug); 
+  //   setTab('svc'); 
+  //   routerNavigate(`/svc${slug ? `/${slug}` : ''}`); 
+  // };
+
+  // Keep your originals (no URL change) — or swap with the versions above:
   const openDetail = (slug: string | null) => { setActiveService(slug); setTab('service'); };
   const openServicePage = (slug: string) => { setActiveServicePage(slug); setTab('svc'); };
-  
-  
 
   let content: React.ReactNode = null;
   if (tab === 'home') content = <HomePage />;
@@ -2934,8 +2975,6 @@ export default function App() {
   if (tab === 'success-stories') content = <SuccessStoriesPage />;
   if (tab === 'blog') content = <BlogPage />;
   if (tab === 'write-for-us') content = <WriteForUsPage />;
-  
-  
 
   return (
     <CurrentTabContext.Provider value={tab}>
