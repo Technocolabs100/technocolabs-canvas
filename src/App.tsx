@@ -259,8 +259,9 @@ function VerifyInternshipPage() {
           <div className="text-sm text-white/80 mb-3">Need help or official confirmation?</div>
           <div className="flex flex-wrap items-center gap-4 text-sm text-white/90">
             <span className="inline-flex items-center gap-2"><Mail className="h-4 w-4" /> contact@technocolabs.com</span>
-            <span className="inline-flex items-center gap-2"><Phone className="h-4 w-4" /> +91-XXXXXXXXXX</span>
-            <a href="/" className="inline-flex items-center gap-2 hover:underline"><Globe className="h-4 w-4" /> technocolabs.com</a>
+            <span className="inline-flex items-center gap-2"><Mail className="h-4 w-4" /> technocollabs@gmail.com</span>
+            <span className="inline-flex items-center gap-2"><Phone className="h-4 w-4" /> +91-8319291391</span>
+            <a href="/" className="inline-flex items-center gap-2 hover:underline"><Globe className="h-4 w-4" /> www.technocolabs.com</a>
           </div>
         </div>
 
