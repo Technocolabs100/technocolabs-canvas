@@ -2872,6 +2872,7 @@ function TopBar() {
   );
 }
 
+// --------------------------- NAV & FOOTER ----------------------------------
 function NavBar() {
   const navigate = useContext(NavContext);
   const tab = useContext(CurrentTabContext);
@@ -2880,40 +2881,55 @@ function NavBar() {
 
   return (
     <header className="fixed inset-x-0 top-10 z-50 bg-[#0a2540] text-white border-b border-white/10">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-14 flex items-center">
 
-        {/* ✅ Brand (Logo + Name) */}
+        {/* Brand (never hidden on mobile) */}
         <button
           onClick={() => navigate('home')}
-          className="flex items-center min-w-0"
+          className="flex items-center min-w-0 mr-2"
         >
-          <div className="h-8 w-8 flex items-center justify-center">
-            {/* ✅ Logo supports only size prop — no className */}
-            <Logo size={32} />
+          <div className="h-8 w-8 flex items-center justify-center shrink-0">
+            {/* Your Logo component accepts only 'size' (no className) */}
+            <Logo size={28} />
           </div>
-
-          <span className="ml-2 font-semibold text-white whitespace-nowrap truncate max-w-[55vw] sm:max-w-none">
-            Technocolabs Softwares
+          <span className="ml-2 font-semibold text-white whitespace-nowrap truncate max-w-[45vw] sm:max-w-none">
+            Technocolabs Softwares Inc.
           </span>
         </button>
 
-        {/* ✅ Navigation */}
-        <nav className="flex items-center gap-3 text-sm">
+        {/* Desktop nav */}
+        <nav className="hidden md:flex items-center gap-3 text-sm ml-auto">
           {TABS.map((t) => (
             <Link
               key={t}
               to={t === 'home' ? '/' : `/${t}`}
               className={`px-3 py-1.5 rounded-lg whitespace-nowrap ${
-                tab === t
-                  ? 'bg-white/10 text-white'
-                  : 'hover:bg-white/5 text-white'
+                tab === t ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-white'
               }`}
+              aria-current={tab === t ? 'page' : undefined}
             >
               {t[0].toUpperCase() + t.slice(1)}
             </Link>
           ))}
         </nav>
 
+        {/* Mobile nav: horizontal scroll so ALL tabs (incl. About) are reachable */}
+        <nav className="md:hidden ml-auto w-[52vw] -mr-4">
+          <div className="flex overflow-x-auto no-scrollbar gap-2 py-2 whitespace-nowrap justify-end">
+            {TABS.map((t) => (
+              <Link
+                key={t}
+                to={t === 'home' ? '/' : `/${t}`}
+                className={`px-3 py-1.5 rounded-lg text-sm ${
+                  tab === t ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-white'
+                }`}
+                aria-current={tab === t ? 'page' : undefined}
+              >
+                {t[0].toUpperCase() + t.slice(1)}
+              </Link>
+            ))}
+          </div>
+        </nav>
       </div>
     </header>
   );
