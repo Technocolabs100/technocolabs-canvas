@@ -2921,7 +2921,7 @@ function NavBar() {
             </div>
             {/* Short name on very small screens; longer from sm+ */}
             <span className="ml-2 font-semibold whitespace-nowrap truncate max-w-[80vw]">
-              <span className="block sm:hidden">Technocolabs</span>
+              <span className="block sm:hidden">Technocolabs Software Inc.</span>
               <span className="hidden sm:block">Technocolabs Softwares Inc.</span>
             </span>
           </div>
