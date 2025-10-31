@@ -3,3 +3,10 @@
     { "source": "/(.*)", "destination": "/" }
   ]
 }
+
+{
+  "redirects": [
+    { "source": "/web.html", "destination": "/verify", "permanent": true }
+  ]
+}
+
