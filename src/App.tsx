@@ -2881,55 +2881,70 @@ function NavBar() {
 
   return (
     <header className="fixed inset-x-0 top-10 z-50 bg-[#0a2540] text-white border-b border-white/10">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-14 flex items-center">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-        {/* Brand (never hidden on mobile) */}
-        <button
-          onClick={() => navigate('home')}
-          className="flex items-center min-w-0 mr-2"
-        >
-          <div className="h-8 w-8 flex items-center justify-center shrink-0">
-            {/* Your Logo component accepts only 'size' (no className) */}
-            <Logo size={28} />
-          </div>
-          <span className="ml-2 font-semibold text-white whitespace-nowrap truncate max-w-[45vw] sm:max-w-none">
-            Technocolabs Softwares Inc.
-          </span>
-        </button>
+        {/* ===== DESKTOP (md+) — single row ===== */}
+        <div className="hidden md:flex h-14 items-center justify-between">
+          {/* Brand */}
+          <button onClick={() => navigate('home')} className="flex items-center min-w-0">
+            <div className="h-8 w-8 flex items-center justify-center shrink-0">
+              <Logo size={28} />
+            </div>
+            <span className="ml-2 font-semibold whitespace-nowrap">
+              Technocolabs Softwares Inc.
+            </span>
+          </button>
 
-        {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-3 text-sm ml-auto">
-          {TABS.map((t) => (
-            <Link
-              key={t}
-              to={t === 'home' ? '/' : `/${t}`}
-              className={`px-3 py-1.5 rounded-lg whitespace-nowrap ${
-                tab === t ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-white'
-              }`}
-              aria-current={tab === t ? 'page' : undefined}
-            >
-              {t[0].toUpperCase() + t.slice(1)}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Mobile nav: horizontal scroll so ALL tabs (incl. About) are reachable */}
-        <nav className="md:hidden ml-auto w-[52vw] -mr-4">
-          <div className="flex overflow-x-auto no-scrollbar gap-2 py-2 whitespace-nowrap justify-end">
+          {/* Tabs */}
+          <nav className="flex items-center gap-3 text-sm">
             {TABS.map((t) => (
               <Link
                 key={t}
                 to={t === 'home' ? '/' : `/${t}`}
-                className={`px-3 py-1.5 rounded-lg text-sm ${
-                  tab === t ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-white'
+                className={`px-3 py-1.5 rounded-lg whitespace-nowrap ${
+                  tab === t ? 'bg-white/10' : 'hover:bg-white/5'
                 }`}
                 aria-current={tab === t ? 'page' : undefined}
               >
                 {t[0].toUpperCase() + t.slice(1)}
               </Link>
             ))}
+          </nav>
+        </div>
+
+        {/* ===== MOBILE (< md) — two rows ===== */}
+        <div className="md:hidden py-2">
+          {/* Row 1: brand */}
+          <div className="flex items-center min-w-0">
+            <div className="h-8 w-8 flex items-center justify-center shrink-0">
+              <Logo size={24} />
+            </div>
+            {/* Short name on very small screens; longer from sm+ */}
+            <span className="ml-2 font-semibold whitespace-nowrap truncate max-w-[80vw]">
+              <span className="block sm:hidden">Technocolabs</span>
+              <span className="hidden sm:block">Technocolabs Softwares Inc.</span>
+            </span>
           </div>
-        </nav>
+
+          {/* Row 2: tabs (full-width, scrollable) */}
+          <nav className="mt-2 -mx-4 px-4">
+            <div className="flex overflow-x-auto no-scrollbar gap-2 py-1 whitespace-nowrap">
+              {TABS.map((t) => (
+                <Link
+                  key={t}
+                  to={t === 'home' ? '/' : `/${t}`}
+                  className={`px-3 py-1.5 rounded-lg text-sm ${
+                    tab === t ? 'bg-white/10' : 'hover:bg-white/5'
+                  }`}
+                  aria-current={tab === t ? 'page' : undefined}
+                >
+                  {t[0].toUpperCase() + t.slice(1)}
+                </Link>
+              ))}
+            </div>
+          </nav>
+        </div>
+
       </div>
     </header>
   );
@@ -3064,8 +3079,12 @@ function ApplicationsClosedPage() {
 
       <p className="mt-3 text-gray-700 max-w-xl">
         You may send your resume to{" "}
-        <a href="mailto:technocolabs@gmail.com" className="text-blue-600 underline">
-          technocollabs@gmail.com and contact@technocolabs.com
+        <a href="mailto:technocollabs@gmail.com" className="text-blue-600 underline">
+          technocollabs@gmail.com
+        </a>
+        {" "} and 
+        <a href="mailto:contact@technocolabs.com" className="text-blue-600 underline">
+         {" "} contact@technocolabs.com
         </a>
         . We will notify you when this position opens again.
       </p>
