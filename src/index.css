@@ -33,7 +33,9 @@ select, option {
   filter: blur(24px);
 }
 
-
+/* Hide scrollbar for horizontal mobile nav strip */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 
 
