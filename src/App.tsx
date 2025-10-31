@@ -498,46 +498,61 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Leadership quote (3-line, author centered) */}
-      <section className="bg-white text-[#0a2540]">
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
-          <div className="max-w-4xl mx-auto relative flex justify-center">
-            <blockquote className="text-lg sm:text-xl leading-relaxed font-medium text-center pr-20 sm:pr-24">
-              “AI is transforming how modern businesses learn, adapt, and innovate. It empowers organizations to turn data into intelligence, deliver personalized experiences, and drive meaningful change across every function.”
-            </blockquote>
-            <div
-              className="hidden sm:block absolute -top-2 right-3 text-[#1e90ff]/20 select-none pointer-events-none  transform scale-x-[-1]"
-              aria-hidden
-            >
-              <svg width="65" height="55" viewBox="0 0 120 100" fill="none">
-                <path d="M30 10h30v30H40c0 11 9 20 20 20v30C37 90 20 70 20 45V10h10Z" fill="currentColor"/>
-                <path d="M80 10h30v30H90c0 11 9 20 20 20v30C87 90 70 70 70 45V10h10Z" fill="currentColor"/>
-              </svg>
-            </div>
-          </div>
+     {/* Leadership quote (3-line, author centered) */}
+<section className="bg-white text-[#0a2540]">
+  <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
+    <div className="max-w-4xl mx-auto relative flex justify-center">
+      <blockquote
+        className="
+          max-w-3xl mx-auto
+          text-center text-lg sm:text-xl leading-relaxed font-medium
+          pr-0 sm:pr-24  /* ✅ no right padding on mobile; add on sm+ for the SVG */
+        "
+      >
+        “AI is transforming how modern businesses learn, adapt, and innovate.
+        It empowers organizations to turn data into intelligence, deliver
+        personalized experiences, and drive meaningful change across every
+        function.”
+      </blockquote>
 
-          <div className="mt-6 mx-auto max-w-4xl flex items-center gap-4 justify-center relative">
-            <div className="pointer-events-none absolute -left-12 bottom-0 hidden select-none text-[#1e90ff]/20 lg:block" aria-hidden>
-              <svg width="65" height="115" viewBox="0 0 120 100" fill="none">
-                <path d="M30 10h30v30H40c0 11 9 20 20 20v30C37 90 20 70 20 45V10h10Z" fill="currentColor"/>
-                <path d="M80 10h30v30H90c0 11 9 20 20 20v30C87 90 70 70 70 45V10h10Z" fill="currentColor"/>
-              </svg>
-            </div>
+      {/* Decorative quote marks (only show on sm+) */}
+      <div
+        className="hidden sm:block absolute -top-2 right-3 text-[#1e90ff]/20 select-none pointer-events-none transform scale-x-[-1]"
+        aria-hidden
+      >
+        <svg width="65" height="55" viewBox="0 0 120 100" fill="none">
+          <path d="M30 10h30v30H40c0 11 9 20 20 20v30C37 90 20 70 20 45V10h10Z" fill="currentColor"/>
+          <path d="M80 10h30v30H90c0 11 9 20 20 20v30C87 90 70 70 70 45V10h10Z" fill="currentColor"/>
+        </svg>
+      </div>
+    </div>
 
-            <img
-              src="/yasin-profile.png"
-              alt="Yasin Shah"
-              className="h-14 w-14 rounded-full object-cover ring-2 ring-[#1e90ff]"
-            />
-            <div className="text-left">
-              <div className="text-base font-semibold">Yasin Shah</div>
-              <div className="text-sm text-[#0a2540]/70">
-                Director and CEO, Technocolabs Softwares Inc.
-              </div>
-            </div>
-          </div>
+    <div className="mt-6 mx-auto max-w-4xl flex items-center gap-4 justify-center relative">
+      {/* Left decorative quotes (desktop only) */}
+      <div
+        className="pointer-events-none absolute -left-12 bottom-0 hidden select-none text-[#1e90ff]/20 lg:block"
+        aria-hidden
+      >
+        <svg width="65" height="115" viewBox="0 0 120 100" fill="none">
+          <path d="M30 10h30v30H40c0 11 9 20 20 20v30C37 90 20 70 20 45V10h10Z" fill="currentColor"/>
+          <path d="M80 10h30v30H90c0 11 9 20 20 20v30C87 90 70 70 70 45V10h10Z" fill="currentColor"/>
+        </svg>
+      </div>
+
+      <img
+        src="/yasin-profile.png"
+        alt="Yasin Shah"
+        className="h-14 w-14 rounded-full object-cover ring-2 ring-[#1e90ff]"
+      />
+      <div className="text-center sm:text-left"> {/* ✅ center on mobile, left on sm+ */}
+        <div className="text-base font-semibold">Yasin Shah</div>
+        <div className="text-sm text-[#0a2540]/70">
+          Director and CEO, Technocolabs Softwares Inc.
         </div>
-      </section>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Mission */}
       <section className="relative overflow-hidden bg-[#06213C]">
@@ -2811,51 +2826,117 @@ function CloudServicesPage(){
   );
 }
 
-// --------------------------- TOP BAR (site‑wide) ---------------------------
+// --------------------------- TOP BAR (site-wide) ---------------------------
 function TopBar() {
   return (
     <div className="fixed inset-x-0 top-0 z-50 bg-white text-[#0a2540] border-b border-[#0a2540]/10">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-10 flex items-center justify-between text-sm">
-        <div className="flex items-center gap-4 min-w-0">
-          <span className="hidden sm:inline-flex items-center gap-1 whitespace-nowrap"><MapPin className="h-4 w-4"/> J.P. Tower First Floor P1, Indore, India</span>
-          <span className="hidden sm:inline h-4 w-px bg-[#0a2540]/15"/>
-          <a href="mailto:contact@technocolabs.com" className="inline-flex items-center gap-2 hover:underline"><Mail className="h-4 w-4"/> contact@technocolabs.com</a>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-auto py-2 
+                      flex flex-wrap items-center gap-2 text-sm">
+
+        {/* LEFT SIDE CONTENT */}
+        <div className="flex items-center gap-4 flex-shrink min-w-0">
+
+          {/* Address - hidden on small screens */}
+          <span className="hidden md:inline-flex items-center gap-1 whitespace-nowrap">
+            <MapPin className="h-4 w-4" /> 
+            J.P. Tower First Floor P1, Indore, India
+          </span>
+
+          {/* Divider */}
+          <span className="hidden md:inline h-4 w-px bg-[#0a2540]/15" />
+
+          {/* Email always visible */}
+          <a 
+            href="mailto:contact@technocolabs.com"
+            className="inline-flex items-center gap-2 hover:underline"
+          >
+            <Mail className="h-4 w-4" /> contact@technocolabs.com
+          </a>
         </div>
-        <div className="flex items-center gap-4">
-          <a href="tel:+918319291391" className="inline-flex items-center gap-2 rounded-full border border-[#0a2540]/15 px-3 py-1 hover:bg-[#0a2540]/5"><Phone className="h-4 w-4"/> +91 8319291391</a>
+
+        {/* RIGHT SIDE CONTENT */}
+        <div className="flex items-center gap-4 ml-auto">
+
+          {/* Phone Number */}
+          <a
+            href="tel:+918319291391"
+            className="inline-flex items-center gap-2 rounded-full border border-[#0a2540]/15 px-3 py-1 hover:bg-[#0a2540]/5"
+          >
+            <Phone className="h-4 w-4" /> +91 8319291391
+          </a>
+
+          {/* Social Icons (hidden on mobile) */}
           <span className="hidden sm:flex items-center gap-3">
-            <a aria-label="Facebook" href={SOCIAL_LINKS.facebook} className="hover:text-[#1e90ff]"><Facebook className="h-4 w-4"/></a>
-            <a aria-label="Twitter" href={SOCIAL_LINKS.twitter} className="hover:text-[#1e90ff]"><Twitter className="h-4 w-4"/></a>
-            <a aria-label="LinkedIn" href={SOCIAL_LINKS.linkedin} className="hover:text-[#1e90ff]"><Linkedin className="h-4 w-4"/></a>
+            <a aria-label="Facebook" href={SOCIAL_LINKS.facebook} className="hover:text-[#1e90ff]">
+              <Facebook className="h-4 w-4" />
+            </a>
+            <a aria-label="Twitter" href={SOCIAL_LINKS.twitter} className="hover:text-[#1e90ff]">
+              <Twitter className="h-4 w-4" />
+            </a>
+            <a aria-label="LinkedIn" href={SOCIAL_LINKS.linkedin} className="hover:text-[#1e90ff]">
+              <Linkedin className="h-4 w-4" />
+            </a>
           </span>
         </div>
+
       </div>
     </div>
   );
 }
-
 // --------------------------- NAV & FOOTER ----------------------------------
 function NavBar() {
   const navigate = useContext(NavContext);
   const tab = useContext(CurrentTabContext);
-  return (
-    <header className="fixed inset-x-0 top-10 z-50 bg-[#0a2540] text-white border-b border-white/10">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-        <button onClick={() => navigate('home')} className="flex items-center gap-2">
-          <Logo size={32} />
-          <span className="font-semibold hidden sm:inline">Technocolabs Softwares Inc.</span>
-        </button>
-        <nav className="flex items-center gap-4 text-sm">
-          {(['home','services','careers','contact','about'] as const).map((t) => (
-  <Link
-    key={t} 
-    to={t === "home" ? "/" : `/${t}`}
-    className={`px-3 py-1.5 rounded-lg ${tab===t ? 'bg-white/10' : 'hover:bg-white/5'}`} >
-    {t[0].toUpperCase() + t.slice(1)}
-  </Link>
-))}
 
+  const TABS = ['home', 'services', 'careers', 'contact', 'about'] as const;
+
+  return (
+    <header className="fixed inset-x-0 top-10 z-50 bg-[#0a2540]/95 backdrop-blur border-b border-white/10 text-white">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+        {/* Row: brand + desktop menu */}
+        <div className="h-14 flex items-center justify-between">
+          <button onClick={() => navigate('home')} className="flex items-center gap-2 text-white">
+            <Logo size={32} />
+            {/* Hide long brand name on very small screens */}
+            <span className="font-semibold hidden sm:inline text-white">
+              Technocolabs Softwares Inc.
+            </span>
+          </button>
+
+          {/* Desktop menu */}
+          <nav className="hidden md:flex items-center gap-4 text-sm text-white">
+            {TABS.map((t) => (
+              <Link
+                key={t}
+                to={t === 'home' ? '/' : `/${t}`}
+                className={`px-3 py-1.5 rounded-lg text-white ${
+                  tab === t ? 'bg-white/10' : 'hover:bg-white/5'
+                }`}
+              >
+                {t[0].toUpperCase() + t.slice(1)}
+              </Link>
+            ))}
+          </nav>
+        </div>
+
+        {/* Mobile menu (scrollable row) */}
+        <nav className="md:hidden -mx-4 px-4 border-t border-white/10 text-white">
+          <div className="flex overflow-x-auto no-scrollbar gap-3 py-2 whitespace-nowrap">
+            {TABS.map((t) => (
+              <Link
+                key={t}
+                to={t === 'home' ? '/' : `/${t}`}
+                className={`px-3 py-1.5 rounded-lg text-white ${
+                  tab === t ? 'bg-white/10' : 'hover:bg-white/5'
+                } text-sm`}
+              >
+                {t[0].toUpperCase() + t.slice(1)}
+              </Link>
+            ))}
+          </div>
         </nav>
+
       </div>
     </header>
   );
