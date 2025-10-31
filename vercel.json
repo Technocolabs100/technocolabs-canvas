@@ -1,7 +1,8 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
-    { "source": "/web.html", "destination": "/verify", "permanent": true }
-     { "source": "/traineeverification.html", "destination": "/verify", "permanent": true }
+    { "source": "/web.html", "destination": "/verify", "permanent": true },
+    { "source": "/traineeverification.html", "destination": "/verify", "permanent": true }
   ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/" }
