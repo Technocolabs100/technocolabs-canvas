@@ -2830,60 +2830,48 @@ function CloudServicesPage(){
 function TopBar() {
   return (
     <div className="fixed inset-x-0 top-0 z-50 bg-white text-[#0a2540] border-b border-[#0a2540]/10">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-auto py-2 
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-auto py-2
                       flex flex-wrap items-center gap-2 text-sm">
 
-        {/* LEFT SIDE CONTENT */}
-        <div className="flex items-center gap-4 flex-shrink min-w-0">
-
-          {/* Address - hidden on small screens */}
+        {/* LEFT: address hidden on phones, email always visible but truncated */}
+        <div className="flex items-center gap-4 min-w-0">
           <span className="hidden md:inline-flex items-center gap-1 whitespace-nowrap">
-            <MapPin className="h-4 w-4" /> 
+            <MapPin className="h-4 w-4" />
             J.P. Tower First Floor P1, Indore, India
           </span>
-
-          {/* Divider */}
           <span className="hidden md:inline h-4 w-px bg-[#0a2540]/15" />
-
-          {/* Email always visible */}
-          <a 
+          <a
             href="mailto:contact@technocolabs.com"
-            className="inline-flex items-center gap-2 hover:underline"
+            className="inline-flex items-center gap-2 min-w-0 max-w-[60vw]"
           >
-            <Mail className="h-4 w-4" /> contact@technocolabs.com
+            <Mail className="h-4 w-4" />
+            <span className="truncate">contact@technocolabs.com</span>
           </a>
         </div>
 
-        {/* RIGHT SIDE CONTENT */}
-        <div className="flex items-center gap-4 ml-auto">
-
-          {/* Phone Number */}
+        {/* RIGHT: phone floats right; show icon + 'Call' on xs, full number from sm+ */}
+        <div className="ml-auto flex items-center gap-4">
           <a
             href="tel:+918319291391"
             className="inline-flex items-center gap-2 rounded-full border border-[#0a2540]/15 px-3 py-1 hover:bg-[#0a2540]/5"
           >
-            <Phone className="h-4 w-4" /> +91 8319291391
+            <Phone className="h-4 w-4" />
+            <span className="hidden sm:inline">+91&nbsp;8319291391</span>
+            <span className="sm:hidden">Call</span>
           </a>
 
-          {/* Social Icons (hidden on mobile) */}
-          <span className="hidden sm:flex items-center gap-3">
-            <a aria-label="Facebook" href={SOCIAL_LINKS.facebook} className="hover:text-[#1e90ff]">
-              <Facebook className="h-4 w-4" />
-            </a>
-            <a aria-label="Twitter" href={SOCIAL_LINKS.twitter} className="hover:text-[#1e90ff]">
-              <Twitter className="h-4 w-4" />
-            </a>
-            <a aria-label="LinkedIn" href={SOCIAL_LINKS.linkedin} className="hover:text-[#1e90ff]">
-              <Linkedin className="h-4 w-4" />
-            </a>
+          {/* Socials hidden on phones to avoid crowding */}
+          <span className="hidden md:flex items-center gap-3">
+            <a aria-label="Facebook" href={SOCIAL_LINKS.facebook} className="hover:text-[#1e90ff]"><Facebook className="h-4 w-4" /></a>
+            <a aria-label="Twitter"  href={SOCIAL_LINKS.twitter}  className="hover:text-[#1e90ff]"><Twitter  className="h-4 w-4" /></a>
+            <a aria-label="LinkedIn"  href={SOCIAL_LINKS.linkedin} className="hover:text-[#1e90ff]"><Linkedin  className="h-4 w-4" /></a>
           </span>
         </div>
-
       </div>
     </div>
   );
 }
-// --------------------------- NAV & FOOTER ----------------------------------
+
 function NavBar() {
   const navigate = useContext(NavContext);
   const tab = useContext(CurrentTabContext);
@@ -2891,50 +2879,39 @@ function NavBar() {
   const TABS = ['home', 'services', 'careers', 'contact', 'about'] as const;
 
   return (
-    <header className="fixed inset-x-0 top-10 z-50 bg-[#0a2540]/95 backdrop-blur border-b border-white/10 text-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <header className="fixed inset-x-0 top-10 z-50 bg-[#0a2540] text-white border-b border-white/10">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
 
-        {/* Row: brand + desktop menu */}
-        <div className="h-14 flex items-center justify-between">
-          <button onClick={() => navigate('home')} className="flex items-center gap-2 text-white">
+        {/* ✅ Brand (Logo + Name) */}
+        <button
+          onClick={() => navigate('home')}
+          className="flex items-center min-w-0"
+        >
+          <div className="h-8 w-8 flex items-center justify-center">
+            {/* ✅ Logo supports only size prop — no className */}
             <Logo size={32} />
-            {/* Hide long brand name on very small screens */}
-            <span className="font-semibold hidden sm:inline text-white">
-              Technocolabs Softwares Inc.
-            </span>
-          </button>
-
-          {/* Desktop menu */}
-          <nav className="hidden md:flex items-center gap-4 text-sm text-white">
-            {TABS.map((t) => (
-              <Link
-                key={t}
-                to={t === 'home' ? '/' : `/${t}`}
-                className={`px-3 py-1.5 rounded-lg text-white ${
-                  tab === t ? 'bg-white/10' : 'hover:bg-white/5'
-                }`}
-              >
-                {t[0].toUpperCase() + t.slice(1)}
-              </Link>
-            ))}
-          </nav>
-        </div>
-
-        {/* Mobile menu (scrollable row) */}
-        <nav className="md:hidden -mx-4 px-4 border-t border-white/10 text-white">
-          <div className="flex overflow-x-auto no-scrollbar gap-3 py-2 whitespace-nowrap">
-            {TABS.map((t) => (
-              <Link
-                key={t}
-                to={t === 'home' ? '/' : `/${t}`}
-                className={`px-3 py-1.5 rounded-lg text-white ${
-                  tab === t ? 'bg-white/10' : 'hover:bg-white/5'
-                } text-sm`}
-              >
-                {t[0].toUpperCase() + t.slice(1)}
-              </Link>
-            ))}
           </div>
+
+          <span className="ml-2 font-semibold text-white whitespace-nowrap truncate max-w-[55vw] sm:max-w-none">
+            Technocolabs Softwares
+          </span>
+        </button>
+
+        {/* ✅ Navigation */}
+        <nav className="flex items-center gap-3 text-sm">
+          {TABS.map((t) => (
+            <Link
+              key={t}
+              to={t === 'home' ? '/' : `/${t}`}
+              className={`px-3 py-1.5 rounded-lg whitespace-nowrap ${
+                tab === t
+                  ? 'bg-white/10 text-white'
+                  : 'hover:bg-white/5 text-white'
+              }`}
+            >
+              {t[0].toUpperCase() + t.slice(1)}
+            </Link>
+          ))}
         </nav>
 
       </div>
@@ -3072,7 +3049,7 @@ function ApplicationsClosedPage() {
       <p className="mt-3 text-gray-700 max-w-xl">
         You may send your resume to{" "}
         <a href="mailto:technocolabs@gmail.com" className="text-blue-600 underline">
-          technocolabs@gmail.com
+          technocollabs@gmail.com and contact@technocolabs.com
         </a>
         . We will notify you when this position opens again.
       </p>
