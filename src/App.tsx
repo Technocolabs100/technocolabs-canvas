@@ -3340,5 +3340,6 @@ export default function App() {
     </CurrentTabContext.Provider>
   );
 }
+
 // --------------------------- ROUTER MOUNT ---------------------------
 
