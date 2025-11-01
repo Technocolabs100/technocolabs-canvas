@@ -5,6 +5,9 @@ import ChatbotWidget from "./ChatbotWidget";
 import { Link } from "react-router-dom";
 import { useParams, useNavigate } from "react-router-dom";
 import { CheckCircle2, Info } from "lucide-react";
+import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from "react-simple-maps";
+import { geoCentroid } from "d3-geo"; // (not used here but fine if you keep it)
+// If TS complains about missing types, add src/react-simple-maps.d.ts with `declare module "react-simple-maps";`
 
 
 import {
@@ -1634,13 +1637,24 @@ function ServiceDetailPage() {
     </div>
   );
 }
-// --------------------------- CAREERS (upgraded) ----------------------------
+// ---------- ADD THESE IMPORTS AT THE TOP OF App.tsx ----------
+
+// ---------- CAREERS PAGE (with Internships, Open Roles, Full-Time) ----------
 function CareersPage() {
   const navigate = useContext(NavContext);
   const setApplyRoleCtx = useContext(ApplyRoleSetterContext);
 
+  // sub-tabs: internships | openroles | fulltime
+  const [sub, setSub] = useState<'internships' | 'openroles' | 'fulltime'>('internships');
+
+  // ------- Types for role IDs (TypeScript-safe indexing) -------
+  type RoleId =
+    | 'genai' | 'py' | 'dl' | 'cv' | 'ba'
+    | 'ds' | 'ml' | 'web' | 'da' | 'bi'
+    | 'ai' | 'se' | 'cyber';
+
   type Role = {
-    id: string;
+    id: RoleId;
     title: string;
     domain: string;
     duration: string;
@@ -1650,10 +1664,8 @@ function CareersPage() {
     requirements: string[];
   };
 
-  // ✅ Map each role → its Google Form link ( "#" = closed )
-  // NOTE: Ideally move this SAME object to top-level in App.tsx
-  // so ApplyFormEmbedPage can use it too.
-  const APPLY_FORM_BY_ID: Record<string, string> = {
+  // ------- Form links ( "#" = closed -> goes to Applications Closed ) -------
+  const APPLY_FORM_BY_ID: Record<RoleId, string> = {
     genai: "#",
     py: "#",
     dl: "#",
@@ -1669,6 +1681,7 @@ function CareersPage() {
     cyber: "https://forms.gle/PFV39TtRkabKGTEW7",
   };
 
+  // ------- Your roles (unchanged content) -------
   const ROLES: Role[] = [
     { id: 'genai', title: 'Generative AI Engineer Intern', domain: 'Generative AI', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Work on LLM-powered features: prompt engineering, embeddings, RAG pipelines, and evaluation. You will prototype, measure, and iterate with mentors to ship features into real apps.', responsibilities: ['Build and evaluate LLM pipelines (chat, Q&A, summarization)','Implement retrieval with vector stores and embeddings','Design/evaluate prompts; collect feedback and improve outputs','Integrate models with web backends/APIs','Document experiments and results'], requirements: ['Strong Python; basics of JS/TypeScript a plus','NLP/LLM concepts (tokenization, embeddings, context windows)','Hands-on with HuggingFace/LangChain/LlamaIndex (any)','Familiar with OpenAI/transformer models; basic CI/Git','Good communication and curiosity to experiment'] },
     { id: 'py', title: 'Python Developer Intern', domain: 'Software Development', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Contribute to backend services, APIs, automation scripts, and internal tools built with Python. Focus on clean code, testing, and shipping maintainable features.', responsibilities: ['Build REST APIs and background jobs','Write reusable, tested modules and CLI tools','Work with databases (SQL/ORM) and caching','Instrument logging and basic monitoring','Participate in code reviews and sprint rituals'], requirements: ['Solid Python fundamentals (typing, packaging, venv)','Experience with FastAPI/Flask or Django (any one)','SQL knowledge (Postgres/MySQL) and Git','Basics of Docker and HTTP/REST','Clear communication and documentation'] },
@@ -1687,139 +1700,78 @@ function CareersPage() {
 
   return (
     <div className="bg-[#0a2540] text-white">
-
-      {/* Hero */}
+      {/* Hero + Sub-tabs */}
       <section className="relative overflow-clip">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-10">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Careers & Internships</h1>
-          <p className="mt-3 max-w-3xl text-white/80">Explore open Positions for Full-Time and internship domains and kickstart your tech career with Technocolabs.</p>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-6">
+          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Careers</h1>
+          <div className="mt-6 inline-flex rounded-xl bg-white/10 p-1">
+            <button onClick={() => setSub('internships')} className={`px-4 py-2 text-sm font-semibold rounded-lg ${sub==='internships'?'bg-white text-[#0a2540]':'text-white hover:bg-white/10'}`}>Internships</button>
+            <button onClick={() => setSub('openroles')}   className={`px-4 py-2 text-sm font-semibold rounded-lg ${sub==='openroles'  ?'bg-white text-[#0a2540]':'text-white hover:bg-white/10'}`}>Open Roles</button>
+            <button onClick={() => setSub('fulltime')}    className={`px-4 py-2 text-sm font-semibold rounded-lg ${sub==='fulltime'   ?'bg-white text-[#0a2540]':'text-white hover:bg-white/10'}`}>Full-Time (Coming Soon)</button>
+          </div>
         </div>
       </section>
 
-      
-      {/* Why Join Technocolabs */}
+      {/* BODY */}
       <section className="bg-white text-[#0a2540]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">Why Join Technocolabs?</h2>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[['Real Industry Projects','Work on production‑grade problems that ship.'],['Mentorship Culture','1:1 guidance from experienced engineers.'],['Career Fast‑Track','Portfolio, certificates and referrals.'],['Innovation‑Driven','Hands‑on with GenAI, ML, MLOps & Cloud.'],['Global Community','Collaborate with peers across countries.'],['Flexible & Remote','Work from anywhere, async‑friendly.']].map(([t,s]) => (
-              <div key={t} className="rounded-2xl border border-[#0a2540]/10 p-6">
-                <div className="font-semibold">{t}</div>
-                <div className="mt-1 text-sm text-[#0a2540]/70">{s}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+          {sub === 'internships' && (
+            <div className="rounded-2xl overflow-hidden border border-[#0a2540]/10">
+              <InternshipShowcaseInline />
+            </div>
+          )}
 
-      {/* Perks & Benefits */}
-      <section className="bg-[#081a2f] text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">Perks & Benefits</h2>
-          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {['Flexible hours','Remote friendly','Certificate of completion','Letter of recommendation','Live project experience','Resume/LinkedIn support','GitHub portfolio building','Mock interview support','Mentor office hours'].map((p)=>(
-              <div key={p} className="rounded-2xl border border-white/10 bg-white/5 p-5">{p}</div>
-            ))}
-          </div>
-        </div>
-      </section>
+          {sub === 'openroles' && (
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">Open Internship Roles</h2>
+              <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
+                {ROLES.map((r) => (
+                  <div key={r.id} id={`intern-${r.id}`} className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm hover:shadow-lg">
+                    <div className="text-sm font-semibold text-[#1e90ff]">{r.domain}</div>
+                    <h3 className="mt-1 text-lg font-semibold">{r.title}</h3>
+                    <p className="mt-2 text-sm text-[#0a2540]/70">{r.jd}</p>
 
-      {/* Growth Roadmap */}
-      <section className="bg-white text-[#0a2540]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">Career Growth Roadmap</h2>
-          <div className="mt-6 grid gap-6 sm:grid-cols-5">
-            {['Intern','Trainee Engineer','Junior Engineer','Associate','Senior Engineer'].map((t,i)=> (
-              <div key={t} className="rounded-2xl border border-[#0a2540]/10 p-5 text-center">
-                <div className="text-sm opacity-70">Stage {i+1}</div>
-                <div className="mt-1 font-semibold">{t}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+                    <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                      <div>
+                        <div className="text-sm font-semibold">Responsibilities</div>
+                        <ul className="mt-1 list-disc pl-5 space-y-1 text-sm text-[#0a2540]/80">
+                          {r.responsibilities.map((x,i)=>(<li key={i}>{x}</li>))}
+                        </ul>
+                      </div>
+                      <div>
+                        <div className="text-sm font-semibold">Requirements</div>
+                        <ul className="mt-1 list-disc pl-5 space-y-1 text-sm text-[#0a2540]/80">
+                          {r.requirements.map((x,i)=>(<li key={i}>{x}</li>))}
+                        </ul>
+                      </div>
+                    </div>
 
-      {/* Hiring Process */}
-      <section className="bg-[#081a2f] text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">Hiring Process</h2>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
-            {['Apply Online','Screening','Assignment / Interview','Final Selection','Offer & Onboarding'].map((t,i)=> (
-              <div key={t} className="rounded-2xl border border-white/10 bg-white/5 p-5">
-                <div className="text-sm opacity-80">Step {i+1}</div>
-                <div className="mt-1 font-semibold">{t}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+                    <div className="mt-5 flex items-center gap-3">
+                      <span className="inline-flex items-center rounded-xl bg-[#0a2540]/5 px-3 py-1 text-xs font-medium">Duration: {r.duration}</span>
+                      <span className="inline-flex items-center rounded-xl bg-[#0a2540]/5 px-3 py-1 text-xs font-medium">Mode: {r.mode}</span>
+                    </div>
 
-      {/* Open Roles */}
-      <section className="bg-white text-[#0a2540]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">Open Internship Roles</h2>
+                    <div className="mt-5 flex items-center gap-2">
+                      {(() => {
+                        const link = APPLY_FORM_BY_ID[r.id];
+                        if (!link || link.trim() === "#") {
+                          return (
+                            <a href={`/applications-closed?role=${encodeURIComponent(r.title)}`} className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md">
+                              Applications Closed
+                            </a>
+                          );
+                        }
+                        return (
+                          <a href={link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md">
+                            Apply Now
+                          </a>
+                        );
+                      })()}
 
-          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
-            {ROLES.map((r) => (
-              <div key={r.id} id={`intern-${r.id}`} className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm hover:shadow-lg">
-
-                <div className="text-sm font-semibold text-[#1e90ff]">{r.domain}</div>
-                <h3 className="mt-1 text-lg font-semibold">{r.title}</h3>
-                <p className="mt-2 text-sm text-[#0a2540]/70">{r.jd}</p>
-
-                <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <div className="text-sm font-semibold">Responsibilities</div>
-                    <ul className="mt-1 list-disc pl-5 space-y-1 text-sm text-[#0a2540]/80">
-                      {r.responsibilities.map((x,i)=>(<li key={i}>{x}</li>))}
-                    </ul>
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold">Requirements</div>
-                    <ul className="mt-1 list-disc pl-5 space-y-1 text-sm text-[#0a2540]/80">
-                      {r.requirements.map((x,i)=>(<li key={i}>{x}</li>))}
-                    </ul>
-                  </div>
-                </div>
-
-                <div className="mt-5 flex items-center gap-3">
-                  <span className="inline-flex items-center rounded-xl bg-[#0a2540]/5 px-3 py-1 text-xs font-medium">Duration: {r.duration}</span>
-                  <span className="inline-flex items-center rounded-xl bg-[#0a2540]/5 px-3 py-1 text-xs font-medium">Mode: {r.mode}</span>
-                </div>
-
-                {/* ✅ APPLY BUTTON (internal pages only) */}
-                <div className="mt-5 flex items-center gap-2">
-                  {(() => {
-                    const link = APPLY_FORM_BY_ID[r.id];
-
-                    // CLOSED → route to Applications Closed page (inline)
-                    if (!link || link.trim() === "#") {
-                      return (
-                        <a
-                          href={`/applications-closed?role=${encodeURIComponent(r.title)}`}
-                          className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md"
-                        >
-                          Applications Closed
-                        </a>
-                      );
-                    }
-
-                    // OPEN → route to internal Form Embed page (inline)
-                    return (
-                      <a
-                        href={`/apply-form?role=${encodeURIComponent(r.id)}`}
-                        className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md"
-                      >
-                        Apply Now
-                      </a>
-                    );
-                  })()}
-
-                  {/* Email Now */}
-                  <button
-                    onClick={() => {
-                      const subject = encodeURIComponent(`Application: ${r.title}`);
-                      const body = encodeURIComponent(`Hello Technocolabs Team,
+                      <button
+                        onClick={() => {
+                          const subject = encodeURIComponent(`Application: ${r.title}`);
+                          const body = encodeURIComponent(`Hello Technocolabs Team,
 
 I would like to apply for the ${r.title} internship.
 
@@ -1836,78 +1788,307 @@ Start date & availability:
 About me:
 
 Thanks,`);
-                      window.location.href = `mailto:technocollabs@gmail.com?subject=${subject}&body=${body}`;
-                    }}
-                    className="text-sm font-medium text-[#1e90ff] hover:underline"
-                  >
-                    Email Now
-                  </button>
-                </div>
-
+                          window.location.href = `mailto:technocolabs@gmail.com?subject=${subject}&body=${body}`;
+                        }}
+                        className="text-sm font-medium text-[#1e90ff] hover:underline"
+                      >
+                        Email Now
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </div>
+          )}
 
-
-      {/* Testimonials */}
-      <section className="bg-white text-[#0a2540]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">What Our Interns Say</h2>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              ['“I shipped a GenAI chatbot to production during my internship.”','— Priya S., GenAI Intern'],
-              ['“The mentorship here is top‑tier. I learned more in 10 weeks than in a year.”','— Arjun M., Python Intern'],
-              ['“My CV models now run realtime on edge thanks to the team.”','— Aisha K., CV Intern']
-            ].map(([q,a])=> (
-              <div key={a} className="rounded-2xl border border-[#0a2540]/10 p-6">
-                <div className="text-sm">{q}</div>
-                <div className="mt-3 text-xs text-[#0a2540]/70">{a}</div>
+          {sub === 'fulltime' && (
+            <div className="rounded-2xl border border-[#0a2540]/10 bg-[#f8fafc] p-8 sm:p-10">
+              <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">Full-Time Opportunities</h2>
+              <p className="mt-3 text-[#0a2540]/80 max-w-2xl">
+                We’ll publish full-time roles here soon. Meanwhile, share your resume at{" "}
+                <a className="text-[#1e90ff] underline" href="mailto:contact@technocolabs.com">contact@technocolabs.com</a>.
+              </p>
+              <div className="mt-6">
+                <a
+                  href="mailto:contact@technocolabs.com?subject=Full-Time%20Application%20-%20Technocolabs&body=Hello%20Technocolabs%20Team,%0D%0A%0D%0APlease%20find%20my%20resume%20attached.%0D%0A%0D%0AName:%0D%0AEmail:%0D%0APhone:%0D%0ALocation:%0D%0AExperience:%0D%0AInterested%20Role:%0D%0A%0D%0AThanks!"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:shadow-md"
+                >
+                  Email Your Resume
+                </a>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="bg-white text-[#0a2540]">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12">
-          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">FAQ</h2>
-          <div className="mt-6 space-y-3">
-            {[
-              ['Who can apply?','Students, recent grads, and early‑career professionals with passion for tech.'],
-              ['Is it remote?','Yes. Roles are remote‑friendly unless a project needs on‑site presence.'],
-              ['What is the duration?','Typically 8–12 weeks.'],
-              ['Is there a registration fee?','Only after selection: 15 USD / 1150 INR (shared by email).'],
-              ['Do I get a certificate?','Yes, plus a letter of recommendation for top performers.'],
-              ['Is there a PPO?','Outstanding interns may be offered extended roles/PPO based on performance.']
-            ].map(([q,a])=> (
-              <details key={q} className="rounded-2xl border border-[#0a2540]/10 p-4">
-                <summary className="font-semibold cursor-pointer">{q}</summary>
-                <p className="mt-2 text-sm text-[#0a2540]/80">{a}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Strip */}
-      <section className="bg-[#0a2540] text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <div className="text-lg font-semibold">Ready to start your journey?</div>
-            <div className="text-white/80">View open roles or talk to our recruiter.</div>
-          </div>
-          <div className="flex items-center gap-3">
-            <button onClick={()=>window.scrollTo({top:0, behavior:'smooth'})} className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold text-white">View Roles</button>
-            <button onClick={()=>navigate('contact')} className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold">Contact Us</button>
-          </div>
+            </div>
+          )}
         </div>
       </section>
     </div>
   );
 }
+
+// ---------- INLINE: Internship showcase (map + logos etc.) ----------
+function InternshipShowcaseInline() {
+  const stats = [
+    ["20+", "Countries"],
+    ["10000+", "Alumni"],
+    ["500+", "Live Projects"],
+    ["92%", "Recommend"],
+  ];
+  const tracks = [
+    { t: "Generative AI & LLMs", s: "RAG, embeddings, prompt engineering, evals" },
+    { t: "Machine Learning", s: "Feature pipelines, model tuning, MLOps basics" },
+    { t: "Data Science & Analytics", s: "EDA, dashboards, BI, KPI storytelling" },
+    { t: "Computer Vision", s: "Detection, OCR, segmentation, real-time inference" },
+    { t: "Web Development", s: "React front-ends, APIs, auth, performance" },
+    { t: "Cybersecurity", s: "VAPT, OWASP, secure coding, automation" },
+    { t: "Software Engineering", s: "Clean code, tests, CI/CD, code reviews" },
+  ];
+  const tools = ["Python","PyTorch","TensorFlow","scikit-learn","LangChain","OpenAI APIs","HuggingFace","FastAPI","React","TypeScript","Vite","Tailwind","PostgreSQL","MongoDB","Docker","Git/GitHub","AWS","GCP","Azure","Power BI","Tableau"];
+  const projects = [
+    { h: "RAG Knowledge Assistant", s: "Enterprise FAQ/chat over docs using embeddings, vector DB, and evaluation harness." },
+    { h: "Demand Forecasting", s: "End-to-end ML pipeline (ETL → features → model → dashboard) with MAPE tracking." },
+    { h: "Real-time OCR + Search", s: "Computer vision service for document OCR and semantic search over extracted text." },
+    { h: "Full-stack Issue Tracker", s: "React + API + auth + role-based access & CI; deployed to cloud." },
+    { h: "Security Posture Scan", s: "OWASP checks + auto reports; secure coding fixes." },
+    { h: "BI Analytics Workspace", s: "Data model + KPIs + interactive dashboards." },
+  ];
+  const differentiators = [
+    { title: "🌍 International Industry Network", bullets: ["Mentors across USA/Europe/India/UAE","Research collaborations","10k+ alumni community","Cross-border project teams"]},
+    { title: "🚀 Real Project Delivery", bullets: ["Live APIs","AI/ML in production-like flows","Cloud dashboards","End-to-end SDLC"]},
+    { title: "🧑‍🏫 1:1 Mentorship", bullets: ["Personal mentor","Weekly office hours","Code reviews","Career consultations"]},
+    { title: "🥇 Guaranteed Work Showcase", bullets: ["Portfolio case studies","GitHub repos","Demo videos & slides"]},
+  ];
+  const achievements = [
+    "✅ 10000+ interns trained globally",
+    "✅ Open-source AI contributions",
+    "✅ Trusted by startups and SMBs",
+  ];
+  const companies = [
+    { name: "google",     url: "https://logo.clearbit.com/google.com" },
+    { name: "meta",       url: "https://logo.clearbit.com/meta.com" },
+    { name: "amazon",     url: "https://logo.clearbit.com/amazon.com" },
+    { name: "microsoft",  url: "https://logo.clearbit.com/microsoft.com" },
+    { name: "nvidia",     url: "https://logo.clearbit.com/nvidia.com" },
+    { name: "openai",     url: "https://logo.clearbit.com/openai.com" },
+    { name: "salesforce", url: "https://logo.clearbit.com/salesforce.com" },
+    { name: "apple",        url: "https://logo.clearbit.com/apple.com" },
+    { name: "deloitte",   url: "https://logo.clearbit.com/deloitte.com" },
+    { name: "accenture",  url: "https://logo.clearbit.com/accenture.com" },
+    { name: "tcs",        url: "https://logo.clearbit.com/tcs.com" },
+    { name: "infosys",    url: "https://logo.clearbit.com/infosys.com" },
+    { name: "swiggy",    url: "https://logo.clearbit.com/swiggy.com" },
+    { name: "ey",    url: "https://logo.clearbit.com/ey.com" },
+    { name: "wipro",    url: "https://logo.clearbit.com/wipro.com" },
+    { name: "wallmart",    url: "https://logo.clearbit.com/wallmart.com" },
+    { name: "capgemini",    url: "https://logo.clearbit.com/capgemini.com" },
+    { name: "flipkart",    url: "https://logo.clearbit.com/flipkart.com" },
+    { name: "hdfc",    url: "https://logo.clearbit.com/hdfc.com" },
+    { name: "zomato",    url: "https://logo.clearbit.com/zomato.com" },
+    { name: "facebook",    url: "https://logo.clearbit.com/facebook.com" },
+    { name: "spinny",    url: "https://logo.clearbit.com/spinny.com" },
+    { name: "hsbc",    url: "https://logo.clearbit.com/hsbc.com" },
+    { name: "twitter",    url: "https://logo.clearbit.com/twitter.com" },
+  ];
+
+  return (
+    <div className="bg-white text-[#0a2540]">
+      {/* HERO */}
+      <section className="bg-gradient-to-b from-[#0a2540] to-[#0d325a] text-white px-6 sm:px-8 lg:px-12 py-12 sm:py-16">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Global Internship Program</h2>
+          <p className="mt-3 max-w-2xl text-white/80">Hands-on, mentor-led internships in AI, Data, and Software. Build real products and a portfolio that gets you hired.</p>
+          <div className="mt-6 grid gap-4 grid-cols-2 md:grid-cols-4">
+            {stats.map(([n, k]) => (
+              <div key={k} className="rounded-2xl border border-white/15 bg-white/5 p-5">
+                <div className="text-3xl font-bold">{n}</div>
+                <div className="text-white/80">{k}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* TRACKS */}
+      <section className="px-6 sm:px-8 lg:px-12 py-10">
+        <div className="max-w-6xl mx-auto grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {tracks.map(({ t, s }) => (
+            <div key={t} className="rounded-2xl border border-[#0a2540]/10 p-6 hover:shadow-sm">
+              <div className="font-semibold">{t}</div>
+              <div className="mt-1 text-sm text-[#0a2540]/70">{s}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* TOOLS */}
+      <section className="px-6 sm:px-8 lg:px-12 py-8">
+        <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          {tools.map((t) => (
+            <div key={t} className="rounded-xl border border-[#0a2540]/10 px-4 py-3 text-sm text-center">{t}</div>
+          ))}
+        </div>
+      </section>
+
+      {/* PROJECTS */}
+      <section className="px-6 sm:px-8 lg:px-12 py-10">
+        <div className="max-w-6xl mx-auto grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {projects.map(({ h, s }) => (
+            <div key={h} className="rounded-2xl border border-[#0a2540]/10 p-6">
+              <div className="font-semibold">{h}</div>
+              <div className="mt-1 text-sm text-[#0a2540]/70">{s}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* DIFFERENTIATORS */}
+      <section className="px-6 sm:px-8 lg:px-12 py-10">
+        <div className="max-w-6xl mx-auto grid gap-6 sm:grid-cols-2">
+          {differentiators.map((d) => (
+            <div key={d.title} className="rounded-2xl border border-[#0a2540]/10 p-6">
+              <div className="font-semibold">{d.title}</div>
+              <ul className="mt-2 text-sm text-[#0a2540]/80 list-disc pl-5 space-y-1">
+                {d.bullets.map((b) => (<li key={b}>{b}</li>))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ACHIEVEMENTS */}
+      <section className="px-6 sm:px-8 lg:px-12 py-10 bg-[#f8fafc]">
+        <div className="max-w-6xl mx-auto grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {achievements.map((a) => (
+            <div key={a} className="rounded-2xl border border-[#0a2540]/10 bg-white p-5 text-sm">{a}</div>
+          ))}
+        </div>
+      </section>
+
+      {/* WORLD MAP (blue land + white labels) */}
+      <section className="px-6 sm:px-8 lg:px-12 py-12 bg-[#0a2540] text-white">
+        <div className="max-w-6xl mx-auto">
+          <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">Global Intern Presence</h3>
+          <p className="text-center mt-2 text-white/80 max-w-3xl mx-auto">Countries where interns have participated. Click/drag to pan; use buttons to zoom.</p>
+          <RealWorldMapInline />
+        </div>
+      </section>
+
+      {/* COMPANIES (logos via Clearbit) */}
+      <section className="px-6 sm:px-8 lg:px-12 py-10">
+        <div className="max-w-6xl mx-auto">
+          <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">Where Our Alumni Work</h3>
+        </div>
+        <div className="max-w-6xl mx-auto mt-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 justify-items-center">
+          {companies.map((logo) => (
+            <div key={logo.name} className="opacity-80 hover:opacity-100 transition">
+              <img src={logo.url} alt={`${logo.name} logo`} className="h-10 w-auto object-contain" />
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+// ---------- INLINE: Blue world map with white markers + labels ----------
+function RealWorldMapInline({ dataUrl = "/intern-locations.json" }: { dataUrl?: string }) {
+  const [locations, setLocations] = useState<Array<{country: string; lat: number; lon: number}>>([]);
+  const [position, setPosition] = useState<{coordinates: [number, number]; zoom: number}>({ coordinates: [0, 0], zoom: 1 });
+  const [isSmall, setIsSmall] = useState<boolean>(typeof window !== "undefined" ? window.innerWidth < 640 : false);
+
+  const DEFAULT_LOCATIONS = [
+    { country: "USA", lat: 38.9072, lon: -77.0369 },
+    { country: "Brazil", lat: -15.8267, lon: -47.9218 },
+    { country: "UK", lat: 51.5074, lon: -0.1278 },
+    { country: "France", lat: 48.8566, lon: 2.3522 },
+    { country: "Germany", lat: 52.5200, lon: 13.4050 },
+    { country: "Morocco", lat: 34.0209, lon: -6.8416 },
+    { country: "Algeria", lat: 36.7538, lon: 3.0588 },
+    { country: "Tunisia", lat: 36.8065, lon: 10.1815 },
+    { country: "Egypt", lat: 30.0444, lon: 31.2357 },
+    { country: "Saudi Arabia", lat: 24.7136, lon: 46.6753 },
+    { country: "Qatar", lat: 25.2854, lon: 51.5310 },
+    { country: "UAE", lat: 24.4539, lon: 54.3773 },
+    { country: "Pakistan", lat: 33.6844, lon: 73.0479 },
+    { country: "India", lat: 28.6139, lon: 77.2090 },
+    { country: "Bangladesh", lat: 23.8103, lon: 90.4125 },
+    { country: "Nepal", lat: 27.7172, lon: 85.3240 },
+    { country: "Sri Lanka", lat: 6.9271, lon: 79.8612 },
+    { country: "Indonesia", lat: -6.2088, lon: 106.8456 }
+  ];
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(dataUrl)
+      .then(async (res) => {
+        const ct = res.headers.get("content-type") || "";
+        if (!res.ok || !ct.includes("application/json")) throw new Error("not json");
+        return res.json();
+      })
+      .then((d) => {
+        if (!cancelled) {
+          const clean = Array.isArray(d) ? d.filter((x) => isFinite(+x.lat) && isFinite(+x.lon)) : [];
+          setLocations(clean.length ? clean as any : DEFAULT_LOCATIONS);
+        }
+      })
+      .catch(() => { if (!cancelled) setLocations(DEFAULT_LOCATIONS); });
+    return () => { cancelled = true; };
+  }, [dataUrl]);
+
+  useEffect(() => {
+    const onResize = () => setIsSmall(window.innerWidth < 640);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  const ABBR: Record<string, string> = { "United States": "USA", USA: "USA", "United Kingdom": "UK", UK: "UK", "United Arab Emirates": "UAE", UAE: "UAE", "Saudi Arabia": "Saudi" };
+  const labelFor = (name: string) => (isSmall && ABBR[name]) ? ABBR[name] : name;
+
+  const handleZoomIn  = () => setPosition((p) => ({ ...p, zoom: Math.min(8, p.zoom * 1.6) }));
+  const handleZoomOut = () => setPosition((p) => ({ ...p, zoom: Math.max(1, p.zoom / 1.6) }));
+  const handleMoveEnd = (p: any) => setPosition(p);
+
+  const LAND   = "#0a2540";
+  const STROKE = "#12385d";
+  const LAND_H = "#11375c";
+
+  return (
+    <div className="mt-6">
+      <div className="flex justify-center gap-4 mb-4">
+        <button onClick={handleZoomIn}  className="px-3 py-1 bg-[#0a2540] text-white rounded">Zoom In</button>
+        <button onClick={handleZoomOut} className="px-3 py-1 bg-[#0a2540] text-white rounded">Zoom Out</button>
+      </div>
+
+      <ComposableMap projection="geoMercator" projectionConfig={{ scale: 150 }} style={{ width: "100%", height: "480px" }}>
+        <ZoomableGroup center={position.coordinates} zoom={position.zoom} onMoveEnd={handleMoveEnd}>
+          <Geographies geography="https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json">
+            {({ geographies }) =>
+              geographies.map((geo) => (
+                <Geography
+                  key={geo.rsmKey}
+                  geography={geo}
+                  style={{
+                    default: { fill: LAND, stroke: STROKE, strokeWidth: 0.5, outline: "none" },
+                    hover:   { fill: LAND_H, stroke: STROKE, strokeWidth: 0.5, outline: "none", cursor: "pointer" },
+                    pressed: { fill: LAND_H, stroke: STROKE, strokeWidth: 0.5, outline: "none" },
+                  }}
+                />
+              ))
+            }
+          </Geographies>
+
+          {locations.map((loc) => (
+            <Marker key={`${loc.country}-${loc.lat}-${loc.lon}`} coordinates={[+loc.lon, +loc.lat]}>
+              <circle r={4.5} fill="#ffffff" />
+              <text x={8} y={4} style={{ fontSize: "11px", fontWeight: 700, fill: "#ffffff", stroke: LAND, strokeWidth: 2, paintOrder: "stroke" }}>
+                {labelFor(String(loc.country))}
+              </text>
+            </Marker>
+          ))}
+        </ZoomableGroup>
+      </ComposableMap>
+    </div>
+  );
+}
+
 
 
 // --------------------------- APPLY ----------------------------------------- -----------------------------------------
