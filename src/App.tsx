@@ -1696,10 +1696,61 @@ function CareersPage() {
         </div>
       </section>
 
-      {/* Why Join */}
+      
+      {/* Why Join Technocolabs */}
       <section className="bg-white text-[#0a2540]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
           <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">Why Join Technocolabs?</h2>
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {[['Real Industry Projects','Work on production‑grade problems that ship.'],['Mentorship Culture','1:1 guidance from experienced engineers.'],['Career Fast‑Track','Portfolio, certificates and referrals.'],['Innovation‑Driven','Hands‑on with GenAI, ML, MLOps & Cloud.'],['Global Community','Collaborate with peers across countries.'],['Flexible & Remote','Work from anywhere, async‑friendly.']].map(([t,s]) => (
+              <div key={t} className="rounded-2xl border border-[#0a2540]/10 p-6">
+                <div className="font-semibold">{t}</div>
+                <div className="mt-1 text-sm text-[#0a2540]/70">{s}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Perks & Benefits */}
+      <section className="bg-[#081a2f] text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">Perks & Benefits</h2>
+          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {['Flexible hours','Remote friendly','Certificate of completion','Letter of recommendation','Live project experience','Resume/LinkedIn support','GitHub portfolio building','Mock interview support','Mentor office hours'].map((p)=>(
+              <div key={p} className="rounded-2xl border border-white/10 bg-white/5 p-5">{p}</div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Growth Roadmap */}
+      <section className="bg-white text-[#0a2540]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">Career Growth Roadmap</h2>
+          <div className="mt-6 grid gap-6 sm:grid-cols-5">
+            {['Intern','Trainee Engineer','Junior Engineer','Associate','Senior Engineer'].map((t,i)=> (
+              <div key={t} className="rounded-2xl border border-[#0a2540]/10 p-5 text-center">
+                <div className="text-sm opacity-70">Stage {i+1}</div>
+                <div className="mt-1 font-semibold">{t}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Hiring Process */}
+      <section className="bg-[#081a2f] text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">Hiring Process</h2>
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+            {['Apply Online','Screening','Assignment / Interview','Final Selection','Offer & Onboarding'].map((t,i)=> (
+              <div key={t} className="rounded-2xl border border-white/10 bg-white/5 p-5">
+                <div className="text-sm opacity-80">Step {i+1}</div>
+                <div className="mt-1 font-semibold">{t}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -1799,8 +1850,61 @@ Thanks,`);
         </div>
       </section>
 
-      {/* ... keep your other sections (Perks, Growth, Hiring Process, Testimonials, FAQ, CTA) ... */}
 
+      {/* Testimonials */}
+      <section className="bg-white text-[#0a2540]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">What Our Interns Say</h2>
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              ['“I shipped a GenAI chatbot to production during my internship.”','— Priya S., GenAI Intern'],
+              ['“The mentorship here is top‑tier. I learned more in 10 weeks than in a year.”','— Arjun M., Python Intern'],
+              ['“My CV models now run realtime on edge thanks to the team.”','— Aisha K., CV Intern']
+            ].map(([q,a])=> (
+              <div key={a} className="rounded-2xl border border-[#0a2540]/10 p-6">
+                <div className="text-sm">{q}</div>
+                <div className="mt-3 text-xs text-[#0a2540]/70">{a}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="bg-white text-[#0a2540]">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12">
+          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-center">FAQ</h2>
+          <div className="mt-6 space-y-3">
+            {[
+              ['Who can apply?','Students, recent grads, and early‑career professionals with passion for tech.'],
+              ['Is it remote?','Yes. Roles are remote‑friendly unless a project needs on‑site presence.'],
+              ['What is the duration?','Typically 8–12 weeks.'],
+              ['Is there a registration fee?','Only after selection: 15 USD / 1150 INR (shared by email).'],
+              ['Do I get a certificate?','Yes, plus a letter of recommendation for top performers.'],
+              ['Is there a PPO?','Outstanding interns may be offered extended roles/PPO based on performance.']
+            ].map(([q,a])=> (
+              <details key={q} className="rounded-2xl border border-[#0a2540]/10 p-4">
+                <summary className="font-semibold cursor-pointer">{q}</summary>
+                <p className="mt-2 text-sm text-[#0a2540]/80">{a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Strip */}
+      <section className="bg-[#0a2540] text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <div className="text-lg font-semibold">Ready to start your journey?</div>
+            <div className="text-white/80">View open roles or talk to our recruiter.</div>
+          </div>
+          <div className="flex items-center gap-3">
+            <button onClick={()=>window.scrollTo({top:0, behavior:'smooth'})} className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold text-white">View Roles</button>
+            <button onClick={()=>navigate('contact')} className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold">Contact Us</button>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
@@ -3236,6 +3340,5 @@ export default function App() {
     </CurrentTabContext.Provider>
   );
 }
-
 // --------------------------- ROUTER MOUNT ---------------------------
 
