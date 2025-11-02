@@ -1640,6 +1640,7 @@ function ServiceDetailPage() {
 // ---------- ADD THESE IMPORTS AT THE TOP OF App.tsx ----------
 
 // ---------- CAREERS PAGE (with Internships, Open Roles, Full-Time) ----------
+
 function CareersPage() {
   const navigate = useContext(NavContext);
   const setApplyRoleCtx = useContext(ApplyRoleSetterContext);
@@ -1666,19 +1667,19 @@ function CareersPage() {
 
   // ------- Form links ( "#" = closed -> goes to Applications Closed ) -------
   const APPLY_FORM_BY_ID: Record<RoleId, string> = {
-    genai: "#",
-    py: "#",
-    dl: "#",
-    cv: "https://forms.gle/w2gzpJQxhGntAnBj6",
-    ba: "#",
-    ds: "https://forms.gle/xT9md6t87N4sgEWV8",
-    ml: "https://forms.gle/6UVG5Tf76zd3XXyE6",
-    web: "https://forms.gle/8zJMG4c67pe16MU18",
-    da: "https://forms.gle/muHWYbDiy173X4Ms8",
-    bi: "https://forms.gle/CNjoeciZSytGakNX8",
-    ai: "https://forms.gle/oMSF6u716nehhdke6",
-    se: "#",
-    cyber: "https://forms.gle/PFV39TtRkabKGTEW7",
+  genai: "#",                  // still closed
+  py: "#",
+  dl: "#",
+  cv: "/apply-form/cv",
+  ba: "#",
+  ds: "/apply-form/ds",
+  ml: "/apply-form/ml",
+  web: "/apply-form/web",
+  da: "/apply-form/da",
+  bi: "/apply-form/bi",
+  ai: "/apply-form/ai",
+  se: "#",
+  cyber: "/apply-form/cyber",
   };
 
   // ------- Your roles (unchanged content) -------
@@ -1751,27 +1752,38 @@ function CareersPage() {
                       <span className="inline-flex items-center rounded-xl bg-[#0a2540]/5 px-3 py-1 text-xs font-medium">Mode: {r.mode}</span>
                     </div>
 
-                    <div className="mt-5 flex items-center gap-2">
-                      {(() => {
-                        const link = APPLY_FORM_BY_ID[r.id];
-                        if (!link || link.trim() === "#") {
-                          return (
-                            <a href={`/applications-closed?role=${encodeURIComponent(r.title)}`} className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md">
-                              Applications Closed
-                            </a>
-                          );
-                        }
-                        return (
-                          <a href={link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md">
-                            Apply Now
-                          </a>
-                        );
-                      })()}
+                    <div className="mt-5 flex items-center gap-2"> {(() => {
+    const link = APPLY_FORM_BY_ID[r.id];             // keeps your open/closed truth
+    const isOpen = !!link && link.trim() !== "#";
 
-                      <button
-                        onClick={() => {
-                          const subject = encodeURIComponent(`Application: ${r.title}`);
-                          const body = encodeURIComponent(`Hello Technocolabs Team,
+    if (!isOpen) {
+      // CLOSED → go to Applications Closed (keeps your role in the query)
+      return (
+        <a
+          href={`/applications-closed?role=${encodeURIComponent(r.title)}`}
+          className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md"
+        >
+          Applications Closed
+        </a>
+      );
+    }
+
+    // OPEN → go to the embedded form inside your site
+    // (route handled by /apply-form/:roleId and ApplyFormEmbedPage)
+    return (
+      <a
+        href={`/apply-form/${r.id}`}
+        className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md"
+      >
+        Apply Now
+      </a>
+    );
+  })()}
+
+  <button
+    onClick={() => {
+      const subject = encodeURIComponent(`Application: ${r.title}`);
+      const body = encodeURIComponent(`Hello Technocolabs Team,
 
 I would like to apply for the ${r.title} internship.
 
@@ -1788,13 +1800,13 @@ Start date & availability:
 About me:
 
 Thanks,`);
-                          window.location.href = `mailto:technocolabs@gmail.com?subject=${subject}&body=${body}`;
-                        }}
-                        className="text-sm font-medium text-[#1e90ff] hover:underline"
-                      >
-                        Email Now
-                      </button>
-                    </div>
+      window.location.href = `mailto:technocolabs@gmail.com?subject=${subject}&body=${body}`;
+    }}
+    className="text-sm font-medium text-[#1e90ff] hover:underline"
+  >
+    Email Now
+  </button>
+</div>
                   </div>
                 ))}
               </div>
@@ -1988,34 +2000,35 @@ function InternshipShowcaseInline() {
   );
 }
 
-// ---------- INLINE: Blue world map with white markers + labels ----------
+// ---------- INLINE: Sky-blue land on dark-blue background ----------
 function RealWorldMapInline({ dataUrl = "/intern-locations.json" }: { dataUrl?: string }) {
-  const [locations, setLocations] = useState<Array<{country: string; lat: number; lon: number}>>([]);
-  const [position, setPosition] = useState<{coordinates: [number, number]; zoom: number}>({ coordinates: [0, 0], zoom: 1 });
-  const [isSmall, setIsSmall] = useState<boolean>(typeof window !== "undefined" ? window.innerWidth < 640 : false);
+  const [locations, setLocations] = React.useState<Array<{country: string; lat: number; lon: number}>>([]);
+  const [position, setPosition] = React.useState<{coordinates: [number, number]; zoom: number}>({ coordinates: [0, 0], zoom: 1 });
+  const [isSmall, setIsSmall] = React.useState<boolean>(typeof window !== "undefined" ? window.innerWidth < 640 : false);
 
+  // Fallback points if JSON not available
   const DEFAULT_LOCATIONS = [
     { country: "USA", lat: 38.9072, lon: -77.0369 },
     { country: "Brazil", lat: -15.8267, lon: -47.9218 },
     { country: "UK", lat: 51.5074, lon: -0.1278 },
     { country: "France", lat: 48.8566, lon: 2.3522 },
-    { country: "Germany", lat: 52.5200, lon: 13.4050 },
+    { country: "Germany", lat: 52.52, lon: 13.405 },
     { country: "Morocco", lat: 34.0209, lon: -6.8416 },
     { country: "Algeria", lat: 36.7538, lon: 3.0588 },
     { country: "Tunisia", lat: 36.8065, lon: 10.1815 },
     { country: "Egypt", lat: 30.0444, lon: 31.2357 },
     { country: "Saudi Arabia", lat: 24.7136, lon: 46.6753 },
-    { country: "Qatar", lat: 25.2854, lon: 51.5310 },
+    { country: "Qatar", lat: 25.2854, lon: 51.531 },
     { country: "UAE", lat: 24.4539, lon: 54.3773 },
     { country: "Pakistan", lat: 33.6844, lon: 73.0479 },
-    { country: "India", lat: 28.6139, lon: 77.2090 },
+    { country: "India", lat: 28.6139, lon: 77.209 },
     { country: "Bangladesh", lat: 23.8103, lon: 90.4125 },
-    { country: "Nepal", lat: 27.7172, lon: 85.3240 },
+    { country: "Nepal", lat: 27.7172, lon: 85.324 },
     { country: "Sri Lanka", lat: 6.9271, lon: 79.8612 },
-    { country: "Indonesia", lat: -6.2088, lon: 106.8456 }
+    { country: "Indonesia", lat: -6.2088, lon: 106.8456 },
   ];
 
-  useEffect(() => {
+  React.useEffect(() => {
     let cancelled = false;
     fetch(dataUrl)
       .then(async (res) => {
@@ -2026,14 +2039,14 @@ function RealWorldMapInline({ dataUrl = "/intern-locations.json" }: { dataUrl?: 
       .then((d) => {
         if (!cancelled) {
           const clean = Array.isArray(d) ? d.filter((x) => isFinite(+x.lat) && isFinite(+x.lon)) : [];
-          setLocations(clean.length ? clean as any : DEFAULT_LOCATIONS);
+          setLocations(clean.length ? (clean as any) : DEFAULT_LOCATIONS);
         }
       })
       .catch(() => { if (!cancelled) setLocations(DEFAULT_LOCATIONS); });
     return () => { cancelled = true; };
   }, [dataUrl]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const onResize = () => setIsSmall(window.innerWidth < 640);
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
@@ -2046,18 +2059,21 @@ function RealWorldMapInline({ dataUrl = "/intern-locations.json" }: { dataUrl?: 
   const handleZoomOut = () => setPosition((p) => ({ ...p, zoom: Math.max(1, p.zoom / 1.6) }));
   const handleMoveEnd = (p: any) => setPosition(p);
 
-  const LAND   = "#0a2540";
-  const STROKE = "#12385d";
-  const LAND_H = "#11375c";
+  // 🎨 Colors: dark section background already #0a2540.
+  const LAND      = "#cfe8ff";   // sky-blue land
+  const LAND_H    = "#b9dcff";   // hover
+  const STROKE    = "#9dc3f9";   // borders
+  const LABEL_OUT = "#0a2540";   // outline color behind white text for readability
 
   return (
     <div className="mt-6">
       <div className="flex justify-center gap-4 mb-4">
-        <button onClick={handleZoomIn}  className="px-3 py-1 bg-[#0a2540] text-white rounded">Zoom In</button>
-        <button onClick={handleZoomOut} className="px-3 py-1 bg-[#0a2540] text-white rounded">Zoom Out</button>
+        <button onClick={handleZoomIn}  className="px-3 py-1 bg-white/10 text-white rounded">Zoom In</button>
+        <button onClick={handleZoomOut} className="px-3 py-1 bg-white/10 text-white rounded">Zoom Out</button>
       </div>
 
-      <ComposableMap projection="geoMercator" projectionConfig={{ scale: 150 }} style={{ width: "100%", height: "480px" }}>
+      {/* Map background is transparent so the section's dark blue shows through */}
+      <ComposableMap projection="geoMercator" projectionConfig={{ scale: 150 }} style={{ width: "100%", height: "480px", background: "transparent" }}>
         <ZoomableGroup center={position.coordinates} zoom={position.zoom} onMoveEnd={handleMoveEnd}>
           <Geographies geography="https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json">
             {({ geographies }) =>
@@ -2078,7 +2094,8 @@ function RealWorldMapInline({ dataUrl = "/intern-locations.json" }: { dataUrl?: 
           {locations.map((loc) => (
             <Marker key={`${loc.country}-${loc.lat}-${loc.lon}`} coordinates={[+loc.lon, +loc.lat]}>
               <circle r={4.5} fill="#ffffff" />
-              <text x={8} y={4} style={{ fontSize: "11px", fontWeight: 700, fill: "#ffffff", stroke: LAND, strokeWidth: 2, paintOrder: "stroke" }}>
+              {/* white label with dark outline to pop on sky-blue */}
+              <text x={8} y={4} style={{ fontSize: "11px", fontWeight: 700, fill: "#ffffff", stroke: LABEL_OUT, strokeWidth: 2, paintOrder: "stroke" }}>
                 {labelFor(String(loc.country))}
               </text>
             </Marker>
@@ -2089,325 +2106,6 @@ function RealWorldMapInline({ dataUrl = "/intern-locations.json" }: { dataUrl?: 
   );
 }
 
-
-
-// --------------------------- APPLY ----------------------------------------- -----------------------------------------
-function ApplyPage() {
-  const navigate = useContext(NavContext);
-  const role = useContext(ActiveApplyRoleContext);
-
-  // Content to render for the selected role
-  const ROLE_DETAILS: Record<string, { jd: string; responsibilities: string[]; requirements: string[]; }> = {
-    'Generative AI Engineer Intern': { jd: 'Work on LLMs, embeddings, RAG and evaluation; prototype chat and knowledge features and integrate them into apps.', responsibilities: ['Build/evaluate LLM pipelines','RAG with vector stores','Prompt design & evaluation','Integrate with APIs/backends','Document experiments'], requirements: ['Python proficiency','HuggingFace/LangChain experience','NLP/LLM basics','Git, basics of Docker','Clear communication'] },
-    'Python Developer Intern': { jd: 'Develop APIs, automation scripts and internal tools using Python — with a strong focus on quality and tests.', responsibilities: ['Build REST APIs','Write reusable modules','Work with SQL/ORM','Add logging/monitoring','Participate in reviews'], requirements: ['Python fundamentals','FastAPI/Flask or Django','SQL & Git','Basics of Docker','Good documentation'] },
-    'Deep Learning Engineer Intern': { jd: 'Train and evaluate DL models for CV/NLP, optimize inference and create clear experiment reports.', responsibilities: ['Dataset prep and training','Experiment with CNN/Transformers','Optimize models for inference','Track metrics & visualize','Share results with team'], requirements: ['PyTorch/TensorFlow','DL theory basics','GPU workflows','Git proficiency','Analytical mindset'] },
-    'Computer Vision Engineer Intern': { jd: 'Implement CV pipelines (detection/segmentation/OCR) and deploy reliable inference services.', responsibilities: ['Collect/clean/augment data','Train/evaluate CV models','Deploy inference services','Write preprocessing tools','Document results'], requirements: ['Python + OpenCV','PyTorch/TensorFlow','YOLO/Detectron experience','Docker basics','Problem-solving'] },
-    'Business Analyst Intern': { jd: 'Turn data into decisions: gather requirements, build dashboards and communicate insights.', responsibilities: ['Define KPIs and questions','Prepare/clean data','Build dashboards in BI tools','Write concise reports','Collaborate with engineers'], requirements: ['SQL + spreadsheets','Power BI/Tableau/Looker','Basic stats/A-B testing','Strong communication','Attention to detail'] },
-    'Data Science Intern': { jd: 'Explore data, build features and predictive models, and communicate insights clearly to stakeholders.', responsibilities: ['EDA and feature engineering','Model training and evaluation','Visualize results and KPIs','Write reports and docs','Collaborate across teams'], requirements: ['Python & pandas/sklearn','Statistics basics','Data viz tools','SQL','Git'] },
-    'Machine Learning Intern': { jd: 'Implement ML pipelines and experiment with models to improve accuracy and robustness.', responsibilities: ['Features & training','Model selection/tuning','Cross-validation & metrics','Report results','Contribute to deployment readiness'], requirements: ['Python, sklearn','ML theory basics','Experiment tracking','Git','Communication'] },
-    'Web Development Intern': { jd: 'Build responsive UI and connect to APIs in a modern JS stack.', responsibilities: ['Implement pages/components','Fetch from REST APIs','Fix UI bugs','Write clean code','Participate in reviews'], requirements: ['HTML/CSS/JS','React basics','Git','HTTP/REST','Attention to detail'] },
-    'Data Analytics Intern': { jd: 'Create dashboards and analyses that guide decisions.', responsibilities: ['Clean/transform data','Create visuals & dashboards','Define KPIs','Share insights','Document sources'], requirements: ['SQL','Power BI/Tableau','Spreadsheets','Statistics basics','Comms'] },
-    'Business Intelligence Intern': { jd: 'Model data and build BI dashboards with good governance.', responsibilities: ['Model for BI','Build/maintain reports','Monitor refresh & quality','Optimize performance','Write docs'], requirements: ['Power BI/Tableau/Looker','SQL','DAX/LookML (any)','Versioning','Stakeholder comms'] },
-    'Artificial Intelligence Intern': { jd: 'Assist across AI tasks, from research to prototypes in NLP/CV.', responsibilities: ['Review papers & baselines','Train simple models','Prepare data','Write notebooks','Demo findings'], requirements: ['Python & ML libs','NLP/CV basics','Math basics','Git','Curiosity'] },
-    'Software Engineering Intern': { jd: 'Support full‑stack development with tests and clean code.', responsibilities: ['Feature work & bug fixes','Unit/integration tests','Reviews and CI','Perf improvements','Documentation'], requirements: ['One stack (frontend/backend)','Git & tests','Clean code','CI/CD basics','Teamwork'] },
-    'CyberSecurity Engineer Intern': { jd: 'Assist security reviews, fix issues, and promote best practices.', responsibilities: ['Run scans','Threat modeling assistance','Track fixes','Document policies','Awareness training'], requirements: ['OWASP basics','Scripting basics','Linux/Networking','Auth/Identity basics','Detail oriented'] },
-  };
-
-  const details = ROLE_DETAILS[role as keyof typeof ROLE_DETAILS];
-
-  // Submit handler with API attempt + email fallback
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.currentTarget as HTMLFormElement;
-    const fd = new FormData(form);
-    const payload = {
-      role,
-      country: String(fd.get('country') || ''),
-      name: String(fd.get('name') || ''),
-      email: String(fd.get('email') || ''),
-      phone: String(fd.get('phone') || ''),
-      university: String(fd.get('university') || ''),
-      location: String(fd.get('location') || ''),
-      portfolio: String(fd.get('portfolio') || ''),
-      resume: String(fd.get('resume') || ''),
-      availability: String(fd.get('availability') || ''),
-      about: String(fd.get('about') || ''),
-      agree: fd.get('agree') ? 'Yes' : 'No',
-    };
-
-    try {
-      const res = await fetch('/api/apply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-      if (res.ok) {
-        alert('Application submitted successfully! Our team will contact you soon.');
-        form.reset();
-        return;
-      }
-    } catch (err) { /* fall through to mailto */ }
-
-    const subject = encodeURIComponent(`Internship Application: ${role}`);
-    const body = encodeURIComponent(
-`Hello Technocolabs Team,
-
-I would like to apply for the ${role} internship.
-
-Name: ${payload.name}
-Email: ${payload.email}
-Phone: ${payload.phone}
-Country: ${payload.country}
-University: ${payload.university}
-Location/Time zone: ${payload.location}
-Portfolio/GitHub/LinkedIn: ${payload.portfolio}
-Resume link: ${payload.resume}
-Start date & availability: ${payload.availability}
-Agreement to registration fee (15 USD / 1150 INR): ${payload.agree}
-
-About me:
-${payload.about}
-
-Thanks,
-${payload.name}`);
-    window.location.href = `mailto:technocollabs@gmail.com?subject=${subject}&body=${body}`;
-  };
-
-  return (<div className="bg-white text-[#0a2540]">
-      <section className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 pt-20 pb-3">
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Apply for <span className="text-[#1e90ff]">{role}</span></h1>
-        <p className="mt-2 text-[#0a2540]/70">Fill the form below to apply for the position. We will attempt to submit to the <code> Hiring Department</code>. If that's not submitted properly, your email app will open with all details, addressed to <strong>technocollabs@gmail.com</strong>.</p>
-      </section>
-      <section className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 pb-16">
-        <form onSubmit={handleSubmit} className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm grid gap-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div><label className="block text-sm font-medium">Internship*</label><input name="role" readOnly value={role} className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-[#0a2540]/5 px-3 py-2"/></div>
-            <div><label className="block text-sm font-medium">Country*</label><select name="country" required className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2"><option value="">Select country</option><option value="AF">🇦🇫 Afghanistan</option>
-<option value="AL">🇦🇱 Albania</option>
-<option value="DZ">🇩🇿 Algeria</option>
-<option value="AD">🇦🇩 Andorra</option>
-<option value="AO">🇦🇴 Angola</option>
-<option value="AG">🇦🇬 Antigua and Barbuda</option>
-<option value="AR">🇦🇷 Argentina</option>
-<option value="AM">🇦🇲 Armenia</option>
-<option value="AU">🇦🇺 Australia</option>
-<option value="AT">🇦🇹 Austria</option>
-<option value="AZ">🇦🇿 Azerbaijan</option>
-<option value="BS">🇧🇸 Bahamas</option>
-<option value="BH">🇧🇭 Bahrain</option>
-<option value="BD">🇧🇩 Bangladesh</option>
-<option value="BB">🇧🇧 Barbados</option>
-<option value="BY">🇧🇾 Belarus</option>
-<option value="BE">🇧🇪 Belgium</option>
-<option value="BZ">🇧🇿 Belize</option>
-<option value="BJ">🇧🇯 Benin</option>
-<option value="BT">🇧🇹 Bhutan</option>
-<option value="BO">🇧🇴 Bolivia</option>
-<option value="BA">🇧🇦 Bosnia and Herzegovina</option>
-<option value="BW">🇧🇼 Botswana</option>
-<option value="BR">🇧🇷 Brazil</option>
-<option value="BN">🇧🇳 Brunei Darussalam</option>
-<option value="BG">🇧🇬 Bulgaria</option>
-<option value="BF">🇧🇫 Burkina Faso</option>
-<option value="BI">🇧🇮 Burundi</option>
-<option value="CV">🇨🇻 Cabo Verde</option>
-<option value="KH">🇰🇭 Cambodia</option>
-<option value="CM">🇨🇲 Cameroon</option>
-<option value="CA">🇨🇦 Canada</option>
-<option value="CF">🇨🇫 Central African Republic</option>
-<option value="TD">🇹🇩 Chad</option>
-<option value="CL">🇨🇱 Chile</option>
-<option value="CN">🇨🇳 China</option>
-<option value="CO">🇨🇴 Colombia</option>
-<option value="KM">🇰🇲 Comoros</option>
-<option value="CG">🇨🇬 Congo</option>
-<option value="CD">🇨🇩 Congo (Democratic Republic)</option>
-<option value="CR">🇨🇷 Costa Rica</option>
-<option value="CI">🇨🇮 Côte d'Ivoire</option>
-<option value="HR">🇭🇷 Croatia</option>
-<option value="CU">🇨🇺 Cuba</option>
-<option value="CY">🇨🇾 Cyprus</option>
-<option value="CZ">🇨🇿 Czech Republic</option>
-<option value="DK">🇩🇰 Denmark</option>
-<option value="DJ">🇩🇯 Djibouti</option>
-<option value="DM">🇩🇲 Dominica</option>
-<option value="DO">🇩🇴 Dominican Republic</option>
-<option value="EC">🇪🇨 Ecuador</option>
-<option value="EG">🇪🇬 Egypt</option>
-<option value="SV">🇸🇻 El Salvador</option>
-<option value="GQ">🇬🇶 Equatorial Guinea</option>
-<option value="ER">🇪🇷 Eritrea</option>
-<option value="EE">🇪🇪 Estonia</option>
-<option value="SZ">🇸🇿 Eswatini</option>
-<option value="ET">🇪🇹 Ethiopia</option>
-<option value="FJ">🇫🇯 Fiji</option>
-<option value="FI">🇫🇮 Finland</option>
-<option value="FR">🇫🇷 France</option>
-<option value="GA">🇬🇦 Gabon</option>
-<option value="GM">🇬🇲 Gambia</option>
-<option value="GE">🇬🇪 Georgia</option>
-<option value="DE">🇩🇪 Germany</option>
-<option value="GH">🇬🇭 Ghana</option>
-<option value="GR">🇬🇷 Greece</option>
-<option value="GD">🇬🇩 Grenada</option>
-<option value="GT">🇬🇹 Guatemala</option>
-<option value="GN">🇬🇳 Guinea</option>
-<option value="GW">🇬🇼 Guinea-Bissau</option>
-<option value="GY">🇬🇾 Guyana</option>
-<option value="HT">🇭🇹 Haiti</option>
-<option value="HN">🇭🇳 Honduras</option>
-<option value="HU">🇭🇺 Hungary</option>
-<option value="IS">🇮🇸 Iceland</option>
-<option value="IN">🇮🇳 India</option>
-<option value="ID">🇮🇩 Indonesia</option>
-<option value="IR">🇮🇷 Iran</option>
-<option value="IQ">🇮🇶 Iraq</option>
-<option value="IE">🇮🇪 Ireland</option>
-<option value="IL">🇮🇱 Israel</option>
-<option value="IT">🇮🇹 Italy</option>
-<option value="JM">🇯🇲 Jamaica</option>
-<option value="JP">🇯🇵 Japan</option>
-<option value="JO">🇯🇴 Jordan</option>
-<option value="KZ">🇰🇿 Kazakhstan</option>
-<option value="KE">🇰🇪 Kenya</option>
-<option value="KI">🇰🇮 Kiribati</option>
-<option value="KW">🇰🇼 Kuwait</option>
-<option value="KG">🇰🇬 Kyrgyzstan</option>
-<option value="LA">🇱🇦 Lao People's Democratic Republic</option>
-<option value="LV">🇱🇻 Latvia</option>
-<option value="LB">🇱🇧 Lebanon</option>
-<option value="LS">🇱🇸 Lesotho</option>
-<option value="LR">🇱🇷 Liberia</option>
-<option value="LY">🇱🇾 Libya</option>
-<option value="LI">🇱🇮 Liechtenstein</option>
-<option value="LT">🇱🇹 Lithuania</option>
-<option value="LU">🇱🇺 Luxembourg</option>
-<option value="MG">🇲🇬 Madagascar</option>
-<option value="MW">🇲🇼 Malawi</option>
-<option value="MY">🇲🇾 Malaysia</option>
-<option value="MV">🇲🇻 Maldives</option>
-<option value="ML">🇲🇱 Mali</option>
-<option value="MT">🇲🇹 Malta</option>
-<option value="MH">🇲🇭 Marshall Islands</option>
-<option value="MR">🇲🇷 Mauritania</option>
-<option value="MU">🇲🇺 Mauritius</option>
-<option value="MX">🇲🇽 Mexico</option>
-<option value="FM">🇫🇲 Micronesia</option>
-<option value="MD">🇲🇩 Moldova</option>
-<option value="MC">🇲🇨 Monaco</option>
-<option value="MN">🇲🇳 Mongolia</option>
-<option value="ME">🇲🇪 Montenegro</option>
-<option value="MA">🇲🇦 Morocco</option>
-<option value="MZ">🇲🇿 Mozambique</option>
-<option value="MM">🇲🇲 Myanmar</option>
-<option value="NA">🇳🇦 Namibia</option>
-<option value="NR">🇳🇷 Nauru</option>
-<option value="NP">🇳🇵 Nepal</option>
-<option value="NL">🇳🇱 Netherlands</option>
-<option value="NZ">🇳🇿 New Zealand</option>
-<option value="NI">🇳🇮 Nicaragua</option>
-<option value="NE">🇳🇪 Niger</option>
-<option value="NG">🇳🇬 Nigeria</option>
-<option value="KP">🇰🇵 North Korea</option>
-<option value="MK">🇲🇰 North Macedonia</option>
-<option value="NO">🇳🇴 Norway</option>
-<option value="OM">🇴🇲 Oman</option>
-<option value="PK">🇵🇰 Pakistan</option>
-<option value="PW">🇵🇼 Palau</option>
-<option value="PS">🇵🇸 State of Palestine</option>
-<option value="PA">🇵🇦 Panama</option>
-<option value="PG">🇵🇬 Papua New Guinea</option>
-<option value="PY">🇵🇾 Paraguay</option>
-<option value="PE">🇵🇪 Peru</option>
-<option value="PH">🇵🇭 Philippines</option>
-<option value="PL">🇵🇱 Poland</option>
-<option value="PT">🇵🇹 Portugal</option>
-<option value="QA">🇶🇦 Qatar</option>
-<option value="RO">🇷🇴 Romania</option>
-<option value="RU">🇷🇺 Russia</option>
-<option value="RW">🇷🇼 Rwanda</option>
-<option value="KN">🇰🇳 Saint Kitts and Nevis</option>
-<option value="LC">🇱🇨 Saint Lucia</option>
-<option value="VC">🇻🇨 Saint Vincent and the Grenadines</option>
-<option value="WS">🇼🇸 Samoa</option>
-<option value="SM">🇸🇲 San Marino</option>
-<option value="ST">🇸🇹 São Tomé and Príncipe</option>
-<option value="SA">🇸🇦 Saudi Arabia</option>
-<option value="SN">🇸🇳 Senegal</option>
-<option value="RS">🇷🇸 Serbia</option>
-<option value="SC">🇸🇨 Seychelles</option>
-<option value="SL">🇸🇱 Sierra Leone</option>
-<option value="SG">🇸🇬 Singapore</option>
-<option value="SK">🇸🇰 Slovakia</option>
-<option value="SI">🇸🇮 Slovenia</option>
-<option value="SB">🇸🇧 Solomon Islands</option>
-<option value="SO">🇸🇴 Somalia</option>
-<option value="ZA">🇿🇦 South Africa</option>
-<option value="SS">🇸🇸 South Sudan</option>
-<option value="ES">🇪🇸 Spain</option>
-<option value="LK">🇱🇰 Sri Lanka</option>
-<option value="SD">🇸🇩 Sudan</option>
-<option value="SR">🇸🇷 Suriname</option>
-<option value="SE">🇸🇪 Sweden</option>
-<option value="CH">🇨🇭 Switzerland</option>
-<option value="SY">🇸🇾 Syria</option>
-<option value="TJ">🇹🇯 Tajikistan</option>
-<option value="TZ">🇹🇿 Tanzania</option>
-<option value="TH">🇹🇭 Thailand</option>
-<option value="TL">🇹🇱 Timor-Leste</option>
-<option value="TG">🇹🇬 Togo</option>
-<option value="TO">🇹🇴 Tonga</option>
-<option value="TT">🇹🇹 Trinidad and Tobago</option>
-<option value="TN">🇹🇳 Tunisia</option>
-<option value="TR">🇹🇷 Turkey</option>
-<option value="TM">🇹🇲 Turkmenistan</option>
-<option value="TV">🇹🇻 Tuvalu</option>
-<option value="UG">🇺🇬 Uganda</option>
-<option value="UA">🇺🇦 Ukraine</option>
-<option value="AE">🇦🇪 United Arab Emirates</option>
-<option value="GB">🇬🇧 United Kingdom</option>
-<option value="US">🇺🇸 United States</option>
-<option value="UY">🇺🇾 Uruguay</option>
-<option value="UZ">🇺🇿 Uzbekistan</option>
-<option value="VU">🇻🇺 Vanuatu</option>
-<option value="VE">🇻🇪 Venezuela</option>
-<option value="VN">🇻🇳 Vietnam</option>
-<option value="VA">🇻🇦 Holy See</option>
-<option value="YE">🇾🇪 Yemen</option>
-<option value="ZM">🇿🇲 Zambia</option>
-<option value="ZW">🇿🇼 Zimbabwe</option>
-</select></div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div><label className="block text-sm font-medium">Full Name*</label><input name="name" required className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2"/></div>
-            <div><label className="block text-sm font-medium">Email*</label><input name="email" required type="email" className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2"/></div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div><label className="block text-sm font-medium">Phone*</label><input name="phone" required className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2"/></div>
-            <div><label className="block text-sm font-medium">University / College*</label><input name="university" required className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2"/></div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div><label className="block text-sm font-medium">Location / Time zone</label><input name="location" className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2"/></div>
-            <div><label className="block text-sm font-medium">GitHub*</label><input name="portfolio" className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2"/></div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div><label className="block text-sm font-medium">Graduation Year</label><input name="Graduation" className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2"/></div>
-            <div><label className="block text-sm font-medium">LinkedIn*</label><input name="portfolio" className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2"/></div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div><label className="block text-sm font-medium">Resume link*</label><input name="resume" className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2"/></div>
-            <div><label className="block text-sm font-medium">Start date & availability</label><input name="availability" className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2"/></div>
-          </div>
-          <div><label className="block text-sm font-medium">About you</label><textarea name="about" rows={5} className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2"/></div>
-          <div className="flex items-start gap-2 bg-[#0a2540]/5 rounded-xl p-3">
-            <input id="agree" name="agree" type="checkbox" className="mt-1"/>
-            <label htmlFor="agree" className="text-sm">I agree that if selected after the interview, a <span className="font-semibold">registration fee of 15 USD / 1150 INR</span> must be paid (instructions will be sent by email post interview.</label>
-          </div>
-          <div className="flex items-center gap-3">
-            <button type="submit" className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:shadow-lg">Submit Application</button>
-            <button type="button" onClick={()=>{ window.location.href = 'mailto:technocollabs@gmail.com?subject=Internship%20Application'; }} className="text-sm font-medium text-[#1e90ff] hover:underline">Open in Email</button>
-          </div>
-        </form>
-      </section>
-    </div>
-  );
-}
 
 // --------------------------- CONTACT PAGE ---------------------------------- ----------------------------------
 function ContactPage() {
@@ -3332,22 +3030,6 @@ function FloatingCTA() {
     </div>
   );
 }
-// ===== GLOBAL: role id → Google Form URL (use "#" to mark closed) =====
-const APPLY_FORM_BY_ID: Record<string, string> = {
-  genai: "#",
-  py: "#",
-  dl: "#",
-  cv: "https://forms.gle/w2gzpJQxhGntAnBj6",
-  ba: "#",
-  ds: "https://forms.gle/xT9md6t87N4sgEWV8",
-  ml: "https://forms.gle/6UVG5Tf76zd3XXyE6",
-  web: "https://forms.gle/8zJMG4c67pe16MU18",
-  da: "https://forms.gle/muHWYbDiy173X4Ms8",
-  bi: "https://forms.gle/CNjoeciZSytGakNX8",
-  ai: "https://forms.gle/oMSF6u716nehhdke6",
-  se: "#",
-  cyber: "https://forms.gle/PFV39TtRkabKGTEW7",
-};
 
 // --------------------------- APPLICATIONS CLOSED PAGE ----------------------------
 function ApplicationsClosedPage() {
@@ -3386,52 +3068,99 @@ function ApplicationsClosedPage() {
 
 
 // --------------------------- APPLY FORM (EMBED PAGE) ----------------------------
-function ApplyFormEmbedPage() {
-  const params = new URLSearchParams(window.location.search);
-  // IMPORTANT: pass the *role id* (e.g., "web", "ml", "ds")
-  const roleId = params.get("role") || "";
-  const formUrl = APPLY_FORM_BY_ID[roleId];
+type ApplyFormEmbedPageProps = { roleId?: string };
 
-  // If form is closed or missing → redirect to closed page
-  if (!formUrl || formUrl.trim() === "#") {
-    window.location.href = `/applications-closed?role=${encodeURIComponent(roleId)}`;
-    return null;
-  }
+function ApplyFormEmbedPage({ roleId = "" }) {
+  // ✅ 1. Short-code → Full Internship Title
+  const ROLE_NAME: Record<string, string> = {
+    genai: "Generative AI Engineer Intern",
+    py: "Python Developer Intern",
+    dl: "Deep Learning Engineer Intern",
+    cv: "Computer Vision Engineer Intern",
+    ba: "Business Analyst Intern",
+    ds: "Data Science Intern",
+    ml: "Machine Learning Intern",
+    web: "Web Development Intern",
+    da: "Data Analytics Intern",
+    bi: "Business Intelligence Intern",
+    ai: "Artificial Intelligence Intern",
+    se: "Software Engineering Intern",
+    cyber: "CyberSecurity Engineer Intern",
+  };
+
+  // ✅ 2. Your short-code → Google Form link mapping
+  const MAP: Record<string, string> = {
+    cv: "https://forms.gle/w2gzpJQxhGntAnBj6",
+    ds: "https://forms.gle/xT9md6t87N4sgEWV8",
+    ml: "https://forms.gle/6UVG5Tf76zd3XXyE6",
+    web: "https://forms.gle/8zJMG4c67pe16MU18",
+    da: "https://forms.gle/muHWYbDiy173X4Ms8",
+    bi: "https://forms.gle/CNjoeciZSytGakNX8",
+    ai: "https://forms.gle/oMSF6u716nehhdke6",
+    py: "<put python form here if you open it>",
+    ba: "<put BA form here if you open it>",
+    se: "<put SE form here if you open it>",
+    cyber: "https://forms.gle/PFV39TtRkabKGTEW7",
+  };
+
+  // ✅ 3. Final full name for heading
+  const fullRoleName = ROLE_NAME[roleId] || "Internship";
+
+  // ✅ 4. Correct Google Form URL
+  const url = MAP[roleId];
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 py-10">
-      <h1 className="text-2xl sm:text-3xl font-semibold mb-4">
-        Apply for the Internship (Remote)
-      </h1>
-      <div className="rounded-2xl border border-gray-300 overflow-hidden">
-        <iframe
-          src={formUrl}
-          title={`Application Form - ${roleId}`}
-          style={{ width: "100%", height: "1800px", border: 0 }}
-          allow="clipboard-write; fullscreen; geolocation; microphone; camera"
-        />
-      </div>
+    <div className="bg-white text-[#0a2540]">
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-6">
+        <h1 className="text-3xl font-bold">
+  Apply — <span className="text-[#1e90ff]">{fullRoleName}</span>
+</h1>
+        {!url ? (
+          <div className="mt-6 rounded-2xl border border-[#0a2540]/10 bg-[#f8fafc] p-6">
+            <p className="text-[#0a2540]/80">
+              This role is currently closed or the form is not set. Please check back later.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-6 rounded-2xl overflow-hidden border border-[#0a2540]/10">
+            <iframe
+              title="Application form"
+              src={url}
+              style={{ width: "100%", height: "80vh", border: 0 }}
+              loading="lazy"
+            />
+          </div>
+        )}
+      </section>
     </div>
   );
 }
 
+/// --------------------------- APP -------------------------------------------
+// read optional slug after "/:tab"
+const roleSlug =
+  typeof window !== "undefined"
+    ? (window.location.pathname.split("/")[2] || "")
+    : "";
+
 // --------------------------- APP -------------------------------------------
 export default function App() {
-  // 🔗 Read the ":tab" from the URL ("/", "/services", "/careers", "/contact", etc.)
-  const { tab: tabParam } = useParams();
+  // 🔗 Read params from the URL
+  const { tab: tabParam, roleId } = useParams();
   const routerNavigate = useNavigate();
 
-  // ✅ List of tabs your app understands (must match your existing Tab union)
   const VALID_TABS = new Set<Tab>([
     'home','services','service','careers','contact','apply','svc','privacy','terms','cookies',
     'bigdata','data-architecture','data-warehouse','bi-visualization','predictive-analytics-bd',
-    'cloud-services','about','success-stories','blog','write-for-us','verify',"applications-closed", 'apply-form'
+    'cloud-services','about','success-stories','blog','write-for-us','verify','applications-closed','apply-form'
   ]);
 
-  // 🧭 Normalize the URL param into a valid Tab (fallback to 'home')
-  const routeTab: Tab = (tabParam && VALID_TABS.has(tabParam as Tab))
-    ? (tabParam as Tab)
-    : 'home';
+  // ✅ If roleId exists (route is /apply-form/:roleId), force 'apply-form'
+  const routeTab: Tab = roleId
+    ? 'apply-form'
+    : (tabParam && VALID_TABS.has(tabParam as Tab))
+      ? (tabParam as Tab)
+      : 'home';
 
   // 🧠 State stays the same, but initializes from the URL
   const [tab, setTab] = useState<Tab>(routeTab);
@@ -3442,7 +3171,8 @@ export default function App() {
   // 🔁 Keep state in sync if user changes the URL (or clicks a Link)
   useEffect(() => {
     if (tab !== routeTab) setTab(routeTab);
-  }, [routeTab]); // eslint-disable-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [routeTab]);
 
   // 🧭 Your existing navigate, but now it also updates the URL
   const navigate = (t: Tab) => {
@@ -3450,30 +3180,43 @@ export default function App() {
     routerNavigate(t === 'home' ? '/' : `/${t}`); // updates the address bar
   };
 
-  // (Optional) If you want detail pages to update the URL too, uncomment:
-  // const openDetail = (slug: string | null) => { 
-  //   setActiveService(slug); 
-  //   setTab('service'); 
-  //   routerNavigate('/service'); 
-  // };
-
-  // const openServicePage = (slug: string) => { 
-  //   setActiveServicePage(slug); 
-  //   setTab('svc'); 
-  //   routerNavigate(`/svc${slug ? `/${slug}` : ''}`); 
-  // };
-
-  // Keep your originals (no URL change) — or swap with the versions above:
+  // Keep your originals (no URL change) — or swap with the URL-updating versions if you want
   const openDetail = (slug: string | null) => { setActiveService(slug); setTab('service'); };
   const openServicePage = (slug: string) => { setActiveServicePage(slug); setTab('svc'); };
 
+  // ✅ Map roleId → human-readable role title for /apply-form/:roleId
+  const ROLE_ID_TO_TITLE: Record<string, string> = {
+    genai: 'Generative AI Engineer Intern',
+    py: 'Python Developer Intern',
+    dl: 'Deep Learning Engineer Intern',
+    cv: 'Computer Vision Engineer Intern',
+    ba: 'Business Analyst Intern',
+    ds: 'Data Science Intern',
+    ml: 'Machine Learning Intern',
+    web: 'Web Development Intern',
+    da: 'Data Analytics Intern',
+    bi: 'Business Intelligence Intern',
+    ai: 'Artificial Intelligence Intern',
+    se: 'Software Engineering Intern',
+    cyber: 'CyberSecurity Engineer Intern',
+  };
+
+  // When opening /apply-form/:roleId, set the applyRole so the embedded form/page knows the role
+  useEffect(() => {
+    if (routeTab === 'apply-form') {
+      const title = roleId ? ROLE_ID_TO_TITLE[roleId] : undefined;
+      if (title) setApplyRole(title);
+    }
+  }, [routeTab, roleId]);
+
+  // --------- render current tab ----------
   let content: React.ReactNode = null;
   if (tab === 'home') content = <HomePage />;
   if (tab === 'services') content = <ServicesPage />;
   if (tab === 'service') content = <ServiceDetailPage />;
   if (tab === 'careers') content = <CareersPage />;
   if (tab === 'contact') content = <ContactPage />;
-  if (tab === 'apply') content = <ApplyPage />;
+  //if (tab === 'apply') content = <ApplyPage />;
   if (tab === 'svc') content = <StandaloneServicePage />;
   if (tab === 'privacy') content = <PrivacyPolicyPage />;
   if (tab === 'terms') content = <TermsPage />;
@@ -3490,8 +3233,7 @@ export default function App() {
   if (tab === 'write-for-us') content = <WriteForUsPage />;
   if (tab === 'verify') content = <VerifyInternshipPage />;
   if (tab === 'applications-closed') content = <ApplicationsClosedPage />;
-  if (tab === 'apply-form') content = <ApplyFormEmbedPage />;
-
+if (tab === 'apply-form') content = <ApplyFormEmbedPage roleId={roleSlug} />;
 
 
 
