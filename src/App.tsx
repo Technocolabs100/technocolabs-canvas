@@ -55,7 +55,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 // --------------------------- ROUTING & CONTEXT ------------------------------
-type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies'| 'bigdata' | 'data-architecture' | 'data-warehouse'| 'bi-visualization' | 'predictive-analytics-bd' | 'cloud-services'| 'about' | 'success-stories' | 'blog' | 'write-for-us'|'verify'|'applications-closed'|'apply-form';
+type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies'| 'bigdata' | 'data-architecture' | 'data-warehouse'| 'bi-visualization' | 'predictive-analytics-bd' | 'cloud-services'| 'about' | 'success-stories' | 'blog' | 'write-for-us'|'verify'|'applications-closed'|'apply-form'|'spotlight';
 const NavContext = React.createContext<(t: Tab) => void>(() => {});
 const ServiceDetailContext = React.createContext<(slug: string | null) => void>(() => {});
 const ActiveServiceContext = React.createContext<string | null>(null);
@@ -1639,22 +1639,28 @@ function ServiceDetailPage() {
 }
 // ---------- ADD THESE IMPORTS AT THE TOP OF App.tsx ----------
 
-// ---------- CAREERS PAGE (with Internships, Open Roles, Full-Time) ----------
-
+// ---------- CAREERS PAGE (with Internships, Open Roles, Full-Time, Spotlight) ----------
 function CareersPage() {
   const navigate = useContext(NavContext);
   const setApplyRoleCtx = useContext(ApplyRoleSetterContext);
 
- const saved = typeof window !== "undefined" ? window.localStorage.getItem("careers-subtab") : null;
-const [sub, setSub] =
-  useState<'internships' | 'openroles' | 'fulltime'>(saved === "openroles" ? "openroles" : "internships");
+  // restore last sub-tab (default: internships). Guard window for SSR.
+  const saved =
+    typeof window !== "undefined"
+      ? window.localStorage.getItem("careers-subtab")
+      : null;
 
-useEffect(() => {
-  window.localStorage.setItem("careers-subtab", sub);
-}, [sub]);
+  const [sub, setSub] = useState<'internships' | 'openroles' | 'fulltime'>(
+    saved === "openroles" ? "openroles" : "internships"
+  );
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("careers-subtab", sub);
+    }
+  }, [sub]);
 
-  // ------- Types for role IDs (TypeScript-safe indexing) -------
+  // ------- Types -------
   type RoleId =
     | 'genai' | 'py' | 'dl' | 'cv' | 'ba'
     | 'ds' | 'ml' | 'web' | 'da' | 'bi'
@@ -1671,24 +1677,24 @@ useEffect(() => {
     requirements: string[];
   };
 
-  // ------- Form links ( "#" = closed -> goes to Applications Closed ) -------
+  // ------- Form links ( "#" = closed -> Applications Closed ) -------
   const APPLY_FORM_BY_ID: Record<RoleId, string> = {
-  genai: "#",                  // still closed
-  py: "#",
-  dl: "#",
-  cv: "/apply-form/cv",
-  ba: "#",
-  ds: "/apply-form/ds",
-  ml: "/apply-form/ml",
-  web: "/apply-form/web",
-  da: "/apply-form/da",
-  bi: "/apply-form/bi",
-  ai: "/apply-form/ai",
-  se: "#",
-  cyber: "/apply-form/cyber",
+    genai: "#", // still closed
+    py: "#",
+    dl: "#",
+    cv: "/apply-form/cv",
+    ba: "#",
+    ds: "/apply-form/ds",
+    ml: "/apply-form/ml",
+    web: "/apply-form/web",
+    da: "/apply-form/da",
+    bi: "/apply-form/bi",
+    ai: "/apply-form/ai",
+    se: "#",
+    cyber: "/apply-form/cyber",
   };
 
-  // ------- Your roles (unchanged content) -------
+  // ------- Roles -------
   const ROLES: Role[] = [
     { id: 'genai', title: 'Generative AI Engineer Intern', domain: 'Generative AI', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Work on LLM-powered features: prompt engineering, embeddings, RAG pipelines, and evaluation. You will prototype, measure, and iterate with mentors to ship features into real apps.', responsibilities: ['Build and evaluate LLM pipelines (chat, Q&A, summarization)','Implement retrieval with vector stores and embeddings','Design/evaluate prompts; collect feedback and improve outputs','Integrate models with web backends/APIs','Document experiments and results'], requirements: ['Strong Python; basics of JS/TypeScript a plus','NLP/LLM concepts (tokenization, embeddings, context windows)','Hands-on with HuggingFace/LangChain/LlamaIndex (any)','Familiar with OpenAI/transformer models; basic CI/Git','Good communication and curiosity to experiment'] },
     { id: 'py', title: 'Python Developer Intern', domain: 'Software Development', duration: '8–12 weeks', mode: 'Remote/On-site', jd: 'Contribute to backend services, APIs, automation scripts, and internal tools built with Python. Focus on clean code, testing, and shipping maintainable features.', responsibilities: ['Build REST APIs and background jobs','Write reusable, tested modules and CLI tools','Work with databases (SQL/ORM) and caching','Instrument logging and basic monitoring','Participate in code reviews and sprint rituals'], requirements: ['Solid Python fundamentals (typing, packaging, venv)','Experience with FastAPI/Flask or Django (any one)','SQL knowledge (Postgres/MySQL) and Git','Basics of Docker and HTTP/REST','Clear communication and documentation'] },
@@ -1711,10 +1717,46 @@ useEffect(() => {
       <section className="relative overflow-clip">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-6">
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Careers</h1>
-          <div className="mt-6 inline-flex rounded-xl bg-white/10 p-1">
-            <button onClick={() => setSub('internships')} className={`px-4 py-2 text-sm font-semibold rounded-lg ${sub==='internships'?'bg-white text-[#0a2540]':'text-white hover:bg-white/10'}`}>Internships</button>
-            <button onClick={() => setSub('openroles')}   className={`px-4 py-2 text-sm font-semibold rounded-lg ${sub==='openroles'  ?'bg-white text-[#0a2540]':'text-white hover:bg-white/10'}`}>Open Roles</button>
-            <button onClick={() => setSub('fulltime')}    className={`px-4 py-2 text-sm font-semibold rounded-lg ${sub==='fulltime'   ?'bg-white text-[#0a2540]':'text-white hover:bg-white/10'}`}>Full-Time (Coming Soon)</button>
+
+          {/* Tabs + Spotlight (scrollable on mobile) */}
+          <div className="mt-6 inline-flex rounded-xl bg-white/10 p-1 max-w-full overflow-x-auto no-scrollbar">
+            <div className="flex gap-1">
+              <button
+                onClick={() => setSub('internships')}
+                className={`px-4 py-2 text-sm font-semibold rounded-lg ${
+                  sub === 'internships' ? 'bg-white text-[#0a2540]' : 'text-white hover:bg-white/10'
+                }`}
+              >
+                Internships
+              </button>
+
+              <button
+                onClick={() => setSub('openroles')}
+                className={`px-4 py-2 text-sm font-semibold rounded-lg ${
+                  sub === 'openroles' ? 'bg-white text-[#0a2540]' : 'text-white hover:bg-white/10'
+                }`}
+              >
+                Open Roles
+              </button>
+
+              <button
+                onClick={() => setSub('fulltime')}
+                className={`px-4 py-2 text-sm font-semibold rounded-lg ${
+                  sub === 'fulltime' ? 'bg-white text-[#0a2540]' : 'text-white hover:bg-white/10'
+                }`}
+              >
+                Full-Time (Coming Soon)
+              </button>
+
+              {/* ⭐ Intern Spotlight – navigates to standalone page */}
+              <button
+                onClick={() => navigate('spotlight')}
+                className="px-4 py-2 text-sm font-semibold rounded-lg text-white hover:bg-white/10"
+                title="See standout intern projects and profiles"
+              >
+                ⭐ Intern Spotlight
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -1742,13 +1784,13 @@ useEffect(() => {
                       <div>
                         <div className="text-sm font-semibold">Responsibilities</div>
                         <ul className="mt-1 list-disc pl-5 space-y-1 text-sm text-[#0a2540]/80">
-                          {r.responsibilities.map((x,i)=>(<li key={i}>{x}</li>))}
+                          {r.responsibilities.map((x, i) => (<li key={i}>{x}</li>))}
                         </ul>
                       </div>
                       <div>
                         <div className="text-sm font-semibold">Requirements</div>
                         <ul className="mt-1 list-disc pl-5 space-y-1 text-sm text-[#0a2540]/80">
-                          {r.requirements.map((x,i)=>(<li key={i}>{x}</li>))}
+                          {r.requirements.map((x, i) => (<li key={i}>{x}</li>))}
                         </ul>
                       </div>
                     </div>
@@ -1758,38 +1800,36 @@ useEffect(() => {
                       <span className="inline-flex items-center rounded-xl bg-[#0a2540]/5 px-3 py-1 text-xs font-medium">Mode: {r.mode}</span>
                     </div>
 
-                    <div className="mt-5 flex items-center gap-2"> {(() => {
-    const link = APPLY_FORM_BY_ID[r.id];             // keeps your open/closed truth
-    const isOpen = !!link && link.trim() !== "#";
+                    <div className="mt-5 flex items-center gap-2">
+                      {(() => {
+                        const link = APPLY_FORM_BY_ID[r.id];
+                        const isOpen = !!link && link.trim() !== "#";
 
-    if (!isOpen) {
-      // CLOSED → go to Applications Closed (keeps your role in the query)
-      return (
-        <a
-          href={`/applications-closed?role=${encodeURIComponent(r.title)}`}
-          className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md"
-        >
-          Applications Closed
-        </a>
-      );
-    }
+                        if (!isOpen) {
+                          return (
+                            <a
+                              href={`/applications-closed?role=${encodeURIComponent(r.title)}`}
+                              className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md"
+                            >
+                              Applications Closed
+                            </a>
+                          );
+                        }
 
-    // OPEN → go to the embedded form inside your site
-    // (route handled by /apply-form/:roleId and ApplyFormEmbedPage)
-    return (
-      <a
-        href={`/apply-form/${r.id}`}
-        className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md"
-      >
-        Apply Now
-      </a>
-    );
-  })()}
+                        return (
+                          <a
+                            href={`/apply-form/${r.id}`}
+                            className="inline-flex items-center gap-2 rounded-xl bg-[#1e90ff] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md"
+                          >
+                            Apply Now
+                          </a>
+                        );
+                      })()}
 
-  <button
-    onClick={() => {
-      const subject = encodeURIComponent(`Application: ${r.title}`);
-      const body = encodeURIComponent(`Hello Technocolabs Team,
+                      <button
+                        onClick={() => {
+                          const subject = encodeURIComponent(`Application: ${r.title}`);
+                          const body = encodeURIComponent(`Hello Technocolabs Team,
 
 I would like to apply for the ${r.title} internship.
 
@@ -1806,13 +1846,13 @@ Start date & availability:
 About me:
 
 Thanks,`);
-      window.location.href = `mailto:technocolabs@gmail.com?subject=${subject}&body=${body}`;
-    }}
-    className="text-sm font-medium text-[#1e90ff] hover:underline"
-  >
-    Email Now
-  </button>
-</div>
+                          window.location.href = `mailto:technocolabs@gmail.com?subject=${subject}&body=${body}`;
+                        }}
+                        className="text-sm font-medium text-[#1e90ff] hover:underline"
+                      >
+                        Email Now
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -3398,6 +3438,596 @@ function ApplyFormEmbedPage({ roleId = "" }: ApplyFormEmbedPageProps) {
   );
 }
 
+// // -------------------------------- INTERN SPOTLIGHT (inline) ------------------
+// const INTERN_SPOTLIGHT_ENDPOINT =
+//   "https://script.google.com/macros/s/AKfycby_qM3TelGESa5rDvgTril1G3PxDOkhzlDKm5AWdbECT0K6raFD-tXCbJzmXMp4QcVB/exec";
+// // ^ replace with your Apps Script "exec" URL if different
+
+// type SpotlightItem = {
+//   name: string;
+//   role: string;
+//   country?: string;
+//   cohort?: string;
+//   linkedin?: string;
+//   github?: string;
+//   project?: string;
+//   quote?: string;
+//   photo?: string; // full URL to image
+// };
+
+// --------------------------- INTERN SPOTLIGHT (standalone page) ---------------------------
+function InternSpotlightPage() {
+  // Allow override via ?csv=...
+  const CSV_URL_DEFAULT =
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vS2Gmqh_aLTJR1WnCQkzjuFrWXh1e7ax33nZJI3eT1LP8T4Uladb-BbotNtYjlMnxqFZVBlVtXqq6PM/pub?gid=1261158396&single=true&output=csv";
+  const csvParam =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search).get("csv")
+      : null;
+  const CSV_URL = csvParam || CSV_URL_DEFAULT;
+
+  type Row = {
+    name: string;
+    role: string;
+    experience: string;
+    country: string;
+    photo: string;
+    linkedin: string;
+    github: string;
+  };
+
+  const [all, setAll] = React.useState<Row[]>([]);
+  const [filtered, setFiltered] = React.useState<Row[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  const [q, setQ] = React.useState("");
+  const [role, setRole] = React.useState("All");
+  const [country, setCountry] = React.useState("All");
+
+  const [active, setActive] = React.useState<Row | null>(null);
+
+  // ---- CSV Parser (handles quotes properly) ----
+  function parseCSV(text: string): string[][] {
+    const rows: string[][] = [];
+    let cur = "";
+    let row: string[] = [];
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (c === '"') {
+        if (inQuotes && text[i + 1] === '"') {
+          cur += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (c === "," && !inQuotes) {
+        row.push(cur);
+        cur = "";
+      } else if ((c === "\n" || c === "\r") && !inQuotes) {
+        if (cur.length || row.length) {
+          row.push(cur);
+          rows.push(row);
+        }
+        cur = "";
+        row = [];
+        if (c === "\r" && text[i + 1] === "\n") i++;
+      } else {
+        cur += c;
+      }
+    }
+    if (cur.length || row.length) {
+      row.push(cur);
+      rows.push(row);
+    }
+    return rows;
+  }
+
+  // ---- Load CSV ----
+  React.useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+
+    fetch(CSV_URL)
+      .then((r) => {
+        const ct = r.headers.get("content-type") || "";
+        if (!r.ok || !ct.includes("text/csv")) throw new Error("CSV not accessible");
+        return r.text();
+      })
+      .then((txt) => {
+        if (cancelled) return;
+        const rows = parseCSV(txt);
+        if (!rows.length) {
+          setAll([]);
+          setLoading(false);
+          return;
+        }
+
+        const header = (rows[0] || []).map((h) => h.trim().toLowerCase());
+        const find = (key: string) =>
+          header.findIndex((h) => h.startsWith(key) || h.includes(key));
+
+        // Your new columns:
+        // Timestamp | Full Name | Email ID | Contact Number | Role | Experience |
+        // Photo URL | Linkedin Profile Link | Country
+        const idxName = find("full name");
+        const idxRole = find("role");
+        const idxExp = find("experience");
+        const idxPhoto = find("photo url");
+        const idxLinked = find("linkedin"); // "linkedin profile link"
+        const idxCountry = find("country");
+        // Optional GitHub column if you add one later
+        const idxGit = find("github");
+
+        const out: Row[] = rows
+          .slice(1)
+          .map((r) => ({
+            name: (r[idxName] || "").trim(),
+            role: (r[idxRole] || "").trim(),
+            experience: (r[idxExp] || "").trim(),
+            country: (r[idxCountry] || "").trim(),
+            photo: (r[idxPhoto] || "").trim(),
+            linkedin: (r[idxLinked] || "").trim(),
+            github: idxGit >= 0 ? (r[idxGit] || "").trim() : "",
+          }))
+          .filter((x) => x.name || x.role || x.linkedin || x.photo);
+
+        setAll(out);
+        setLoading(false);
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setError(err.message || "Failed to load spotlight data");
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [CSV_URL]);
+
+  // ---- Filters ----
+  React.useEffect(() => {
+    const term = q.trim().toLowerCase();
+    setFiltered(
+      all.filter((x) => {
+        const blob = [x.name, x.role, x.experience, x.country].join(" ").toLowerCase();
+        const matchText = !term || blob.includes(term);
+        const matchRole = role === "All" || x.role === role;
+        const matchCountry = country === "All" || x.country === country;
+        return matchText && matchRole && matchCountry;
+      })
+    );
+  }, [all, q, role, country]);
+
+  // ---- Helpers ----
+  const unique = (arr: string[]) => Array.from(new Set(arr.filter(Boolean))).sort();
+  const roles = ["All", ...unique(all.map((x) => x.role))];
+  const countries = ["All", ...unique(all.map((x) => x.country))];
+
+  const initials = (name: string) =>
+    name
+      .split(" ")
+      .map((s) => s[0])
+      .filter(Boolean)
+      .slice(0, 2)
+      .join("")
+      .toUpperCase();
+
+  // ---- Big story slider state ----
+  const stories = filtered.length ? filtered : all;
+  const [slide, setSlide] = React.useState(0);
+  const go = (n: number) => {
+    if (!stories.length) return;
+    const m = (n + stories.length) % stories.length;
+    setSlide(m);
+  };
+  React.useEffect(() => {
+    if (!stories.length) return;
+    const id = setInterval(() => go(slide + 1), 4500);
+    return () => clearInterval(id);
+  }, [slide, stories.length]);
+
+  // ---- Auto spotlight slider (cards that move horizontally) ----
+  const autoList = stories.slice(0, Math.max(10, Math.min(20, stories.length)));
+  const [autoIndex, setAutoIndex] = React.useState(0);
+  React.useEffect(() => {
+    if (!autoList.length) return;
+    const id = setInterval(() => setAutoIndex((i) => (i + 1) % autoList.length), 3000);
+    return () => clearInterval(id);
+  }, [autoList.length]);
+
+  return (
+    <div className="bg-[#0a2540] text-white">
+      {/* HERO (title) */}
+      <section className="bg-gradient-to-b from-[#0a2540] to-[#0d325a] px-6 sm:px-8 lg:px-12 py-10 sm:py-12">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl sm:text-4xl font-bold">Intern Spotlight</h1>
+          <p className="mt-2 text-white/80">
+            Real stories from Technocolabs interns worldwide.
+          </p>
+        </div>
+      </section>
+
+      {/* BIG STORY SLIDER (paragraph removed as requested) */}
+      <section className="px-6 sm:px-8 lg:px-12 pb-8">
+        <div className="max-w-7xl mx-auto">
+      
+            {stories.length ? (
+              <div className="grid md:grid-cols-3 gap-6 items-center">
+                {/* Image */}
+                <div className="md:col-span-1">
+                  <div className="overflow-hidden rounded-2xl bg-white/5 border border-white/10 aspect-[16/9] md:aspect-square">
+                    {stories[slide].photo ? (
+                      <img
+                        src={stories[slide].photo}
+                        alt={stories[slide].name}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center text-4xl font-semibold text-white/50">
+                        {initials(stories[slide].name)}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Text (NO long paragraph here) */}
+                <div className="md:col-span-2 flex flex-col">
+                  <div className="flex flex-wrap gap-2 text-xs text-white/80">
+                    {stories[slide].country && (
+                      <span className="inline-flex items-center rounded-full bg-white/10 px-2 py-1">
+                        {stories[slide].country}
+                      </span>
+                    )}
+                    {stories[slide].role && (
+                      <span className="inline-flex items-center rounded-full bg-white/10 px-2 py-1">
+                        {stories[slide].role}
+                      </span>
+                    )}
+                    {stories[slide].experience && (
+                      <span className="inline-flex items-center rounded-full bg-white/10 px-2 py-1">
+                        {stories[slide].experience}
+                      </span>
+                    )}
+                  </div>
+
+                  <h2 className="mt-3 text-2xl sm:text-3xl font-semibold">
+                    {stories[slide].name}
+                  </h2>
+
+                  <div className="mt-5 flex items-center gap-3">
+                    {stories[slide].linkedin && (
+                      <a
+                        href={stories[slide].linkedin}
+                        target="_blank"
+                        className="text-sm rounded-xl border border-white/15 bg-white/5 px-3 py-2 hover:bg-white/10"
+                      >
+                        LinkedIn
+                      </a>
+                    )}
+                    {stories[slide].github && (
+                      <a
+                        href={stories[slide].github}
+                        target="_blank"
+                        className="text-sm rounded-xl border border-white/15 bg-white/5 px-3 py-2 hover:bg-white/10"
+                      >
+                        GitHub
+                      </a>
+                    )}
+                    <button
+                      onClick={() => setActive(stories[slide])}
+                      className="text-sm rounded-xl bg-white text-[#0a2540] px-3 py-2 font-semibold hover:opacity-90"
+                    >
+                      View details
+                    </button>
+                  </div>
+
+                  {/* slider controls */}
+                  <div className="mt-6 flex items-center gap-2">
+                    <button
+                      onClick={() => go(slide - 1)}
+                      className="rounded-lg bg-white/10 px-3 py-2 hover:bg-white/15"
+                      aria-label="Previous"
+                    >
+                      ‹
+                    </button>
+                    <div className="flex-1 h-2 rounded-full bg-white/10">
+                      <div
+                        className="h-2 rounded-full bg-white/60 transition-[width]"
+                        style={{
+                          width: `${((slide + 1) / stories.length) * 100}%`,
+                        }}
+                      />
+                    </div>
+                    <button
+                      onClick={() => go(slide + 1)}
+                      className="rounded-lg bg-white/10 px-3 py-2 hover:bg-white/15"
+                      aria-label="Next"
+                    >
+                      ›
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-white/70 text-sm">No spotlight entries yet.</div>
+            )}
+          
+        </div>
+      </section>
+
+      {/* FILTERS */}
+      <section className="px-6 sm:px-8 lg:px-12 pb-3">
+        <div className="max-w-7xl mx-auto grid gap-3 sm:grid-cols-4">
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search by name, role, country, experience…"
+            className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-white/50"
+          />
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-white"
+          >
+            {roles.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+          </select>
+          <select
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+            className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-white"
+          >
+            {countries.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+          <button
+            onClick={() => {
+              setQ("");
+              setRole("All");
+              setCountry("All");
+            }}
+            className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-white hover:bg-white/10"
+          >
+            Reset
+          </button>
+        </div>
+      </section>
+
+      {/* AUTO SPOTLIGHT SLIDER (single section) */}
+      <section className="px-6 sm:px-8 lg:px-12 pb-8">
+        <div className="max-w-7xl mx-auto">
+          <h3 className="text-lg font-semibold mb-3 text-white/90">
+            Auto Spotlight Slider
+          </h3>
+          <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-4">
+            <div
+              className="flex gap-4 transition-transform duration-700 ease-out"
+              style={{
+                transform: `translateX(-${autoIndex * 280}px)`,
+                width: `${Math.max(autoList.length * 280, 560)}px`,
+              }}
+            >
+              {autoList.map((x, i) => (
+                <div
+                  key={x.name + i}
+                  className="w-[260px] shrink-0 rounded-xl border border-white/10 bg-white/5 p-4"
+                >
+                  <div className="flex items-center gap-3">
+                    {x.photo ? (
+                      <img
+                        src={x.photo}
+                        alt={x.name}
+                        className="h-10 w-10 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-sm">
+                        {initials(x.name)}
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <div className="font-semibold truncate">{x.name}</div>
+                      <div className="text-xs text-white/70 truncate">
+                        {x.role}
+                        {x.country ? ` · ${x.country}` : ""}
+                        {x.experience ? ` · ${x.experience}` : ""}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 flex items-center gap-2">
+                    {x.linkedin && (
+                      <a
+                        href={x.linkedin}
+                        target="_blank"
+                        className="text-xs rounded-lg border border-white/10 bg-white/5 px-2 py-1 hover:bg-white/10"
+                      >
+                        LinkedIn
+                      </a>
+                    )}
+                    {x.github && (
+                      <a
+                        href={x.github}
+                        target="_blank"
+                        className="text-xs rounded-lg border border-white/10 bg-white/5 px-2 py-1 hover:bg-white/10"
+                      >
+                        GitHub
+                      </a>
+                    )}
+                    <button
+                      onClick={() => setActive(x)}
+                      className="text-xs rounded-lg border border-white/10 bg-white text-[#0a2540] px-2 py-1 font-semibold hover:opacity-90"
+                    >
+                      View
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-3 text-[11px] text-white/60">
+              Hover to pause · Slides every 3s
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* GRID */}
+      <section className="px-6 sm:px-8 lg:px-12 pb-14">
+        <div className="max-w-7xl mx-auto">
+          {loading && (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="rounded-2xl border border-white/10 bg-white/5 p-5 animate-pulse"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 rounded-full bg-white/10" />
+                    <div className="flex-1">
+                      <div className="h-3 bg-white/10 rounded w-2/3 mb-2" />
+                      <div className="h-3 bg-white/10 rounded w-1/3" />
+                    </div>
+                  </div>
+                  <div className="mt-4 h-3 bg-white/10 rounded w-full" />
+                  <div className="mt-2 h-3 bg-white/10 rounded w-2/3" />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {error && (
+            <div className="rounded-2xl border border-red-400/30 bg-red-900/20 p-5 text-sm text-red-200">
+              Failed to load data: {error}
+            </div>
+          )}
+
+          {!loading && !error && (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {filtered.map((x, i) => (
+                <button
+                  key={`${x.name}-${i}`}
+                  onClick={() => setActive(x)}
+                  className="text-left rounded-2xl border border-white/10 bg-white/5 p-5 hover:bg-white/10"
+                >
+                  <div className="flex items-center gap-3">
+                    {x.photo ? (
+                      <img
+                        src={x.photo}
+                        alt={x.name}
+                        className="h-12 w-12 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center font-semibold">
+                        {initials(x.name)}
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <div className="font-semibold truncate">{x.name}</div>
+                      <div className="text-xs text-white/70 truncate">
+                        {x.role} {x.country ? `· ${x.country}` : ""}{" "}
+                        {x.experience ? `· ${x.experience}` : ""}
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* MODAL */}
+      {active && (
+        <div
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setActive(null)}
+        >
+          <div
+            className="w-full max-w-xl rounded-2xl bg-[#0e2f55] border border-white/10 text-white p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {active.photo ? (
+                  <img
+                    src={active.photo}
+                    alt={active.name}
+                    className="h-12 w-12 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center font-semibold">
+                    {initials(active.name)}
+                  </div>
+                )}
+                <div>
+                  <div className="font-semibold">{active.name}</div>
+                  <div className="text-xs text-white/70">
+                    {active.role} {active.country ? `· ${active.country}` : ""}{" "}
+                    {active.experience ? `· ${active.experience}` : ""}
+                  </div>
+                </div>
+              </div>
+              <button
+                className="text-sm text-white/70 hover:text-white"
+                onClick={() => setActive(null)}
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="mt-4 flex items-center gap-3">
+              {active.linkedin && (
+                <a
+                  href={active.linkedin}
+                  target="_blank"
+                  className="rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm hover:bg-white/10"
+                >
+                  LinkedIn
+                </a>
+              )}
+              {active.github && (
+                <a
+                  href={active.github}
+                  target="_blank"
+                  className="rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm hover:bg-white/10"
+                >
+                  GitHub
+                </a>
+              )}
+              <button
+                className="rounded-xl border border-white/15 bg-white text-[#0a2540] px-3 py-2 text-sm font-semibold hover:opacity-90"
+                onClick={() => {
+                  const share = `${window.location.origin}/spotlight?csv=${encodeURIComponent(
+                    CSV_URL
+                  )}#${encodeURIComponent(active.name)}`;
+                  navigator.clipboard?.writeText(share);
+                  alert("Link copied!");
+                }}
+              >
+                Copy Share Link
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+
 /// --------------------------- APP -------------------------------------------
 // read optional slug after "/:tab"
 const roleSlug =
@@ -3414,7 +4044,8 @@ export default function App() {
   const VALID_TABS = new Set<Tab>([
     'home','services','service','careers','contact','apply','svc','privacy','terms','cookies',
     'bigdata','data-architecture','data-warehouse','bi-visualization','predictive-analytics-bd',
-    'cloud-services','about','success-stories','blog','write-for-us','verify','applications-closed','apply-form'
+    'cloud-services','about','success-stories','blog','write-for-us','verify',
+    'applications-closed','apply-form','spotlight' // ✅ spotlight included
   ]);
 
   // ✅ If roleId exists (route is /apply-form/:roleId), force 'apply-form'
@@ -3436,13 +4067,13 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [routeTab]);
 
-  // 🧭 Your existing navigate, but now it also updates the URL
+  // 🧭 Navigate + update URL
   const navigate = (t: Tab) => {
     setTab(t);
-    routerNavigate(t === 'home' ? '/' : `/${t}`); // updates the address bar
+    routerNavigate(t === 'home' ? '/' : `/${t}`);
   };
 
-  // Keep your originals (no URL change) — or swap with the URL-updating versions if you want
+  // Keep your originals (no URL change)
   const openDetail = (slug: string | null) => { setActiveService(slug); setTab('service'); };
   const openServicePage = (slug: string) => { setActiveServicePage(slug); setTab('svc'); };
 
@@ -3463,7 +4094,6 @@ export default function App() {
     cyber: 'CyberSecurity Engineer Intern',
   };
 
-  // When opening /apply-form/:roleId, set the applyRole so the embedded form/page knows the role
   useEffect(() => {
     if (routeTab === 'apply-form') {
       const title = roleId ? ROLE_ID_TO_TITLE[roleId] : undefined;
@@ -3478,7 +4108,7 @@ export default function App() {
   if (tab === 'service') content = <ServiceDetailPage />;
   if (tab === 'careers') content = <CareersPage />;
   if (tab === 'contact') content = <ContactPage />;
-  //if (tab === 'apply') content = <ApplyPage />;
+  // if (tab === 'apply') content = <ApplyPage />;
   if (tab === 'svc') content = <StandaloneServicePage />;
   if (tab === 'privacy') content = <PrivacyPolicyPage />;
   if (tab === 'terms') content = <TermsPage />;
@@ -3495,9 +4125,12 @@ export default function App() {
   if (tab === 'write-for-us') content = <WriteForUsPage />;
   if (tab === 'verify') content = <VerifyInternshipPage />;
   if (tab === 'applications-closed') content = <ApplicationsClosedPage />;
-if (tab === 'apply-form') content = <ApplyFormEmbedPage roleId={roleSlug} />;
 
+  // ✅ FIX: pass roleId (not roleSlug)
+  if (tab === 'apply-form') content = <ApplyFormEmbedPage roleId={roleId} />;
 
+  // ✅ Spotlight standalone page
+  if (tab === 'spotlight') content = <InternSpotlightPage />;
 
   return (
     <CurrentTabContext.Provider value={tab}>
