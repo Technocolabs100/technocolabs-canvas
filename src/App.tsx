@@ -3456,8 +3456,9 @@ function ApplyFormEmbedPage({ roleId = "" }: ApplyFormEmbedPageProps) {
 // };
 
 // --------------------------- INTERN SPOTLIGHT (standalone page) ---------------------------
+// --------------------------- INTERN SPOTLIGHT (standalone page) ---------------------------
 function InternSpotlightPage() {
-  // Allow override via ?csv=...
+  // CSV (can be overridden with ?csv=...)
   const CSV_URL_DEFAULT =
     "https://docs.google.com/spreadsheets/d/e/2PACX-1vS2Gmqh_aLTJR1WnCQkzjuFrWXh1e7ax33nZJI3eT1LP8T4Uladb-BbotNtYjlMnxqFZVBlVtXqq6PM/pub?gid=1261158396&single=true&output=csv";
   const csvParam =
@@ -3466,14 +3467,16 @@ function InternSpotlightPage() {
       : null;
   const CSV_URL = csvParam || CSV_URL_DEFAULT;
 
+  // Row type
   type Row = {
     name: string;
     role: string;
     experience: string;
     country: string;
-    photo: string;
     linkedin: string;
     github: string;
+    // kept for compatibility; we won't use it unless you want a fallback
+    photo?: string;
   };
 
   const [all, setAll] = React.useState<Row[]>([]);
@@ -3487,100 +3490,7 @@ function InternSpotlightPage() {
 
   const [active, setActive] = React.useState<Row | null>(null);
 
-  // ---------- helpers ----------
-  const initials = (name: string) =>
-    name
-      .split(" ")
-      .map((s) => s[0])
-      .filter(Boolean)
-      .slice(0, 2)
-      .join("")
-      .toUpperCase();
-
-  // Build multiple candidate URLs for a Drive image and try them in order
-  function driveCandidates(url: string): string[] {
-    if (!url) return [];
-    const u = url.trim();
-
-    // If it's already a direct image (or googleusercontent), just use it
-    if (
-      /(\.png|\.jpg|\.jpeg|\.gif|\.webp)(\?.*)?$/i.test(u) ||
-      u.includes("lh3.googleusercontent.com")
-    ) {
-      return [u];
-    }
-
-    let id: string | null = null;
-
-    // /file/d/<ID>/...
-    const m1 = u.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-    if (m1 && m1[1]) id = m1[1];
-
-    // ...id=<ID> in query
-    if (!id) {
-      try {
-        const urlObj = new URL(u);
-        id = urlObj.searchParams.get("id");
-      } catch (_) {
-        // ignore parse error
-      }
-    }
-
-    // uc?id=<ID> in raw string
-    if (!id) {
-      const m2 = u.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-      if (m2 && m2[1]) id = m2[1];
-    }
-
-    // thumbnail?id=<ID>
-    if (!id) {
-      const m3 = u.match(/thumbnail\?id=([a-zA-Z0-9_-]+)/);
-      if (m3 && m3[1]) id = m3[1];
-    }
-
-    if (!id) return [u]; // best-effort
-
-    // Try several public endpoints
-    return [
-      `https://drive.google.com/uc?export=view&id=${id}`,
-      `https://drive.google.com/uc?export=download&id=${id}`,
-      `https://drive.google.com/thumbnail?id=${id}&sz=w2000`,
-      // this often works for public files as well:
-      `https://lh3.googleusercontent.com/d/${id}`,
-    ];
-  }
-
-  // Tiny avatar component that fails over through candidates
-  function Avatar({
-    src,
-    alt,
-    className,
-    fallback,
-  }: {
-    src?: string;
-    alt: string;
-    className: string;
-    fallback: React.ReactNode;
-  }) {
-    const [idx, setIdx] = React.useState(0);
-    const candidates = React.useMemo(() => driveCandidates(src || ""), [src]);
-
-    if (!candidates.length || idx < 0) return <>{fallback}</>;
-
-    return (
-      <img
-        src={candidates[idx]}
-        alt={alt}
-        className={className}
-        onError={() => {
-          // advance to next candidate, else give up (render fallback)
-          setIdx((i) => (i + 1 < candidates.length ? i + 1 : -1));
-        }}
-      />
-    );
-  }
-
-  // ---- CSV Parser (handles quotes properly) ----
+  // ---- Helpers ----
   function parseCSV(text: string): string[][] {
     const rows: string[][] = [];
     let cur = "";
@@ -3618,6 +3528,34 @@ function InternSpotlightPage() {
     return rows;
   }
 
+  const initials = (name: string) =>
+    name
+      .split(" ")
+      .map((s) => s[0])
+      .filter(Boolean)
+      .slice(0, 2)
+      .join("")
+      .toUpperCase();
+
+  // Build an avatar URL from a LinkedIn profile link
+  function getLinkedInAvatar(link: string): string | null {
+    if (!link) return null;
+    try {
+      const url = new URL(link.trim());
+      // Typical patterns:
+      // /in/username/  OR  /in/username  OR sometimes just /username
+      const parts = url.pathname.split("/").filter(Boolean);
+      let user = "";
+      const inIdx = parts.findIndex((p) => p.toLowerCase() === "in");
+      if (inIdx >= 0 && parts[inIdx + 1]) user = parts[inIdx + 1];
+      else if (parts[0]) user = parts[0];
+      if (!user) return null;
+      return `https://unavatar.io/linkedin/${encodeURIComponent(user)}`;
+    } catch {
+      return null;
+    }
+  }
+
   // ---- Load CSV ----
   React.useEffect(() => {
     let cancelled = false;
@@ -3627,7 +3565,9 @@ function InternSpotlightPage() {
     fetch(CSV_URL)
       .then((r) => {
         const ct = r.headers.get("content-type") || "";
-        if (!r.ok || !ct.includes("text/csv")) throw new Error("CSV not accessible");
+        if (!r.ok || !ct.includes("text/csv")) {
+          throw new Error("CSV not accessible");
+        }
         return r.text();
       })
       .then((txt) => {
@@ -3641,17 +3581,18 @@ function InternSpotlightPage() {
 
         const header = (rows[0] || []).map((h) => h.trim().toLowerCase());
         const find = (key: string) =>
-          header.findIndex((h) => h.startsWith(key) || h.includes(key));
+          header.findIndex((h) => h.includes(key) || h.startsWith(key));
 
-        // Timestamp | Full Name | Email ID | Contact Number | Role | Experience |
-        // Photo URL | Linkedin Profile Link | Country | (optional GitHub)
+        // Columns (we ignore Photo URL; we use LinkedIn avatar):
+        // Timestamp | Full Name | Email ID | Contact Number
+        // Role | Experience | Photo URL | Linkedin Profile Link | Country
         const idxName = find("full name");
         const idxRole = find("role");
         const idxExp = find("experience");
-        const idxPhoto = find("photo url");
+        const idxPhoto = find("photo url"); // kept but unused
         const idxLinked = find("linkedin");
         const idxCountry = find("country");
-        const idxGit = find("github"); // optional
+        const idxGit = find("github"); // optional if you add later
 
         const out: Row[] = rows
           .slice(1)
@@ -3660,11 +3601,11 @@ function InternSpotlightPage() {
             role: (r[idxRole] || "").trim(),
             experience: (r[idxExp] || "").trim(),
             country: (r[idxCountry] || "").trim(),
-            photo: (r[idxPhoto] || "").trim(), // raw; Avatar will resolve variants
             linkedin: (r[idxLinked] || "").trim(),
             github: idxGit >= 0 ? (r[idxGit] || "").trim() : "",
+            photo: (r[idxPhoto] || "").trim(), // present but not used
           }))
-          .filter((x) => x.name || x.role || x.linkedin || x.photo);
+          .filter((x) => x.name || x.role || x.linkedin);
 
         setAll(out);
         setLoading(false);
@@ -3686,7 +3627,9 @@ function InternSpotlightPage() {
     const term = q.trim().toLowerCase();
     setFiltered(
       all.filter((x) => {
-        const blob = [x.name, x.role, x.experience, x.country].join(" ").toLowerCase();
+        const blob = [x.name, x.role, x.experience, x.country]
+          .join(" ")
+          .toLowerCase();
         const matchText = !term || blob.includes(term);
         const matchRole = role === "All" || x.role === role;
         const matchCountry = country === "All" || x.country === country;
@@ -3695,12 +3638,12 @@ function InternSpotlightPage() {
     );
   }, [all, q, role, country]);
 
-  // ---- Helpers ----
-  const unique = (arr: string[]) => Array.from(new Set(arr.filter(Boolean))).sort();
+  const unique = (arr: string[]) =>
+    Array.from(new Set(arr.filter(Boolean))).sort();
   const roles = ["All", ...unique(all.map((x) => x.role))];
   const countries = ["All", ...unique(all.map((x) => x.country))];
 
-  // ---- Big story slider state ----
+  // ---- Big story slider ----
   const stories = filtered.length ? filtered : all;
   const [slide, setSlide] = React.useState(0);
   const go = (n: number) => {
@@ -3714,18 +3657,21 @@ function InternSpotlightPage() {
     return () => clearInterval(id);
   }, [slide, stories.length]);
 
-  // ---- Auto spotlight slider (cards that move horizontally) ----
+  // ---- Auto slider list ----
   const autoList = stories.slice(0, Math.max(10, Math.min(20, stories.length)));
   const [autoIndex, setAutoIndex] = React.useState(0);
   React.useEffect(() => {
     if (!autoList.length) return;
-    const id = setInterval(() => setAutoIndex((i) => (i + 1) % autoList.length), 3000);
+    const id = setInterval(
+      () => setAutoIndex((i) => (i + 1) % autoList.length),
+      3000
+    );
     return () => clearInterval(id);
   }, [autoList.length]);
 
   return (
     <div className="bg-[#0a2540] text-white">
-      {/* HERO (title) */}
+      {/* HERO */}
       <section className="bg-gradient-to-b from-[#0a2540] to-[#0d325a] px-6 sm:px-8 lg:px-12 py-10 sm:py-12">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl sm:text-4xl font-bold">Intern Spotlight</h1>
@@ -3735,34 +3681,34 @@ function InternSpotlightPage() {
         </div>
       </section>
 
-      {/* BIG STORY SLIDER (paragraph box removed) */}
+      {/* BIG STORY SLIDER */}
       <section className="px-6 sm:px-8 lg:px-12 pb-8">
         <div className="max-w-7xl mx-auto">
           {stories.length ? (
             <div className="grid md:grid-cols-3 gap-6 items-center">
               {/* Image */}
               <div className="md:col-span-1">
-                <div className="overflow-hidden rounded-2xl aspect-[16/9] md:aspect-square">
-                  {stories[slide].photo ? (
-                    <Avatar
-                      src={stories[slide].photo}
-                      alt={stories[slide].name}
-                      className="h-full w-full object-cover"
-                      fallback={
-                        <div className="h-full w-full flex items-center justify-center text-4xl font-semibold text-white/50">
-                          {initials(stories[slide].name)}
-                        </div>
-                      }
-                    />
-                  ) : (
-                    <div className="h-full w-full flex items-center justify-center text-4xl font-semibold text-white/50">
-                      {initials(stories[slide].name)}
-                    </div>
-                  )}
+                <div className="overflow-hidden rounded-2xl bg-white/5 border border-white/10 aspect-[16/9] md:aspect-square">
+                  {(() => {
+                    const avatar =
+                      getLinkedInAvatar(stories[slide].linkedin) ||
+                      null; // no Drive fallback
+                    return avatar ? (
+                      <img
+                        src={avatar}
+                        alt={stories[slide].name}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center text-4xl font-semibold text-white/50">
+                        {initials(stories[slide].name)}
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
 
-              {/* Text (no long paragraph) */}
+              {/* Text */}
               <div className="md:col-span-2 flex flex-col">
                 <div className="flex flex-wrap gap-2 text-xs text-white/80">
                   {stories[slide].country && (
@@ -3904,66 +3850,64 @@ function InternSpotlightPage() {
                 width: `${Math.max(autoList.length * 280, 560)}px`,
               }}
             >
-              {autoList.map((x, i) => (
-                <div
-                  key={x.name + i}
-                  className="w-[260px] shrink-0 rounded-xl border border-white/10 bg-white/5 p-4"
-                >
-                  <div className="flex items-center gap-3">
-                    {x.photo ? (
-                      <Avatar
-                        src={x.photo}
-                        alt={x.name}
-                        className="h-10 w-10 rounded-full object-cover"
-                        fallback={
-                          <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-sm">
-                            {initials(x.name)}
-                          </div>
-                        }
-                      />
-                    ) : (
-                      <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-sm">
-                        {initials(x.name)}
-                      </div>
-                    )}
-                    <div className="min-w-0">
-                      <div className="font-semibold truncate">{x.name}</div>
-                      <div className="text-xs text-white/70 truncate">
-                        {x.role}
-                        {x.country ? ` · ${x.country}` : ""}
-                        {x.experience ? ` · ${x.experience}` : ""}
+              {autoList.map((x, i) => {
+                const avatar = getLinkedInAvatar(x.linkedin) || null;
+                return (
+                  <div
+                    key={x.name + i}
+                    className="w-[260px] shrink-0 rounded-xl border border-white/10 bg-white/5 p-4"
+                  >
+                    <div className="flex items-center gap-3">
+                      {avatar ? (
+                        <img
+                          src={avatar}
+                          alt={x.name}
+                          className="h-10 w-10 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-sm">
+                          {initials(x.name)}
+                        </div>
+                      )}
+                      <div className="min-w-0">
+                        <div className="font-semibold truncate">{x.name}</div>
+                        <div className="text-xs text-white/70 truncate">
+                          {x.role}
+                          {x.country ? ` · ${x.country}` : ""}
+                          {x.experience ? ` · ${x.experience}` : ""}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="mt-3 flex items-center gap-2">
-                    {x.linkedin && (
-                      <a
-                        href={x.linkedin}
-                        target="_blank"
-                        className="text-xs rounded-lg border border-white/10 bg-white/5 px-2 py-1 hover:bg-white/10"
+                    <div className="mt-3 flex items-center gap-2">
+                      {x.linkedin && (
+                        <a
+                          href={x.linkedin}
+                          target="_blank"
+                          className="text-xs rounded-lg border border-white/10 bg-white/5 px-2 py-1 hover:bg-white/10"
+                        >
+                          LinkedIn
+                        </a>
+                      )}
+                      {x.github && (
+                        <a
+                          href={x.github}
+                          target="_blank"
+                          className="text-xs rounded-lg border border-white/10 bg-white/5 px-2 py-1 hover:bg-white/10"
+                        >
+                          GitHub
+                        </a>
+                      )}
+                      <button
+                        onClick={() => setActive(x)}
+                        className="text-xs rounded-lg border border-white/10 bg-white text-[#0a2540] px-2 py-1 font-semibold hover:opacity-90"
                       >
-                        LinkedIn
-                      </a>
-                    )}
-                    {x.github && (
-                      <a
-                        href={x.github}
-                        target="_blank"
-                        className="text-xs rounded-lg border border-white/10 bg-white/5 px-2 py-1 hover:bg-white/10"
-                      >
-                        GitHub
-                      </a>
-                    )}
-                    <button
-                      onClick={() => setActive(x)}
-                      className="text-xs rounded-lg border border-white/10 bg-white text-[#0a2540] px-2 py-1 font-semibold hover:opacity-90"
-                    >
-                      View
-                    </button>
+                        View
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <div className="mt-3 text-[11px] text-white/60">
@@ -4005,39 +3949,37 @@ function InternSpotlightPage() {
 
           {!loading && !error && (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {filtered.map((x, i) => (
-                <button
-                  key={`${x.name}-${i}`}
-                  onClick={() => setActive(x)}
-                  className="text-left rounded-2xl border border-white/10 bg-white/5 p-5 hover:bg-white/10"
-                >
-                  <div className="flex items-center gap-3">
-                    {x.photo ? (
-                      <Avatar
-                        src={x.photo}
-                        alt={x.name}
-                        className="h-12 w-12 rounded-full object-cover"
-                        fallback={
-                          <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center font-semibold">
-                            {initials(x.name)}
-                          </div>
-                        }
-                      />
-                    ) : (
-                      <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center font-semibold">
-                        {initials(x.name)}
-                      </div>
-                    )}
-                    <div className="min-w-0">
-                      <div className="font-semibold truncate">{x.name}</div>
-                      <div className="text-xs text-white/70 truncate">
-                        {x.role} {x.country ? `· ${x.country}` : ""}{" "}
-                        {x.experience ? `· ${x.experience}` : ""}
+              {filtered.map((x, i) => {
+                const avatar = getLinkedInAvatar(x.linkedin) || null;
+                return (
+                  <button
+                    key={`${x.name}-${i}`}
+                    onClick={() => setActive(x)}
+                    className="text-left rounded-2xl border border-white/10 bg-white/5 p-5 hover:bg-white/10"
+                  >
+                    <div className="flex items-center gap-3">
+                      {avatar ? (
+                        <img
+                          src={avatar}
+                          alt={x.name}
+                          className="h-12 w-12 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center font-semibold">
+                          {initials(x.name)}
+                        </div>
+                      )}
+                      <div className="min-w-0">
+                        <div className="font-semibold truncate">{x.name}</div>
+                        <div className="text-xs text-white/70 truncate">
+                          {x.role} {x.country ? `· ${x.country}` : ""}{" "}
+                          {x.experience ? `· ${x.experience}` : ""}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
@@ -4055,22 +3997,20 @@ function InternSpotlightPage() {
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                {active.photo ? (
-                  <Avatar
-                    src={active.photo}
-                    alt={active.name}
-                    className="h-12 w-12 rounded-full object-cover"
-                    fallback={
-                      <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center font-semibold">
-                        {initials(active.name)}
-                      </div>
-                    }
-                  />
-                ) : (
-                  <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center font-semibold">
-                    {initials(active.name)}
-                  </div>
-                )}
+                {(() => {
+                  const avatar = getLinkedInAvatar(active.linkedin) || null;
+                  return avatar ? (
+                    <img
+                      src={avatar}
+                      alt={active.name}
+                      className="h-12 w-12 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center font-semibold">
+                      {initials(active.name)}
+                    </div>
+                  );
+                })()}
                 <div>
                   <div className="font-semibold">{active.name}</div>
                   <div className="text-xs text-white/70">
