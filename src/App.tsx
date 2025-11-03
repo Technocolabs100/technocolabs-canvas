@@ -3650,9 +3650,9 @@ function InternSpotlightPage() {
       {/* HERO */}
       <section className="bg-gradient-to-b from-[#0a2540] to-[#0d325a] px-5 sm:px-8 lg:px-12 py-8 sm:py-12">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-2xl sm:text-4xl font-bold">Featured Intern Spotlight</h1>
+          <h1 className="text-2xl sm:text-4xl font-bold">From Interns to Innovators</h1>
           <p className="mt-1 sm:mt-2 text-white/80 text-sm sm:text-base">
-            Real stories from Technocolabs interns worldwide.
+            Discover inspiring journeys and real experiences from Technocolabs talent across the globe.
           </p>
         </div>
       </section>
@@ -3832,7 +3832,7 @@ function InternSpotlightPage() {
       {/* AUTO SPOTLIGHT (scroll-snap on mobile, auto on md+) */}
       <section className="px-5 sm:px-8 lg:px-12 pb-8">
         <div className="max-w-7xl mx-auto">
-          <h3 className="text-base sm:text-lg font-semibold mb-3">Best Performers All Time</h3>
+          <h3 className="text-base sm:text-lg font-semibold mb-3">Global Interns Stories</h3>
 
           {/* MOBILE: scroll-snap - DESKTOP: auto-translate */}
           <div className="relative">
