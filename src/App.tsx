@@ -3456,9 +3456,8 @@ function ApplyFormEmbedPage({ roleId = "" }: ApplyFormEmbedPageProps) {
 // };
 
 // --------------------------- INTERN SPOTLIGHT (standalone page) ---------------------------
-// --------------------------- INTERN SPOTLIGHT (standalone page) ---------------------------
 function InternSpotlightPage() {
-  // CSV (can be overridden with ?csv=...)
+  // Allow override via ?csv=...
   const CSV_URL_DEFAULT =
     "https://docs.google.com/spreadsheets/d/e/2PACX-1vS2Gmqh_aLTJR1WnCQkzjuFrWXh1e7ax33nZJI3eT1LP8T4Uladb-BbotNtYjlMnxqFZVBlVtXqq6PM/pub?gid=1261158396&single=true&output=csv";
   const csvParam =
@@ -3467,7 +3466,6 @@ function InternSpotlightPage() {
       : null;
   const CSV_URL = csvParam || CSV_URL_DEFAULT;
 
-  // Row type
   type Row = {
     name: string;
     role: string;
@@ -3475,8 +3473,6 @@ function InternSpotlightPage() {
     country: string;
     linkedin: string;
     github: string;
-    // kept for compatibility; we won't use it unless you want a fallback
-    photo?: string;
   };
 
   const [all, setAll] = React.useState<Row[]>([]);
@@ -3488,9 +3484,7 @@ function InternSpotlightPage() {
   const [role, setRole] = React.useState("All");
   const [country, setCountry] = React.useState("All");
 
-  const [active, setActive] = React.useState<Row | null>(null);
-
-  // ---- Helpers ----
+  // ---- CSV Parser (handles quotes properly) ----
   function parseCSV(text: string): string[][] {
     const rows: string[][] = [];
     let cur = "";
@@ -3528,34 +3522,6 @@ function InternSpotlightPage() {
     return rows;
   }
 
-  const initials = (name: string) =>
-    name
-      .split(" ")
-      .map((s) => s[0])
-      .filter(Boolean)
-      .slice(0, 2)
-      .join("")
-      .toUpperCase();
-
-  // Build an avatar URL from a LinkedIn profile link
-  function getLinkedInAvatar(link: string): string | null {
-    if (!link) return null;
-    try {
-      const url = new URL(link.trim());
-      // Typical patterns:
-      // /in/username/  OR  /in/username  OR sometimes just /username
-      const parts = url.pathname.split("/").filter(Boolean);
-      let user = "";
-      const inIdx = parts.findIndex((p) => p.toLowerCase() === "in");
-      if (inIdx >= 0 && parts[inIdx + 1]) user = parts[inIdx + 1];
-      else if (parts[0]) user = parts[0];
-      if (!user) return null;
-      return `https://unavatar.io/linkedin/${encodeURIComponent(user)}`;
-    } catch {
-      return null;
-    }
-  }
-
   // ---- Load CSV ----
   React.useEffect(() => {
     let cancelled = false;
@@ -3565,9 +3531,7 @@ function InternSpotlightPage() {
     fetch(CSV_URL)
       .then((r) => {
         const ct = r.headers.get("content-type") || "";
-        if (!r.ok || !ct.includes("text/csv")) {
-          throw new Error("CSV not accessible");
-        }
+        if (!r.ok || !ct.includes("text/csv")) throw new Error("CSV not accessible");
         return r.text();
       })
       .then((txt) => {
@@ -3583,16 +3547,14 @@ function InternSpotlightPage() {
         const find = (key: string) =>
           header.findIndex((h) => h.includes(key) || h.startsWith(key));
 
-        // Columns (we ignore Photo URL; we use LinkedIn avatar):
-        // Timestamp | Full Name | Email ID | Contact Number
-        // Role | Experience | Photo URL | Linkedin Profile Link | Country
+        // Columns present:
+        // Timestamp | Full Name | Email ID | Contact Number | Role | Experience | Photo URL | Linkedin Profile Link | Country
         const idxName = find("full name");
         const idxRole = find("role");
         const idxExp = find("experience");
-        const idxPhoto = find("photo url"); // kept but unused
         const idxLinked = find("linkedin");
         const idxCountry = find("country");
-        const idxGit = find("github"); // optional if you add later
+        const idxGit = find("github"); // optional, if you add a GitHub column later
 
         const out: Row[] = rows
           .slice(1)
@@ -3603,7 +3565,6 @@ function InternSpotlightPage() {
             country: (r[idxCountry] || "").trim(),
             linkedin: (r[idxLinked] || "").trim(),
             github: idxGit >= 0 ? (r[idxGit] || "").trim() : "",
-            photo: (r[idxPhoto] || "").trim(), // present but not used
           }))
           .filter((x) => x.name || x.role || x.linkedin);
 
@@ -3627,9 +3588,7 @@ function InternSpotlightPage() {
     const term = q.trim().toLowerCase();
     setFiltered(
       all.filter((x) => {
-        const blob = [x.name, x.role, x.experience, x.country]
-          .join(" ")
-          .toLowerCase();
+        const blob = [x.name, x.role, x.experience, x.country].join(" ").toLowerCase();
         const matchText = !term || blob.includes(term);
         const matchRole = role === "All" || x.role === role;
         const matchCountry = country === "All" || x.country === country;
@@ -3638,12 +3597,12 @@ function InternSpotlightPage() {
     );
   }, [all, q, role, country]);
 
-  const unique = (arr: string[]) =>
-    Array.from(new Set(arr.filter(Boolean))).sort();
+  // ---- Helpers ----
+  const unique = (arr: string[]) => Array.from(new Set(arr.filter(Boolean))).sort();
   const roles = ["All", ...unique(all.map((x) => x.role))];
   const countries = ["All", ...unique(all.map((x) => x.country))];
 
-  // ---- Big story slider ----
+  // ---- Big story slider state (uses filtered -> falls back to all) ----
   const stories = filtered.length ? filtered : all;
   const [slide, setSlide] = React.useState(0);
   const go = (n: number) => {
@@ -3651,417 +3610,333 @@ function InternSpotlightPage() {
     const m = (n + stories.length) % stories.length;
     setSlide(m);
   };
+
+  // Auto-advance on md+ only (mobile swipe instead)
   React.useEffect(() => {
     if (!stories.length) return;
-    const id = setInterval(() => go(slide + 1), 4500);
+    if (typeof window !== "undefined" && window.innerWidth < 640) return; // disable auto play on mobile
+    const id = setInterval(() => go(slide + 1), 4800);
     return () => clearInterval(id);
   }, [slide, stories.length]);
 
-  // ---- Auto slider list ----
-  const autoList = stories.slice(0, Math.max(10, Math.min(20, stories.length)));
+  // ---- Touch swipe for big slider (mobile) ----
+  const touchStartX = React.useRef<number | null>(null);
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current == null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    // threshold
+    if (delta > 40) go(slide - 1);
+    if (delta < -40) go(slide + 1);
+    touchStartX.current = null;
+  };
+
+  // ---- Auto slider (small cards, no photos) ----
+  const autoList = stories.slice(0, Math.max(10, Math.min(24, stories.length)));
   const [autoIndex, setAutoIndex] = React.useState(0);
+
+  // Auto scroll for md+; on mobile it's scroll-snap by drag
   React.useEffect(() => {
     if (!autoList.length) return;
-    const id = setInterval(
-      () => setAutoIndex((i) => (i + 1) % autoList.length),
-      3000
-    );
+    if (typeof window !== "undefined" && window.innerWidth < 640) return;
+    const id = setInterval(() => setAutoIndex((i) => (i + 1) % autoList.length), 2800);
     return () => clearInterval(id);
   }, [autoList.length]);
 
   return (
     <div className="bg-[#0a2540] text-white">
       {/* HERO */}
-      <section className="bg-gradient-to-b from-[#0a2540] to-[#0d325a] px-6 sm:px-8 lg:px-12 py-10 sm:py-12">
+      <section className="bg-gradient-to-b from-[#0a2540] to-[#0d325a] px-5 sm:px-8 lg:px-12 py-8 sm:py-12">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl sm:text-4xl font-bold">Intern Spotlight</h1>
-          <p className="mt-2 text-white/80">
+          <h1 className="text-2xl sm:text-4xl font-bold">Featured Intern Spotlight</h1>
+          <p className="mt-1 sm:mt-2 text-white/80 text-sm sm:text-base">
             Real stories from Technocolabs interns worldwide.
           </p>
         </div>
       </section>
 
-      {/* BIG STORY SLIDER */}
-      <section className="px-6 sm:px-8 lg:px-12 pb-8">
-        <div className="max-w-7xl mx-auto">
-          {stories.length ? (
-            <div className="grid md:grid-cols-3 gap-6 items-center">
-              {/* Image */}
-              <div className="md:col-span-1">
-                <div className="overflow-hidden rounded-2xl bg-white/5 border border-white/10 aspect-[16/9] md:aspect-square">
-                  {(() => {
-                    const avatar =
-                      getLinkedInAvatar(stories[slide].linkedin) ||
-                      null; // no Drive fallback
-                    return avatar ? (
-                      <img
-                        src={avatar}
-                        alt={stories[slide].name}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <div className="h-full w-full flex items-center justify-center text-4xl font-semibold text-white/50">
-                        {initials(stories[slide].name)}
-                      </div>
-                    );
-                  })()}
-                </div>
-              </div>
-
-              {/* Text */}
-              <div className="md:col-span-2 flex flex-col">
-                <div className="flex flex-wrap gap-2 text-xs text-white/80">
-                  {stories[slide].country && (
-                    <span className="inline-flex items-center rounded-full bg-white/10 px-2 py-1">
-                      {stories[slide].country}
-                    </span>
-                  )}
-                  {stories[slide].role && (
-                    <span className="inline-flex items-center rounded-full bg-white/10 px-2 py-1">
-                      {stories[slide].role}
-                    </span>
-                  )}
-                  {stories[slide].experience && (
-                    <span className="inline-flex items-center rounded-full bg-white/10 px-2 py-1">
-                      {stories[slide].experience}
-                    </span>
-                  )}
-                </div>
-
-                <h2 className="mt-3 text-2xl sm:text-3xl font-semibold">
-                  {stories[slide].name}
-                </h2>
-
-                <div className="mt-5 flex items-center gap-3">
-                  {stories[slide].linkedin && (
-                    <a
-                      href={stories[slide].linkedin}
-                      target="_blank"
-                      className="text-sm rounded-xl border border-white/15 bg-white/5 px-3 py-2 hover:bg-white/10"
-                    >
-                      LinkedIn
-                    </a>
-                  )}
-                  {stories[slide].github && (
-                    <a
-                      href={stories[slide].github}
-                      target="_blank"
-                      className="text-sm rounded-xl border border-white/15 bg-white/5 px-3 py-2 hover:bg-white/10"
-                    >
-                      GitHub
-                    </a>
-                  )}
-                  <button
-                    onClick={() => setActive(stories[slide])}
-                    className="text-sm rounded-xl bg-white text-[#0a2540] px-3 py-2 font-semibold hover:opacity-90"
-                  >
-                    View details
-                  </button>
-                </div>
-
-                {/* slider controls */}
-                <div className="mt-6 flex items-center gap-2">
-                  <button
-                    onClick={() => go(slide - 1)}
-                    className="rounded-lg bg-white/10 px-3 py-2 hover:bg-white/15"
-                    aria-label="Previous"
-                  >
-                    ‹
-                  </button>
-                  <div className="flex-1 h-2 rounded-full bg-white/10">
-                    <div
-                      className="h-2 rounded-full bg-white/60 transition-[width]"
-                      style={{
-                        width: `${((slide + 1) / stories.length) * 100}%`,
-                      }}
-                    />
-                  </div>
-                  <button
-                    onClick={() => go(slide + 1)}
-                    className="rounded-lg bg-white/10 px-3 py-2 hover:bg-white/15"
-                    aria-label="Next"
-                  >
-                    ›
-                  </button>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="text-white/70 text-sm">No spotlight entries yet.</div>
-          )}
-        </div>
-      </section>
-
-      {/* FILTERS */}
-      <section className="px-6 sm:px-8 lg:px-12 pb-3">
-        <div className="max-w-7xl mx-auto grid gap-3 sm:grid-cols-4">
+      {/* FILTERS (above big slider) */}
+      <section className="px-5 sm:px-8 lg:px-12 pt-5 pb-6">
+        <div className="max-w-7xl mx-auto grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
+          {/* Search */}
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Search by name, role, country, experience…"
-            className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-white/50"
+            placeholder="Search name, role, country…"
+            className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-white placeholder:text-white/50 text-sm sm:text-base"
           />
+
+          {/* Role */}
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
-            className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-white"
+            className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-white text-sm sm:text-base"
           >
-            {roles.map((r) => (
-              <option key={r} value={r}>
-                {r}
-              </option>
-            ))}
+            <option value="All" style={{ color: "#1E90FF", backgroundColor: "#0a2540" }}>
+              Roles
+            </option>
+            {roles
+              .filter((r) => r !== "All")
+              .map((r) => (
+                <option
+                  key={r}
+                  value={r}
+                  style={{ color: "#f7f7f7", backgroundColor: "#0a2540" }}
+                >
+                  {r}
+                </option>
+              ))}
           </select>
+
+          {/* Country */}
           <select
             value={country}
             onChange={(e) => setCountry(e.target.value)}
-            className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-white"
+            className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-white text-sm sm:text-base"
           >
-            {countries.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
+            <option value="All" style={{ color: "#1E90FF", backgroundColor: "#0a2540" }}>
+              Country
+            </option>
+            {countries
+              .filter((c) => c !== "All")
+              .map((c) => (
+                <option
+                  key={c}
+                  value={c}
+                  style={{ color: "#f7f7f7", backgroundColor: "#0a2540" }}
+                >
+                  {c}
+                </option>
+              ))}
           </select>
+
+          {/* Reset */}
           <button
             onClick={() => {
               setQ("");
               setRole("All");
               setCountry("All");
             }}
-            className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-white hover:bg-white/10"
+            className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-white hover:bg-white/10 text-sm sm:text-base"
           >
             Reset
           </button>
         </div>
       </section>
 
-      {/* AUTO SPOTLIGHT SLIDER */}
-      <section className="px-6 sm:px-8 lg:px-12 pb-8">
+      {/* BIG STORY SLIDER (mobile swipe) */}
+      <section className="px-5 sm:px-8 lg:px-12 pb-8">
         <div className="max-w-7xl mx-auto">
-          <h3 className="text-lg font-semibold mb-3 text-white/90">
-            Auto Spotlight Slider
-          </h3>
-          <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-4">
-            <div
-              className="flex gap-4 transition-transform duration-700 ease-out"
-              style={{
-                transform: `translateX(-${autoIndex * 280}px)`,
-                width: `${Math.max(autoList.length * 280, 560)}px`,
-              }}
-            >
-              {autoList.map((x, i) => {
-                const avatar = getLinkedInAvatar(x.linkedin) || null;
-                return (
-                  <div
-                    key={x.name + i}
-                    className="w-[260px] shrink-0 rounded-xl border border-white/10 bg-white/5 p-4"
-                  >
-                    <div className="flex items-center gap-3">
-                      {avatar ? (
-                        <img
-                          src={avatar}
-                          alt={x.name}
-                          className="h-10 w-10 rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-sm">
-                          {initials(x.name)}
-                        </div>
-                      )}
-                      <div className="min-w-0">
-                        <div className="font-semibold truncate">{x.name}</div>
-                        <div className="text-xs text-white/70 truncate">
-                          {x.role}
-                          {x.country ? ` · ${x.country}` : ""}
-                          {x.experience ? ` · ${x.experience}` : ""}
-                        </div>
-                      </div>
-                    </div>
+          {loading && (
+            <div className="rounded-2xl bg-white/5 border border-white/10 p-5 animate-pulse">
+              <div className="h-4 bg-white/10 rounded w-24 mb-3" />
+              <div className="h-3 bg-white/10 rounded w-full mb-2" />
+              <div className="h-3 bg-white/10 rounded w-3/4 mb-6" />
+              <div className="h-5 bg-white/10 rounded w-40" />
+            </div>
+          )}
 
-                    <div className="mt-3 flex items-center gap-2">
-                      {x.linkedin && (
-                        <a
-                          href={x.linkedin}
-                          target="_blank"
-                          className="text-xs rounded-lg border border-white/10 bg-white/5 px-2 py-1 hover:bg-white/10"
-                        >
-                          LinkedIn
-                        </a>
-                      )}
-                      {x.github && (
-                        <a
-                          href={x.github}
-                          target="_blank"
-                          className="text-xs rounded-lg border border-white/10 bg-white/5 px-2 py-1 hover:bg-white/10"
-                        >
-                          GitHub
-                        </a>
-                      )}
-                      <button
-                        onClick={() => setActive(x)}
-                        className="text-xs rounded-lg border border-white/10 bg-white text-[#0a2540] px-2 py-1 font-semibold hover:opacity-90"
-                      >
-                        View
-                      </button>
-                    </div>
+          {error && (
+            <div className="rounded-2xl border border-red-400/30 bg-red-900/20 p-4 text-sm">
+              Failed to load data: {error}
+            </div>
+          )}
+
+          {!loading && !error && stories.length > 0 && (
+            <div
+              className="rounded-2xl bg-white/5 border border-white/10 p-5 sm:p-6"
+              onTouchStart={onTouchStart}
+              onTouchEnd={onTouchEnd}
+            >
+              {/* Chips */}
+              <div className="flex flex-wrap gap-2 text-xs sm:text-sm">
+                {stories[slide].country && (
+                  <span className="inline-flex items-center rounded-full bg-white/10 px-2 py-1">
+                    {stories[slide].country}
+                  </span>
+                )}
+                {stories[slide].role && (
+                  <span className="inline-flex items-center rounded-full bg-white/10 px-2 py-1">
+                    {stories[slide].role}
+                  </span>
+                )}
+              </div>
+
+              {/* Paragraph */}
+              <p className="mt-3 sm:mt-4 text-white/90 text-sm sm:text-base leading-relaxed">
+                {stories[slide].experience}
+              </p>
+
+              {/* Name */}
+              <h2 className="mt-4 sm:mt-5 text-2xl sm:text-3xl font-bold">
+                {stories[slide].name}
+              </h2>
+
+              {/* CTA */}
+              <div className="mt-4 sm:mt-5">
+                {!!stories[slide].linkedin && (
+                  <a
+                    href={stories[slide].linkedin}
+                    target="_blank"
+                    className="inline-block bg-white text-[#0a2540] font-semibold px-4 py-2 rounded-xl text-sm"
+                  >
+                    LinkedIn
+                  </a>
+                )}
+              </div>
+
+              {/* Dots (mobile) */}
+              <div className="mt-5 flex sm:hidden items-center gap-1.5">
+                {stories.slice(0, 6).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setSlide(i)}
+                    className={`h-1.5 rounded-full transition-all ${
+                      i === slide ? "w-6 bg-white" : "w-2 bg-white/30"
+                    }`}
+                    aria-label={`Slide ${i + 1}`}
+                  />
+                ))}
+              </div>
+
+              {/* Controls (desktop) */}
+              <div className="mt-5 hidden sm:flex items-center gap-2">
+                <button
+                  onClick={() => go(slide - 1)}
+                  className="rounded-lg bg-white/10 px-3 py-2 hover:bg-white/15"
+                  aria-label="Previous"
+                >
+                  ‹
+                </button>
+                <div className="flex-1 h-2 rounded-full bg-white/10">
+                  <div
+                    className="h-2 rounded-full bg-white/60 transition-[width]"
+                    style={{ width: `${((slide + 1) / stories.length) * 100}%` }}
+                  />
+                </div>
+                <button
+                  onClick={() => go(slide + 1)}
+                  className="rounded-lg bg-white/10 px-3 py-2 hover:bg-white/15"
+                  aria-label="Next"
+                >
+                  ›
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* AUTO SPOTLIGHT (scroll-snap on mobile, auto on md+) */}
+      <section className="px-5 sm:px-8 lg:px-12 pb-8">
+        <div className="max-w-7xl mx-auto">
+          <h3 className="text-base sm:text-lg font-semibold mb-3">Best Performers All Time</h3>
+
+          {/* MOBILE: scroll-snap - DESKTOP: auto-translate */}
+          <div className="relative">
+            <div
+              className={`
+                sm:hidden overflow-x-auto no-scrollbar snap-x snap-mandatory
+                flex gap-3 pb-1
+              `}
+            >
+              {autoList.map((x, i) => (
+                <div
+                  key={i}
+                  className="snap-start w-64 shrink-0 rounded-xl bg-white/5 border border-white/10 p-4"
+                >
+                  <div className="font-semibold truncate">{x.name}</div>
+                  <div className="text-xs text-white/70 truncate">
+                    {x.role} · {x.country}
                   </div>
-                );
-              })}
+                  {!!x.linkedin && (
+                    <a
+                      href={x.linkedin}
+                      target="_blank"
+                      className="mt-3 inline-block text-xs bg-white text-[#0a2540] px-2 py-1 rounded-lg"
+                    >
+                      LinkedIn
+                    </a>
+                  )}
+                </div>
+              ))}
             </div>
 
-            <div className="mt-3 text-[11px] text-white/60">
-              Hover to pause · Slides every 3s
+            {/* md+ auto slide */}
+            <div className="hidden sm:block rounded-2xl border border-white/10 bg-white/5 p-4 overflow-hidden">
+              <div
+                className="flex gap-4 transition-transform duration-700 ease-out"
+                style={{
+                  transform: `translateX(-${autoIndex * 260}px)`,
+                  width: `${autoList.length * 260}px`,
+                }}
+              >
+                {autoList.map((x, i) => (
+                  <div
+                    key={i}
+                    className="w-60 shrink-0 rounded-xl bg-white/5 border border-white/10 p-4"
+                  >
+                    <div className="font-semibold truncate">{x.name}</div>
+                    <div className="text-xs text-white/70 truncate">
+                      {x.role} · {x.country}
+                    </div>
+                    {!!x.linkedin && (
+                      <a
+                        href={x.linkedin}
+                        target="_blank"
+                        className="mt-3 inline-block text-xs bg-white text-[#0a2540] px-2 py-1 rounded-lg"
+                      >
+                        LinkedIn
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* GRID */}
-      <section className="px-6 sm:px-8 lg:px-12 pb-14">
-        <div className="max-w-7xl mx-auto">
-          {loading && (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="rounded-2xl border border-white/10 bg-white/5 p-5 animate-pulse"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-full bg-white/10" />
-                    <div className="flex-1">
-                      <div className="h-3 bg-white/10 rounded w-2/3 mb-2" />
-                      <div className="h-3 bg-white/10 rounded w-1/3" />
-                    </div>
-                  </div>
-                  <div className="mt-4 h-3 bg-white/10 rounded w-full" />
-                  <div className="mt-2 h-3 bg-white/10 rounded w-2/3" />
-                </div>
-              ))}
-            </div>
-          )}
+      <section className="px-5 sm:px-8 lg:px-12 pb-12">
+        <div className="max-w-7xl mx-auto grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((x, i) => (
+            <div
+              key={i}
+              className="rounded-2xl bg-white/5 border border-white/10 p-4 sm:p-5 hover:bg-white/10 transition"
+            >
+              <div className="text-lg sm:text-xl font-semibold truncate">{x.name}</div>
+              <div className="text-xs sm:text-sm text-white/70 truncate">
+                {x.role} · {x.country}
+              </div>
+              <p className="mt-3 text-sm text-white/80 line-clamp-3">{x.experience}</p>
 
-          {error && (
-            <div className="rounded-2xl border border-red-400/30 bg-red-900/20 p-5 text-sm text-red-200">
-              Failed to load data: {error}
-            </div>
-          )}
-
-          {!loading && !error && (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {filtered.map((x, i) => {
-                const avatar = getLinkedInAvatar(x.linkedin) || null;
-                return (
-                  <button
-                    key={`${x.name}-${i}`}
-                    onClick={() => setActive(x)}
-                    className="text-left rounded-2xl border border-white/10 bg-white/5 p-5 hover:bg-white/10"
+              <div className="mt-3 flex gap-2">
+                {!!x.linkedin && (
+                  <a
+                    href={x.linkedin}
+                    target="_blank"
+                    className="inline-block bg-white text-[#0a2540] px-3 py-1.5 rounded-lg text-xs sm:text-sm"
                   >
-                    <div className="flex items-center gap-3">
-                      {avatar ? (
-                        <img
-                          src={avatar}
-                          alt={x.name}
-                          className="h-12 w-12 rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center font-semibold">
-                          {initials(x.name)}
-                        </div>
-                      )}
-                      <div className="min-w-0">
-                        <div className="font-semibold truncate">{x.name}</div>
-                        <div className="text-xs text-white/70 truncate">
-                          {x.role} {x.country ? `· ${x.country}` : ""}{" "}
-                          {x.experience ? `· ${x.experience}` : ""}
-                        </div>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
+                    LinkedIn
+                  </a>
+                )}
+                {!!x.github && (
+                  <a
+                    href={x.github}
+                    target="_blank"
+                    className="inline-block bg-white/10 border border-white/15 px-3 py-1.5 rounded-lg text-xs sm:text-sm"
+                  >
+                    GitHub
+                  </a>
+                )}
+              </div>
             </div>
-          )}
+          ))}
         </div>
       </section>
-
-      {/* MODAL */}
-      {active && (
-        <div
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setActive(null)}
-        >
-          <div
-            className="w-full max-w-xl rounded-2xl bg-[#0e2f55] border border-white/10 text-white p-6"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                {(() => {
-                  const avatar = getLinkedInAvatar(active.linkedin) || null;
-                  return avatar ? (
-                    <img
-                      src={avatar}
-                      alt={active.name}
-                      className="h-12 w-12 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center font-semibold">
-                      {initials(active.name)}
-                    </div>
-                  );
-                })()}
-                <div>
-                  <div className="font-semibold">{active.name}</div>
-                  <div className="text-xs text-white/70">
-                    {active.role} {active.country ? `· ${active.country}` : ""}{" "}
-                    {active.experience ? `· ${active.experience}` : ""}
-                  </div>
-                </div>
-              </div>
-              <button
-                className="text-sm text-white/70 hover:text-white"
-                onClick={() => setActive(null)}
-              >
-                Close
-              </button>
-            </div>
-
-            <div className="mt-4 flex items-center gap-3">
-              {active.linkedin && (
-                <a
-                  href={active.linkedin}
-                  target="_blank"
-                  className="rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm hover:bg-white/10"
-                >
-                  LinkedIn
-                </a>
-              )}
-              {active.github && (
-                <a
-                  href={active.github}
-                  target="_blank"
-                  className="rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm hover:bg-white/10"
-                >
-                  GitHub
-                </a>
-              )}
-              <button
-                className="rounded-xl border border-white/15 bg-white text-[#0a2540] px-3 py-2 text-sm font-semibold hover:opacity-90"
-                onClick={() => {
-                  const share = `${window.location.origin}/spotlight?csv=${encodeURIComponent(
-                    CSV_URL
-                  )}#${encodeURIComponent(active.name)}`;
-                  navigator.clipboard?.writeText(share);
-                  alert("Link copied!");
-                }}
-              >
-                Copy Share Link
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
