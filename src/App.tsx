@@ -3487,36 +3487,97 @@ function InternSpotlightPage() {
 
   const [active, setActive] = React.useState<Row | null>(null);
 
-  // --- NEW: make Google Drive links work in <img> ---
-  function normalizePhotoUrl(url: string): string {
-    if (!url) return "";
+  // ---------- helpers ----------
+  const initials = (name: string) =>
+    name
+      .split(" ")
+      .map((s) => s[0])
+      .filter(Boolean)
+      .slice(0, 2)
+      .join("")
+      .toUpperCase();
+
+  // Build multiple candidate URLs for a Drive image and try them in order
+  function driveCandidates(url: string): string[] {
+    if (!url) return [];
     const u = url.trim();
 
-    // Already a direct image from Googleusercontent / or typical image URL
+    // If it's already a direct image (or googleusercontent), just use it
     if (
       /(\.png|\.jpg|\.jpeg|\.gif|\.webp)(\?.*)?$/i.test(u) ||
       u.includes("lh3.googleusercontent.com")
     ) {
-      return u;
+      return [u];
     }
 
-    // Drive: /file/d/<ID>/view
-    const m1 = u.match(/\/file\/d\/([a-zA-Z0-9_-]+)\//);
-    if (m1 && m1[1]) {
-      return `https://drive.google.com/uc?export=view&id=${m1[1]}`;
+    let id: string | null = null;
+
+    // /file/d/<ID>/...
+    const m1 = u.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (m1 && m1[1]) id = m1[1];
+
+    // ...id=<ID> in query
+    if (!id) {
+      try {
+        const urlObj = new URL(u);
+        id = urlObj.searchParams.get("id");
+      } catch (_) {
+        // ignore parse error
+      }
     }
 
-    // Drive: open?id=<ID>
-    try {
-      const maybe = new URL(u);
-      const id = maybe.searchParams.get("id");
-      if (id) return `https://drive.google.com/uc?export=view&id=${id}`;
-    } catch (_) {
-      // ignore invalid URL
+    // uc?id=<ID> in raw string
+    if (!id) {
+      const m2 = u.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if (m2 && m2[1]) id = m2[1];
     }
 
-    // Shared folder or other variants – return as-is (if public it may still work)
-    return u;
+    // thumbnail?id=<ID>
+    if (!id) {
+      const m3 = u.match(/thumbnail\?id=([a-zA-Z0-9_-]+)/);
+      if (m3 && m3[1]) id = m3[1];
+    }
+
+    if (!id) return [u]; // best-effort
+
+    // Try several public endpoints
+    return [
+      `https://drive.google.com/uc?export=view&id=${id}`,
+      `https://drive.google.com/uc?export=download&id=${id}`,
+      `https://drive.google.com/thumbnail?id=${id}&sz=w2000`,
+      // this often works for public files as well:
+      `https://lh3.googleusercontent.com/d/${id}`,
+    ];
+  }
+
+  // Tiny avatar component that fails over through candidates
+  function Avatar({
+    src,
+    alt,
+    className,
+    fallback,
+  }: {
+    src?: string;
+    alt: string;
+    className: string;
+    fallback: React.ReactNode;
+  }) {
+    const [idx, setIdx] = React.useState(0);
+    const candidates = React.useMemo(() => driveCandidates(src || ""), [src]);
+
+    if (!candidates.length || idx < 0) return <>{fallback}</>;
+
+    return (
+      <img
+        src={candidates[idx]}
+        alt={alt}
+        className={className}
+        onError={() => {
+          // advance to next candidate, else give up (render fallback)
+          setIdx((i) => (i + 1 < candidates.length ? i + 1 : -1));
+        }}
+      />
+    );
   }
 
   // ---- CSV Parser (handles quotes properly) ----
@@ -3599,8 +3660,7 @@ function InternSpotlightPage() {
             role: (r[idxRole] || "").trim(),
             experience: (r[idxExp] || "").trim(),
             country: (r[idxCountry] || "").trim(),
-            // use normalized photo URL here
-            photo: normalizePhotoUrl((r[idxPhoto] || "").trim()),
+            photo: (r[idxPhoto] || "").trim(), // raw; Avatar will resolve variants
             linkedin: (r[idxLinked] || "").trim(),
             github: idxGit >= 0 ? (r[idxGit] || "").trim() : "",
           }))
@@ -3640,15 +3700,6 @@ function InternSpotlightPage() {
   const roles = ["All", ...unique(all.map((x) => x.role))];
   const countries = ["All", ...unique(all.map((x) => x.country))];
 
-  const initials = (name: string) =>
-    name
-      .split(" ")
-      .map((s) => s[0])
-      .filter(Boolean)
-      .slice(0, 2)
-      .join("")
-      .toUpperCase();
-
   // ---- Big story slider state ----
   const stories = filtered.length ? filtered : all;
   const [slide, setSlide] = React.useState(0);
@@ -3684,18 +3735,24 @@ function InternSpotlightPage() {
         </div>
       </section>
 
-      {/* BIG STORY SLIDER (your latest version with no background box) */}
+      {/* BIG STORY SLIDER (paragraph box removed) */}
       <section className="px-6 sm:px-8 lg:px-12 pb-8">
         <div className="max-w-7xl mx-auto">
           {stories.length ? (
             <div className="grid md:grid-cols-3 gap-6 items-center">
+              {/* Image */}
               <div className="md:col-span-1">
                 <div className="overflow-hidden rounded-2xl aspect-[16/9] md:aspect-square">
                   {stories[slide].photo ? (
-                    <img
+                    <Avatar
                       src={stories[slide].photo}
                       alt={stories[slide].name}
                       className="h-full w-full object-cover"
+                      fallback={
+                        <div className="h-full w-full flex items-center justify-center text-4xl font-semibold text-white/50">
+                          {initials(stories[slide].name)}
+                        </div>
+                      }
                     />
                   ) : (
                     <div className="h-full w-full flex items-center justify-center text-4xl font-semibold text-white/50">
@@ -3705,6 +3762,7 @@ function InternSpotlightPage() {
                 </div>
               </div>
 
+              {/* Text (no long paragraph) */}
               <div className="md:col-span-2 flex flex-col">
                 <div className="flex flex-wrap gap-2 text-xs text-white/80">
                   {stories[slide].country && (
@@ -3755,6 +3813,7 @@ function InternSpotlightPage() {
                   </button>
                 </div>
 
+                {/* slider controls */}
                 <div className="mt-6 flex items-center gap-2">
                   <button
                     onClick={() => go(slide - 1)}
@@ -3852,10 +3911,15 @@ function InternSpotlightPage() {
                 >
                   <div className="flex items-center gap-3">
                     {x.photo ? (
-                      <img
+                      <Avatar
                         src={x.photo}
                         alt={x.name}
                         className="h-10 w-10 rounded-full object-cover"
+                        fallback={
+                          <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-sm">
+                            {initials(x.name)}
+                          </div>
+                        }
                       />
                     ) : (
                       <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-sm">
@@ -3949,10 +4013,15 @@ function InternSpotlightPage() {
                 >
                   <div className="flex items-center gap-3">
                     {x.photo ? (
-                      <img
+                      <Avatar
                         src={x.photo}
                         alt={x.name}
                         className="h-12 w-12 rounded-full object-cover"
+                        fallback={
+                          <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center font-semibold">
+                            {initials(x.name)}
+                          </div>
+                        }
                       />
                     ) : (
                       <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center font-semibold">
@@ -3987,10 +4056,15 @@ function InternSpotlightPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 {active.photo ? (
-                  <img
+                  <Avatar
                     src={active.photo}
                     alt={active.name}
                     className="h-12 w-12 rounded-full object-cover"
+                    fallback={
+                      <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center font-semibold">
+                        {initials(active.name)}
+                      </div>
+                    }
                   />
                 ) : (
                   <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center font-semibold">
