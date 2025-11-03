@@ -3487,6 +3487,38 @@ function InternSpotlightPage() {
 
   const [active, setActive] = React.useState<Row | null>(null);
 
+  // --- NEW: make Google Drive links work in <img> ---
+  function normalizePhotoUrl(url: string): string {
+    if (!url) return "";
+    const u = url.trim();
+
+    // Already a direct image from Googleusercontent / or typical image URL
+    if (
+      /(\.png|\.jpg|\.jpeg|\.gif|\.webp)(\?.*)?$/i.test(u) ||
+      u.includes("lh3.googleusercontent.com")
+    ) {
+      return u;
+    }
+
+    // Drive: /file/d/<ID>/view
+    const m1 = u.match(/\/file\/d\/([a-zA-Z0-9_-]+)\//);
+    if (m1 && m1[1]) {
+      return `https://drive.google.com/uc?export=view&id=${m1[1]}`;
+    }
+
+    // Drive: open?id=<ID>
+    try {
+      const maybe = new URL(u);
+      const id = maybe.searchParams.get("id");
+      if (id) return `https://drive.google.com/uc?export=view&id=${id}`;
+    } catch (_) {
+      // ignore invalid URL
+    }
+
+    // Shared folder or other variants – return as-is (if public it may still work)
+    return u;
+  }
+
   // ---- CSV Parser (handles quotes properly) ----
   function parseCSV(text: string): string[][] {
     const rows: string[][] = [];
@@ -3550,17 +3582,15 @@ function InternSpotlightPage() {
         const find = (key: string) =>
           header.findIndex((h) => h.startsWith(key) || h.includes(key));
 
-        // Your new columns:
         // Timestamp | Full Name | Email ID | Contact Number | Role | Experience |
-        // Photo URL | Linkedin Profile Link | Country
+        // Photo URL | Linkedin Profile Link | Country | (optional GitHub)
         const idxName = find("full name");
         const idxRole = find("role");
         const idxExp = find("experience");
         const idxPhoto = find("photo url");
-        const idxLinked = find("linkedin"); // "linkedin profile link"
+        const idxLinked = find("linkedin");
         const idxCountry = find("country");
-        // Optional GitHub column if you add one later
-        const idxGit = find("github");
+        const idxGit = find("github"); // optional
 
         const out: Row[] = rows
           .slice(1)
@@ -3569,7 +3599,8 @@ function InternSpotlightPage() {
             role: (r[idxRole] || "").trim(),
             experience: (r[idxExp] || "").trim(),
             country: (r[idxCountry] || "").trim(),
-            photo: (r[idxPhoto] || "").trim(),
+            // use normalized photo URL here
+            photo: normalizePhotoUrl((r[idxPhoto] || "").trim()),
             linkedin: (r[idxLinked] || "").trim(),
             github: idxGit >= 0 ? (r[idxGit] || "").trim() : "",
           }))
@@ -3653,111 +3684,106 @@ function InternSpotlightPage() {
         </div>
       </section>
 
-      {/* BIG STORY SLIDER (paragraph removed as requested) */}
+      {/* BIG STORY SLIDER (your latest version with no background box) */}
       <section className="px-6 sm:px-8 lg:px-12 pb-8">
         <div className="max-w-7xl mx-auto">
-      
-            {stories.length ? (
-              <div className="grid md:grid-cols-3 gap-6 items-center">
-                {/* Image */}
-                <div className="md:col-span-1">
-                  <div className="overflow-hidden rounded-2xl bg-white/5 border border-white/10 aspect-[16/9] md:aspect-square">
-                    {stories[slide].photo ? (
-                      <img
-                        src={stories[slide].photo}
-                        alt={stories[slide].name}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <div className="h-full w-full flex items-center justify-center text-4xl font-semibold text-white/50">
-                        {initials(stories[slide].name)}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Text (NO long paragraph here) */}
-                <div className="md:col-span-2 flex flex-col">
-                  <div className="flex flex-wrap gap-2 text-xs text-white/80">
-                    {stories[slide].country && (
-                      <span className="inline-flex items-center rounded-full bg-white/10 px-2 py-1">
-                        {stories[slide].country}
-                      </span>
-                    )}
-                    {stories[slide].role && (
-                      <span className="inline-flex items-center rounded-full bg-white/10 px-2 py-1">
-                        {stories[slide].role}
-                      </span>
-                    )}
-                    {stories[slide].experience && (
-                      <span className="inline-flex items-center rounded-full bg-white/10 px-2 py-1">
-                        {stories[slide].experience}
-                      </span>
-                    )}
-                  </div>
-
-                  <h2 className="mt-3 text-2xl sm:text-3xl font-semibold">
-                    {stories[slide].name}
-                  </h2>
-
-                  <div className="mt-5 flex items-center gap-3">
-                    {stories[slide].linkedin && (
-                      <a
-                        href={stories[slide].linkedin}
-                        target="_blank"
-                        className="text-sm rounded-xl border border-white/15 bg-white/5 px-3 py-2 hover:bg-white/10"
-                      >
-                        LinkedIn
-                      </a>
-                    )}
-                    {stories[slide].github && (
-                      <a
-                        href={stories[slide].github}
-                        target="_blank"
-                        className="text-sm rounded-xl border border-white/15 bg-white/5 px-3 py-2 hover:bg-white/10"
-                      >
-                        GitHub
-                      </a>
-                    )}
-                    <button
-                      onClick={() => setActive(stories[slide])}
-                      className="text-sm rounded-xl bg-white text-[#0a2540] px-3 py-2 font-semibold hover:opacity-90"
-                    >
-                      View details
-                    </button>
-                  </div>
-
-                  {/* slider controls */}
-                  <div className="mt-6 flex items-center gap-2">
-                    <button
-                      onClick={() => go(slide - 1)}
-                      className="rounded-lg bg-white/10 px-3 py-2 hover:bg-white/15"
-                      aria-label="Previous"
-                    >
-                      ‹
-                    </button>
-                    <div className="flex-1 h-2 rounded-full bg-white/10">
-                      <div
-                        className="h-2 rounded-full bg-white/60 transition-[width]"
-                        style={{
-                          width: `${((slide + 1) / stories.length) * 100}%`,
-                        }}
-                      />
+          {stories.length ? (
+            <div className="grid md:grid-cols-3 gap-6 items-center">
+              <div className="md:col-span-1">
+                <div className="overflow-hidden rounded-2xl aspect-[16/9] md:aspect-square">
+                  {stories[slide].photo ? (
+                    <img
+                      src={stories[slide].photo}
+                      alt={stories[slide].name}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center text-4xl font-semibold text-white/50">
+                      {initials(stories[slide].name)}
                     </div>
-                    <button
-                      onClick={() => go(slide + 1)}
-                      className="rounded-lg bg-white/10 px-3 py-2 hover:bg-white/15"
-                      aria-label="Next"
-                    >
-                      ›
-                    </button>
-                  </div>
+                  )}
                 </div>
               </div>
-            ) : (
-              <div className="text-white/70 text-sm">No spotlight entries yet.</div>
-            )}
-          
+
+              <div className="md:col-span-2 flex flex-col">
+                <div className="flex flex-wrap gap-2 text-xs text-white/80">
+                  {stories[slide].country && (
+                    <span className="inline-flex items-center rounded-full bg-white/10 px-2 py-1">
+                      {stories[slide].country}
+                    </span>
+                  )}
+                  {stories[slide].role && (
+                    <span className="inline-flex items-center rounded-full bg-white/10 px-2 py-1">
+                      {stories[slide].role}
+                    </span>
+                  )}
+                  {stories[slide].experience && (
+                    <span className="inline-flex items-center rounded-full bg-white/10 px-2 py-1">
+                      {stories[slide].experience}
+                    </span>
+                  )}
+                </div>
+
+                <h2 className="mt-3 text-2xl sm:text-3xl font-semibold">
+                  {stories[slide].name}
+                </h2>
+
+                <div className="mt-5 flex items-center gap-3">
+                  {stories[slide].linkedin && (
+                    <a
+                      href={stories[slide].linkedin}
+                      target="_blank"
+                      className="text-sm rounded-xl border border-white/15 bg-white/5 px-3 py-2 hover:bg-white/10"
+                    >
+                      LinkedIn
+                    </a>
+                  )}
+                  {stories[slide].github && (
+                    <a
+                      href={stories[slide].github}
+                      target="_blank"
+                      className="text-sm rounded-xl border border-white/15 bg-white/5 px-3 py-2 hover:bg-white/10"
+                    >
+                      GitHub
+                    </a>
+                  )}
+                  <button
+                    onClick={() => setActive(stories[slide])}
+                    className="text-sm rounded-xl bg-white text-[#0a2540] px-3 py-2 font-semibold hover:opacity-90"
+                  >
+                    View details
+                  </button>
+                </div>
+
+                <div className="mt-6 flex items-center gap-2">
+                  <button
+                    onClick={() => go(slide - 1)}
+                    className="rounded-lg bg-white/10 px-3 py-2 hover:bg-white/15"
+                    aria-label="Previous"
+                  >
+                    ‹
+                  </button>
+                  <div className="flex-1 h-2 rounded-full bg-white/10">
+                    <div
+                      className="h-2 rounded-full bg-white/60 transition-[width]"
+                      style={{
+                        width: `${((slide + 1) / stories.length) * 100}%`,
+                      }}
+                    />
+                  </div>
+                  <button
+                    onClick={() => go(slide + 1)}
+                    className="rounded-lg bg-white/10 px-3 py-2 hover:bg-white/15"
+                    aria-label="Next"
+                  >
+                    ›
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="text-white/70 text-sm">No spotlight entries yet.</div>
+          )}
         </div>
       </section>
 
@@ -3805,7 +3831,7 @@ function InternSpotlightPage() {
         </div>
       </section>
 
-      {/* AUTO SPOTLIGHT SLIDER (single section) */}
+      {/* AUTO SPOTLIGHT SLIDER */}
       <section className="px-6 sm:px-8 lg:px-12 pb-8">
         <div className="max-w-7xl mx-auto">
           <h3 className="text-lg font-semibold mb-3 text-white/90">
@@ -4025,8 +4051,6 @@ function InternSpotlightPage() {
     </div>
   );
 }
-
-
 
 /// --------------------------- APP -------------------------------------------
 // read optional slug after "/:tab"
