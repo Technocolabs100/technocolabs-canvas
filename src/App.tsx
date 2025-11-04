@@ -2281,47 +2281,68 @@ function RealWorldMapInline({ dataUrl = "/intern-locations.json" }: { dataUrl?: 
 }
 
 
-// --------------------------- CONTACT PAGE ---------------------------------- ----------------------------------
+// --------------------------- CONTACT PAGE ----------------------------------
 function ContactPage() {
+  // ⬅️ Put your Apps Script /exec URL here
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwfKkgAree57Rw3k_qo9lbY3cfr033hEO6GUPC3aVvRR_C9QA6D1pG2iy8n90wmAQeg/exec';
+
   const [budget, setBudget] = useState<number>(10000);
-  const [hear, setHear] = useState<string>("Referral");
+  const [hear, setHear] = useState<string>('Referral');
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [okMsg, setOkMsg] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
-    const payload = {
-      name: String(fd.get('name')||''),
-      company: String(fd.get('company')||''),
-      email: String(fd.get('email')||''),
-      phone: String(fd.get('phone')||''),
-      message: String(fd.get('message')||''),
-      hear: String(fd.get('hear')||''),
-      budget: String(fd.get('budget')||'')
-    };
-    const subject = encodeURIComponent(`New inquiry from ${payload.name}`);
-    const body = encodeURIComponent(`Name: ${payload.name}
-Company: ${payload.company}
-Email: ${payload.email}
-Phone: ${payload.phone}
-Heard via: ${payload.hear}
-Budget: ${payload.budget}
+    setSubmitting(true);
+    setErrorMsg(null);
+    setOkMsg(null);
 
-Message:
-${payload.message}`);
-    window.location.href = `mailto:contact@technocolabs.com?subject=${subject}&body=${body}`;
+    const form = e.currentTarget;
+    const fd = new FormData(form);
+
+    // add context fields used by the Apps Script
+    fd.append('page', window.location.href);
+    fd.append('ua', navigator.userAgent);
+
+    try {
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: fd, // multipart/form-data (FormData handles the boundary)
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) {
+        throw new Error(data?.error || `HTTP ${res.status}`);
+      }
+
+      setOkMsg('Thanks! We received your message and will reply shortly.');
+      form.reset();
+      // keep UI slider state in sync after reset
+      setBudget(10000);
+      setHear('Referral');
+    } catch (err: any) {
+      setErrorMsg(`Submit failed: ${err?.message || String(err)}`);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <div className="bg-white text-[#0a2540]">
+      {/* HERO */}
       <section className="bg-[#0a2540] text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-10">
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Contact Us</h1>
-          <p className="mt-2 text-white/80">Tell us about your project or training needs. You can also reach us at <span className="font-semibold">contact@technocolabs.com</span> or <span className="font-semibold">+91 8319291391</span>.</p>
+          <p className="mt-2 text-white/80">
+            Tell us about your project or training needs. You can also reach us at{' '}
+            <span className="font-semibold">contact@technocolabs.com</span> or{' '}
+            <span className="font-semibold">+91 8319291391</span>.
+          </p>
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 grid gap-8 lg:grid-cols-2">
-        {/* Map + Offices */}
+        {/* Map + Office card */}
         <div className="space-y-6">
           <div className="overflow-hidden rounded-2xl border border-[#0a2540]/10 shadow-sm">
             <iframe
@@ -2330,50 +2351,101 @@ ${payload.message}`);
               height="360"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              src="https://www.google.com/maps?q=J.P.+Tower+First+Floor+P1,+Indore,+452002&output=embed"></iframe>
+              src="https://www.google.com/maps?q=J.P.+Tower+First+Floor+P1,+Indore,+452002&output=embed"
+            />
           </div>
           <div className="rounded-2xl border border-[#0a2540]/10 p-6 shadow-sm">
             <div className="text-base font-semibold">Our Office</div>
-            <div className="mt-2 text-sm text-[#0a2540]/80">J.P. Tower First Floor P1, Indore, India, 452002.</div>
+            <div className="mt-2 text-sm text-[#0a2540]/80">
+              J.P. Tower First Floor P1, Indore, India, 452002.
+            </div>
             <div className="mt-2 flex flex-wrap gap-4 text-sm">
-              <a className="hover:underline" href="mailto:contact@technocolabs.com">contact@technocolabs.com</a>
-              <a className="hover:underline" href="tel:+918319291391">+91 8319291391</a>
+              <a className="hover:underline" href="mailto:contact@technocolabs.com">
+                contact@technocolabs.com
+              </a>
+              <a className="hover:underline" href="tel:+918319291391">
+                +91 8319291391
+              </a>
             </div>
             <div className="mt-4 text-xs text-[#0a2540]/60">Open: Mon–Sat, 10:00–18:00 IST</div>
           </div>
         </div>
 
-        {/* Form */}
+        {/* Form → posts to Apps Script (saves to Sheet + uploads to Drive) */}
         <form onSubmit={handleSubmit} className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+          {/* Alerts */}
+          {okMsg && (
+            <div className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+              {okMsg}
+            </div>
+          )}
+          {errorMsg && (
+            <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+              {errorMsg}
+            </div>
+          )}
+
           <div className="grid gap-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium">Name*</label>
-                <input name="name" required className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"/>
+                <input
+                  name="name"
+                  required
+                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
+                  placeholder="Your name"
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium">Company</label>
-                <input name="company" className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"/>
+                <input
+                  name="company"
+                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
+                  placeholder="Your company"
+                />
               </div>
             </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium">Business email*</label>
-                <input name="email" type="email" required className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"/>
+                <input
+                  name="email"
+                  type="email"
+                  required
+                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
+                  placeholder="you@example.com"
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium">Phone</label>
-                <input name="phone" className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"/>
+                <input
+                  name="phone"
+                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
+                  placeholder="+91 ..."
+                />
               </div>
             </div>
+
             <div>
               <label className="block text-sm font-medium">How can we help?</label>
-              <textarea name="message" rows={4} className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"/>
+              <textarea
+                name="message"
+                rows={4}
+                className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
+                placeholder="Tell us about your project or training needs…"
+              />
             </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium">How did you hear about us?</label>
-                <select name="hear" value={hear} onChange={(e)=>setHear(e.target.value)} className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2">
+                <select
+                  name="hear"
+                  value={hear}
+                  onChange={(e) => setHear(e.target.value)}
+                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2"
+                >
                   <option>Referral</option>
                   <option>LinkedIn</option>
                   <option>Instagram</option>
@@ -2385,23 +2457,55 @@ ${payload.message}`);
               <div>
                 <label className="block text-sm font-medium">Budget (estimate)</label>
                 <div className="mt-2 flex items-center gap-3">
-                  <input type="range" name="budget" min={1000} max={50000} step={1000} value={budget} onChange={(e)=>setBudget(Number(e.target.value))} className="w-full"/>
-                  <span className="text-sm whitespace-nowrap">${'{'}{Intl.NumberFormat().format(budget)}{'}'}</span>
+                  <input
+                    type="range"
+                    name="budget"
+                    min={1000}
+                    max={50000}
+                    step={1000}
+                    value={budget}
+                    onChange={(e) => setBudget(Number(e.target.value))}
+                    className="w-full"
+                  />
+                  <span className="text-sm whitespace-nowrap">
+                    ${Intl.NumberFormat().format(budget)}
+                  </span>
                 </div>
               </div>
             </div>
+
+            {/* Files → Goes to Drive (folder in your script config) */}
             <div>
-              <label className="block text-sm font-medium">Attach a file (optional)</label>
-              <input type="file" className="mt-1 block w-full text-sm"/>
-              <div className="mt-1 text-xs text-[#0a2540]/60">Max 2MB. Allowed: doc, xls, pdf, png, jpg.</div>
+              <label className="block text-sm font-medium">Attach files (optional)</label>
+              <input
+                type="file" 
+                name="attachments"
+                multiple
+                className="mt-1 block w-full text-sm"
+                // optionally restrict:
+                // accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg"
+              />
+              <div className="mt-1 text-xs text-[#0a2540]/60">
+                Max ~10MB per file (Apps Script limit). Allowed: doc, xls, pdf, png, jpg.
+              </div>
             </div>
-            <button type="submit" className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:shadow-lg">Send Message</button>
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className={`inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white shadow-sm hover:shadow-lg ${
+                submitting ? 'bg-[#1e90ff]/60 cursor-not-allowed' : 'bg-[#1e90ff]'
+              }`}
+            >
+              {submitting ? 'Sending…' : 'Send Message'}
+            </button>
           </div>
         </form>
       </section>
     </div>
   );
 }
+
 // --------------------------- Top Bar Site--------------------------------------
 // --------------------------- CONTENT PAGES (ABOUT SECTION) --------------------
 function SuccessStoriesPage(){
