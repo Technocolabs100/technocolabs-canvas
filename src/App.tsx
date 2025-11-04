@@ -2282,15 +2282,17 @@ function RealWorldMapInline({ dataUrl = "/intern-locations.json" }: { dataUrl?: 
 
 
 // --------------------------- CONTACT PAGE ----------------------------------
-function ContactPage() {
-  // ⬅️ Put your Apps Script /exec URL here
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwfKkgAree57Rw3k_qo9lbY3cfr033hEO6GUPC3aVvRR_C9QA6D1pG2iy8n90wmAQeg/exec';
 
-  const [budget, setBudget] = useState<number>(10000);
-  const [hear, setHear] = useState<string>('Referral');
-  const [submitting, setSubmitting] = useState<boolean>(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [okMsg, setOkMsg] = useState<string | null>(null);
+function ContactPage() {
+  // ⬅️ Your deployed Apps Script /exec URL
+  const APPS_SCRIPT_URL =
+    "https://script.google.com/macros/s/AKfycbyBgK7FNCJ5M_KrNhlJlmkLreQDkfgWvlhEBEHZUJcKNvBVr6hWn2HphpoBZpnOHT598Q/exec";
+
+  const [budget, setBudget] = React.useState<number>(10000);
+  const [hear, setHear] = React.useState<string>("Referral");
+  const [submitting, setSubmitting] = React.useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
+  const [okMsg, setOkMsg] = React.useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -2298,29 +2300,31 @@ function ContactPage() {
     setErrorMsg(null);
     setOkMsg(null);
 
-    const form = e.currentTarget;
+    const form = e.currentTarget as HTMLFormElement;
     const fd = new FormData(form);
-
-    // add context fields used by the Apps Script
-    fd.append('page', window.location.href);
-    fd.append('ua', navigator.userAgent);
+    fd.set("page", window.location.href);
+    fd.set("ua", navigator.userAgent);
 
     try {
-      const res = await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        body: fd, // multipart/form-data (FormData handles the boundary)
+      // IMPORTANT: Apps Script must be called with no-cors.
+      // The request will succeed server-side, but the browser
+      // cannot read the JSON response due to Google infra.
+      await fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        body: fd,
+        mode: "no-cors",
       });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.ok) {
-        throw new Error(data?.error || `HTTP ${res.status}`);
-      }
 
-      setOkMsg('Thanks! We received your message and will reply shortly.');
+      // If fetch didn't throw, assume success.
+      setOkMsg("✅ Thanks! We received your message and will reply shortly.");
       form.reset();
-      // keep UI slider state in sync after reset
       setBudget(10000);
-      setHear('Referral');
+      setHear("Referral");
+
+      // Auto-hide success after 5s
+      window.setTimeout(() => setOkMsg(null), 5000);
     } catch (err: any) {
+      console.error("Submit error:", err);
       setErrorMsg(`Submit failed: ${err?.message || String(err)}`);
     } finally {
       setSubmitting(false);
@@ -2329,20 +2333,23 @@ function ContactPage() {
 
   return (
     <div className="bg-white text-[#0a2540]">
-      {/* HERO */}
+      {/* HERO SECTION */}
       <section className="bg-[#0a2540] text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-10">
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Contact Us</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
+            Contact Us
+          </h1>
           <p className="mt-2 text-white/80">
-            Tell us about your project or training needs. You can also reach us at{' '}
-            <span className="font-semibold">contact@technocolabs.com</span> or{' '}
-            <span className="font-semibold">+91 8319291391</span>.
+            Tell us about your project or training needs. You can also reach us
+            at <span className="font-semibold">contact@technocolabs.com</span>{" "}
+            or <span className="font-semibold">+91 8319291391</span>.
           </p>
         </div>
       </section>
 
+      {/* MAIN SECTION */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 grid gap-8 lg:grid-cols-2">
-        {/* Map + Office card */}
+        {/* LEFT SIDE - MAP & OFFICE INFO */}
         <div className="space-y-6">
           <div className="overflow-hidden rounded-2xl border border-[#0a2540]/10 shadow-sm">
             <iframe
@@ -2354,6 +2361,7 @@ function ContactPage() {
               src="https://www.google.com/maps?q=J.P.+Tower+First+Floor+P1,+Indore,+452002&output=embed"
             />
           </div>
+
           <div className="rounded-2xl border border-[#0a2540]/10 p-6 shadow-sm">
             <div className="text-base font-semibold">Our Office</div>
             <div className="mt-2 text-sm text-[#0a2540]/80">
@@ -2367,12 +2375,17 @@ function ContactPage() {
                 +91 8319291391
               </a>
             </div>
-            <div className="mt-4 text-xs text-[#0a2540]/60">Open: Mon–Sat, 10:00–18:00 IST</div>
+            <div className="mt-4 text-xs text-[#0a2540]/60">
+              Open: Mon–Sat, 10:00–18:00 IST
+            </div>
           </div>
         </div>
 
-        {/* Form → posts to Apps Script (saves to Sheet + uploads to Drive) */}
-        <form onSubmit={handleSubmit} className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+        {/* RIGHT SIDE - CONTACT FORM */}
+        <form
+          onSubmit={handleSubmit}
+          className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm"
+        >
           {/* Alerts */}
           {okMsg && (
             <div className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
@@ -2386,13 +2399,14 @@ function ContactPage() {
           )}
 
           <div className="grid gap-4">
+            {/* Name + Company */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium">Name*</label>
                 <input
                   name="name"
                   required
-                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
+                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
                   placeholder="Your name"
                 />
               </div>
@@ -2400,12 +2414,13 @@ function ContactPage() {
                 <label className="block text-sm font-medium">Company</label>
                 <input
                   name="company"
-                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
+                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
                   placeholder="Your company"
                 />
               </div>
             </div>
 
+            {/* Email + Phone */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium">Business email*</label>
@@ -2413,7 +2428,7 @@ function ContactPage() {
                   name="email"
                   type="email"
                   required
-                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
+                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
                   placeholder="you@example.com"
                 />
               </div>
@@ -2421,30 +2436,34 @@ function ContactPage() {
                 <label className="block text-sm font-medium">Phone</label>
                 <input
                   name="phone"
-                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
+                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
                   placeholder="+91 ..."
                 />
               </div>
             </div>
 
+            {/* Message */}
             <div>
               <label className="block text-sm font-medium">How can we help?</label>
               <textarea
                 name="message"
                 rows={4}
-                className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
+                className="mt-1 w-full rounded-xl border border-[#0a2540]/20 px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
                 placeholder="Tell us about your project or training needs…"
               />
             </div>
 
+            {/* Hear + Budget */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium">How did you hear about us?</label>
+                <label className="block text-sm font-medium">
+                  How did you hear about us?
+                </label>
                 <select
                   name="hear"
                   value={hear}
                   onChange={(e) => setHear(e.target.value)}
-                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2"
+                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 px-3 py-2"
                 >
                   <option>Referral</option>
                   <option>LinkedIn</option>
@@ -2454,6 +2473,7 @@ function ContactPage() {
                   <option>Other</option>
                 </select>
               </div>
+
               <div>
                 <label className="block text-sm font-medium">Budget (estimate)</label>
                 <div className="mt-2 flex items-center gap-3">
@@ -2474,30 +2494,29 @@ function ContactPage() {
               </div>
             </div>
 
-            {/* Files → Goes to Drive (folder in your script config) */}
+            {/* File URL instead of upload */}
             <div>
-              <label className="block text-sm font-medium">Attach files (optional)</label>
+              <label className="block text-sm font-medium">File URL (optional)</label>
               <input
-                type="file" 
-                name="attachments"
-                multiple
-                className="mt-1 block w-full text-sm"
-                // optionally restrict:
-                // accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg"
+                type="url"
+                name="fileurl"
+                placeholder="https://drive.google.com/file/d/... or https://wetransfer.com/..."
+                className="mt-1 w-full rounded-xl border border-[#0a2540]/20 px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
               />
               <div className="mt-1 text-xs text-[#0a2540]/60">
-                Max ~10MB per file (Apps Script limit). Allowed: doc, xls, pdf, png, jpg.
+                Paste a public file link (Google Drive, Dropbox, etc.)
               </div>
             </div>
 
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={submitting}
               className={`inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white shadow-sm hover:shadow-lg ${
-                submitting ? 'bg-[#1e90ff]/60 cursor-not-allowed' : 'bg-[#1e90ff]'
+                submitting ? "bg-[#1e90ff]/60 cursor-not-allowed" : "bg-[#1e90ff]"
               }`}
             >
-              {submitting ? 'Sending…' : 'Send Message'}
+              {submitting ? "Sending…" : "Send Message"}
             </button>
           </div>
         </form>
@@ -2505,6 +2524,7 @@ function ContactPage() {
     </div>
   );
 }
+
 
 // --------------------------- Top Bar Site--------------------------------------
 // --------------------------- CONTENT PAGES (ABOUT SECTION) --------------------
