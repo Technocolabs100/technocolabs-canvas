@@ -734,17 +734,87 @@ function IndustriesSection() {
   );
 }
 
-// --------------------------- CONTACT PREVIEW -------------------------------
+// --------------------------- CONTACT PREVIEW (wired up) ----------------------
 function ContactPreview() {
+  // TODO: replace with your deployed Apps Script Web App URL or a form backend
+  const ENDPOINT = "https://script.google.com/macros/s/AKfycbzI4WiGLJhpUoz9SHejRQ6kqK8OSnhdORlqHbr5w_xlZd_LfUky-m6VB0TsxOSGUfcMpA/exec";
+
+  const [name, setName] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [message, setMessage] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const [note, setNote] = React.useState<{ type: "ok" | "err"; text: string } | null>(null);
+  const [sentOnceAt, setSentOnceAt] = React.useState<number>(0);
+
+  // Honeypot (bots fill it, humans won't)
+  const [website, setWebsite] = React.useState("");
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setNote(null);
+
+    // very simple checks
+    if (!name.trim() || !email.trim() || !message.trim()) {
+      setNote({ type: "err", text: "Please fill in all fields." });
+      return;
+    }
+    // Honeypot: if filled, silently succeed (or just return)
+    if (website.trim()) {
+      setNote({ type: "ok", text: "Thanks! Your message has been sent." });
+      setName(""); setEmail(""); setMessage("");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("email", email);
+      formData.append("message", message);
+      // extra meta (optional, handy in your Sheet)
+      formData.append("ua", navigator.userAgent);
+      formData.append("page", window.location.href);
+
+      // ---- Option A: read JSON reply (if your endpoint supports CORS) ----
+      const res = await fetch(ENDPOINT, { method: "POST", body: formData });
+      const text = await res.text(); // Apps Script sometimes returns text/plain
+      let data: any = {};
+      try { data = JSON.parse(text || "{}"); } catch {}
+      if (res.ok && (data.ok === true || Object.keys(data).length === 0)) {
+        setNote({ type: "ok", text: "Thanks! Your message has been sent." });
+        setName(""); setEmail(""); setMessage("");
+        setSentOnceAt(Date.now());
+      } else {
+        throw new Error(data.error || "Could not send. Please try again.");
+      }
+
+      // ---- Option B: if your endpoint blocks CORS, use no-cors and assume success ----
+      // await fetch(ENDPOINT, { method: "POST", body: formData, mode: "no-cors" });
+      // setNote({ type: "ok", text: "Thanks! Your message has been sent." });
+      // setName(""); setEmail(""); setMessage("");
+      // setSentOnceAt(Date.now());
+
+    } catch (err) {
+      setNote({ type: "err", text: "Could not send. Please try again in a moment." });
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <section id="contact" className="bg-white text-[#0a2540]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid gap-8 lg:grid-cols-2">
           <div>
             <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight">Let's build something great</h3>
-            <p className="mt-3 text-[#0a2540]/70">We combine learning and real-world projects to nurture future-ready professionals and deliver cutting-edge AI and ML products to clients worldwide. Tell us about your project or training needs. Our team will get back within 1-2 business days.</p>
+            <p className="mt-3 text-[#0a2540]/70">
+              We combine learning and real-world projects to nurture future-ready professionals and deliver cutting-edge AI and ML products to clients worldwide. Tell us about your project or training needs. Our team will get back within 1-2 business days.
+            </p>
             <div className="mt-6 flex flex-col gap-2 text-sm">
-              <a href="mailto:contact@technocolabs.com" className="inline-flex items-center gap-2 hover:underline"><Mail className="h-4 w-4" /> contact@technocolabs.com</a>
+              <a href="mailto:contact@technocolabs.com" className="inline-flex items-center gap-2 hover:underline">
+                <Mail className="h-4 w-4" /> contact@technocolabs.com
+              </a>
               <div className="flex items-center gap-4 mt-2">
                 <a aria-label="LinkedIn" href={SOCIAL_LINKS.linkedin} className="hover:text-[#1e90ff]"><Linkedin className="h-5 w-5" /></a>
                 <a aria-label="Instagram" href={SOCIAL_LINKS.instagram} className="hover:text-[#1e90ff]"><Instagram className="h-5 w-5" /></a>
@@ -753,21 +823,79 @@ function ContactPreview() {
               </div>
             </div>
           </div>
-          <form className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+
+          <form onSubmit={handleSubmit} className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
             <div className="grid gap-4">
+              {/* Honeypot (hidden) */}
+              <input
+                name="website"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                tabIndex={-1}
+                autoComplete="off"
+                className="hidden"
+              />
+
               <div>
                 <label className="block text-sm font-medium">Name</label>
-                <input className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]" placeholder="Your name" />
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
+                  placeholder="Your name"
+                  required
+                />
               </div>
+
               <div>
                 <label className="block text-sm font-medium">Email</label>
-                <input type="email" className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]" placeholder="you@example.com" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
+                  placeholder="you@example.com"
+                  required
+                />
               </div>
+
               <div>
                 <label className="block text-sm font-medium">Message</label>
-                <textarea rows={4} className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]" placeholder="How can we help?" />
+                <textarea
+                  rows={4}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
+                  placeholder="How can we help?"
+                  required
+                />
               </div>
-              <button type="button" className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:shadow-lg">Send Message <ArrowRight className="h-4 w-4" /></button>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className={`inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white shadow-sm hover:shadow-lg ${
+                  loading ? "bg-[#1e90ff]/70" : "bg-[#1e90ff]"
+                }`}
+              >
+                {loading ? "Sending..." : "Send Message"} <ArrowRight className="h-4 w-4" />
+              </button>
+
+              {note && (
+                <p
+                  className={`text-sm ${
+                    note.type === "ok" ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  {note.text}
+                </p>
+              )}
+
+              {sentOnceAt > 0 && (
+                <p className="text-xs text-[#0a2540]/60">
+                  Reference: {new Date(sentOnceAt).toLocaleString()}
+                </p>
+              )}
             </div>
           </form>
         </div>
