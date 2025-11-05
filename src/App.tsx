@@ -55,7 +55,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 // --------------------------- ROUTING & CONTEXT ------------------------------
-type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies'| 'bigdata' | 'data-architecture' | 'data-warehouse'| 'bi-visualization' | 'predictive-analytics-bd' | 'cloud-services'| 'about' | 'success-stories' | 'blog' | 'write-for-us'|'verify'|'applications-closed'|'apply-form'|'spotlight';
+type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies'| 'bigdata' | 'data-architecture' | 'data-warehouse'| 'bi-visualization' | 'predictive-analytics-bd' | 'cloud-services'| 'about' | 'success-stories' | 'blog' | 'write-for-us'|'verify'|'applications-closed'|'apply-form'|'spotlight' |'spotlight-apply';
 const NavContext = React.createContext<(t: Tab) => void>(() => {});
 const ServiceDetailContext = React.createContext<(slug: string | null) => void>(() => {});
 const ActiveServiceContext = React.createContext<string | null>(null);
@@ -4193,6 +4193,297 @@ function InternSpotlightPage() {
   );
 }
 
+
+// --------------------------- SPOTLIGHT APPLY (inline page) ---------------------------
+function SpotlightApplyPage() {
+  // ✅ Use your deployed Apps Script /exec URL (not /dev)
+  const APPS_SCRIPT_URL =
+    "https://script.google.com/macros/s/AKfycby7BRgIEN7kFIiFgS_I1gznFi3ursCnUrthlY4HBy15Aa_wzS0K7f5Q963SekKXqIJ8IA/exec";
+
+  const [submitting, setSubmitting] = React.useState(false);
+  const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
+  const [submitted, setSubmitted] = React.useState(false); // 👈 show blue tick screen
+  const [wordCount, setWordCount] = React.useState(0);
+
+  // Keep in sync with your Google Form options
+  const roles = [
+    "Data Scientist",
+    "Data Analyst",
+    "Machine Learning Engineer",
+    "Business Intelligence Developer",
+    "Python Developer",
+    "AI Engineer",
+    "Deep Learning Engineer",
+    "Computer Vision Engineer",
+    "Full Stack Developer",
+  ];
+
+  // Normalize Google Drive “share” links
+  const normalizeDriveUrl = (url: string) => {
+    try {
+      const u = new URL(url);
+      const m1 = u.pathname.match(/\/file\/d\/([^/]+)/);
+      if (m1 && m1[1]) return `https://drive.google.com/file/d/${m1[1]}/view`;
+      const id = u.searchParams.get("id");
+      if (id) return `https://drive.google.com/file/d/${id}/view`;
+      return url;
+    } catch {
+      return url;
+    }
+  };
+
+  const countWords = (v: string) => (v.trim().match(/\S+/g) || []).length;
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setSubmitting(true);
+    setErrorMsg(null);
+
+    const form = e.currentTarget;
+    const fd = new FormData(form);
+
+    // Soft min length
+    const exp = String(fd.get("experience") || "");
+    const words = countWords(exp);
+    setWordCount(words);
+    if (words < 20) {
+      setSubmitting(false);
+      setErrorMsg("Please write at least ~20 words so we can feature you properly.");
+      return;
+    }
+
+    // Normalize Google Drive link if possible
+    const photo = String(fd.get("photoUrl") || "");
+    if (photo) fd.set("photoUrl", normalizeDriveUrl(photo));
+
+    // Helpful context (optional)
+    fd.append("page", window.location.href);
+    fd.append("ua", navigator.userAgent);
+
+    try {
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        body: fd,
+        mode: "cors",
+        headers: { Accept: "application/json" },
+        credentials: "omit",
+      });
+
+      // Prefer JSON, but fall back to text
+      let data: any = {};
+      const ct = res.headers.get("content-type") || "";
+      if (ct.includes("application/json")) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        try { data = JSON.parse(text || "{}"); } catch { data = {}; }
+      }
+
+      if (!res.ok || data?.ok === false) {
+        throw new Error(data?.error || `HTTP ${res.status}`);
+      }
+
+      // ✅ Success
+      setSubmitted(true);
+      form.reset();
+      setWordCount(0);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err: any) {
+      setErrorMsg("❌ Submit failed: " + (err?.message || String(err)));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <div className="bg-white text-[#0a2540] min-h-screen">
+      {/* HERO */}
+      <section className="bg-[#0a2540] text-white py-10 sm:py-14 px-6">
+        <div className="max-w-3xl mx-auto text-center">
+          <h1 className="text-2xl sm:text-3xl font-bold">
+            Technocolabs Intern Spotlight — Submit Your Profile
+          </h1>
+          <p className="mt-3 text-white/80">
+            Share your achievements of your internship journey so we can feature you on our official Spotlight page.
+          </p>
+        </div>
+      </section>
+
+      {/* SUCCESS SCREEN (blue tick) */}
+      {submitted ? (
+        <section className="max-w-3xl mx-auto px-6 py-10">
+          <div className="rounded-2xl border border-[#1e90ff33] bg-[#1e90ff0d] p-8 text-center">
+            {/* Blue tick */}
+            <div className="mx-auto mb-4 h-14 w-14 rounded-full border-4 border-[#1e90ff] flex items-center justify-center">
+              <svg
+                viewBox="0 0 24 24"
+                className="h-8 w-8"
+                fill="none"
+                stroke="#1e90ff"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-semibold text-[#0a2540]">Successfully submitted</h2>
+            <p className="mt-2 text-sm text-[#0a2540]/70">
+              You can check your spotlight in 1–2 days on our Intern Spotlight official page.
+            </p>
+            <div className="mt-6">
+              <a
+                href="/spotlight"
+                className="inline-flex items-center justify-center rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:shadow-lg"
+              >
+                Go to Intern Spotlight
+              </a>
+            </div>
+          </div>
+        </section>
+      ) : (
+        // FORM
+        <section className="max-w-3xl mx-auto px-6 py-8">
+          {errorMsg && (
+            <div
+              role="alert"
+              aria-live="polite"
+              className="mb-4 p-4 rounded-xl bg-red-50 text-red-700 border border-red-200"
+            >
+              {errorMsg}
+            </div>
+          )}
+
+          <form
+            onSubmit={handleSubmit}
+            className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm"
+          >
+            <div className="grid gap-5">
+              {/* Full Name */}
+              <div>
+                <label className="block text-sm font-medium">Full Name*</label>
+                <input
+                  name="fullName"
+                  required
+                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
+                  placeholder="Your full name"
+                />
+              </div>
+
+              {/* Email + Phone */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium">Email ID*</label>
+                  <input
+                    name="email"
+                    type="email"
+                    required
+                    className="mt-1 w-full rounded-xl border border-[#0a2540]/20 px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
+                    placeholder="you@example.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium">Contact Number</label>
+                  <input
+                    name="phone"
+                    className="mt-1 w-full rounded-xl border border-[#0a2540]/20 px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
+                    placeholder="+91 ..."
+                  />
+                </div>
+              </div>
+
+              {/* Role (radio list) */}
+              <div>
+                <div className="block text-sm font-medium mb-2">Role*</div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {roles.map((r) => (
+                    <label
+                      key={r}
+                      className="inline-flex items-center gap-3 rounded-xl border border-[#0a2540]/20 px-3 py-2 hover:bg-[#0a2540]/[0.03] cursor-pointer"
+                    >
+                      <input type="radio" name="role" value={r} required className="accent-[#1e90ff]" />
+                      <span className="text-sm">{r}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Experience */}
+              <div>
+                <label className="block text-sm font-medium">
+                  Write about your internship domain, the tech stack you’ll be working with, and what excites you most
+                  about this opportunity. (≈150 words)*
+                </label>
+                <textarea
+                  name="experience"
+                  required
+                  rows={6}
+                  onChange={(e) => setWordCount(countWords(e.target.value))}
+                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
+                  placeholder="Example: During my internship at Technocolabs, I will be working in Data Analytics, using Python, pandas, SQL, Power BI/Tableau..."
+                />
+                <div className="mt-1 text-xs text-[#0a2540]/60">Word count: {wordCount} (soft target ≈150)</div>
+              </div>
+
+              {/* Photo URL */}
+              <div>
+                <label className="block text-sm font-medium">Photo URL*</label>
+                <input
+                  name="photoUrl"
+                  type="url"
+                  required
+                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
+                  placeholder="https://drive.google.com/file/d/.../view"
+                />
+                <p className="text-xs text-[#0a2540]/60 mt-1">
+                  Make sure the link is public (Google Drive/Dropbox/etc.). We’ll normalize Google Drive links
+                  automatically.
+                </p>
+              </div>
+
+              {/* LinkedIn */}
+              <div>
+                <label className="block text-sm font-medium">LinkedIn Profile*</label>
+                <input
+                  name="linkedin"
+                  type="url"
+                  required
+                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
+                  placeholder="https://linkedin.com/in/yourprofile"
+                />
+              </div>
+
+              {/* Country */}
+              <div>
+                <label className="block text-sm font-medium">Country*</label>
+                <input
+                  name="country"
+                  required
+                  className="mt-1 w-full rounded-xl border border-[#0a2540]/20 px-3 py-2 outline-none focus:ring-2 focus:ring-[#1e90ff]"
+                  placeholder="India, USA, UAE, etc."
+                />
+              </div>
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={submitting}
+                className={`mt-2 inline-flex items-center justify-center rounded-xl w-full sm:w-auto px-6 py-3 text-sm font-semibold text-white shadow-sm ${
+                  submitting ? "bg-[#1e90ff]/60 cursor-not-allowed" : "bg-[#1e90ff] hover:shadow-lg"
+                }`}
+              >
+                {submitting ? "Submitting..." : "Submit Spotlight"}
+              </button>
+            </div>
+          </form>
+        </section>
+      )}
+    </div>
+  );
+}
+
+
 /// --------------------------- APP -------------------------------------------
 // read optional slug after "/:tab"
 const roleSlug =
@@ -4210,7 +4501,7 @@ export default function App() {
     'home','services','service','careers','contact','apply','svc','privacy','terms','cookies',
     'bigdata','data-architecture','data-warehouse','bi-visualization','predictive-analytics-bd',
     'cloud-services','about','success-stories','blog','write-for-us','verify',
-    'applications-closed','apply-form','spotlight' // ✅ spotlight included
+    'applications-closed','apply-form','spotlight','spotlight-apply' // ✅ spotlight included
   ]);
 
   // ✅ If roleId exists (route is /apply-form/:roleId), force 'apply-form'
@@ -4290,6 +4581,8 @@ export default function App() {
   if (tab === 'write-for-us') content = <WriteForUsPage />;
   if (tab === 'verify') content = <VerifyInternshipPage />;
   if (tab === 'applications-closed') content = <ApplicationsClosedPage />;
+  if (tab === 'spotlight-apply') content = <SpotlightApplyPage />;
+
 
   // ✅ FIX: pass roleId (not roleSlug)
   if (tab === 'apply-form') content = <ApplyFormEmbedPage roleId={roleId} />;
