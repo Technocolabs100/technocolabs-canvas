@@ -55,7 +55,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 // --------------------------- ROUTING & CONTEXT ------------------------------
-type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies'| 'bigdata' | 'data-architecture' | 'data-warehouse'| 'bi-visualization' | 'predictive-analytics-bd' | 'cloud-services'| 'about' | 'success-stories' | 'blog' | 'write-for-us'|'verify'|'applications-closed'|'apply-form'|'spotlight' |'spotlight-apply';
+type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies'| 'bigdata' | 'data-architecture' | 'data-warehouse'| 'bi-visualization' | 'predictive-analytics-bd' | 'cloud-services'| 'about' | 'success-stories' | 'blog' | 'write-for-us'|'verify'|'applications-closed'|'apply-form'|'spotlight' |'spotlight-apply'|'internship-apply';
 const NavContext = React.createContext<(t: Tab) => void>(() => {});
 const ServiceDetailContext = React.createContext<(slug: string | null) => void>(() => {});
 const ActiveServiceContext = React.createContext<string | null>(null);
@@ -4491,6 +4491,603 @@ const roleSlug =
     ? (window.location.pathname.split("/")[2] || "")
     : "";
 
+
+// ---------- inline page inside App.tsx ----------
+function InternshipApplyInline() {
+  // ⬅️ Replace with your Apps Script /exec URL when wiring up
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJx82nJlgm2Y5DMTlSewOm5DYi3lHf-OcicaW7LmKBKRGWIZJSrgxZyyieIk9j71zB/exec";
+
+  // Theme + UI state
+  const [dark, setDark] = React.useState(false);
+  const [shareToast, setShareToast] = React.useState(false);
+
+  // Slugs → Pretty names (keep in sync with Careers)
+  const SLUG_TO_ROLE: Record<string, string> = {
+    ds: "Data Scientist",
+    da: "Data Analyst",
+    ml: "Machine Learning Engineer",
+    bi: "Business Intelligence Developer",
+    py: "Python Developer",
+    ai: "AI Engineer",
+    dl: "Deep Learning Engineer",
+    cv: "Computer Vision Engineer",
+    fs: "Full Stack Developer",
+  };
+
+  // Which positions are open (closed ones are disabled + form hidden)
+  const ROLE_OPEN: Record<string, boolean> = {
+    "Data Scientist": true,
+    "Data Analyst": true,
+    "Machine Learning Engineer": true,
+    "Business Intelligence Developer": true,
+    "Python Developer": true,
+    "AI Engineer": true,
+    "Deep Learning Engineer": true,
+    "Computer Vision Engineer": true,
+    "Full Stack Developer": true,
+  };
+
+  // Full list for the left switcher + select
+  const ROLES = React.useMemo(
+    () => Object.values(SLUG_TO_ROLE).filter((v, i, a) => a.indexOf(v) === i).sort(),
+    []
+  );
+
+  // Role → tech stack choices (curated)
+  const TECH_STACKS: Record<string, string[]> = {
+    "Data Scientist": [
+      "Python","Pandas","NumPy","scikit-learn","XGBoost","LightGBM","Statsmodels","Matplotlib","Seaborn","Plotly",
+      "SQL","Spark","Airflow","Docker","Git","MLflow"
+    ],
+    "Data Analyst": [
+      "Excel","Google Sheets","SQL","Power BI","Tableau","Looker Studio","Python","pandas","DAX","dbt",
+      "Metabase","Mode","Git"
+    ],
+    "Machine Learning Engineer": [
+      "Python","scikit-learn","PyTorch","TensorFlow","Keras","ONNX","Docker","Kubernetes","Airflow","MLflow",
+      "Ray","Spark","FastAPI","gRPC","Git"
+    ],
+    "Business Intelligence Developer": [
+      "Power BI","Tableau","Looker","LookML","DAX","SQL","Snowflake","BigQuery","Redshift","dbt",
+      "Fivetran","Airbyte","Git"
+    ],
+    "Python Developer": [
+      "Python","FastAPI","Django","Flask","SQLAlchemy","PostgreSQL","Redis","Celery","PyTest","Docker",
+      "Git","Linux"
+    ],
+    "AI Engineer": [
+      "Python","LangChain","LlamaIndex","Hugging Face","OpenAI API","Transformers","Vector DB (Pinecone)","RAG",
+      "Prompt Engineering","Evaluation","FastAPI","Docker"
+    ],
+    "Deep Learning Engineer": [
+      "PyTorch","TensorFlow","Keras","Transformers","Lightning","Weights & Biases","CUDA","ONNX","Triton","DeepSpeed",
+      "Hugging Face","Git"
+    ],
+    "Computer Vision Engineer": [
+      "PyTorch","OpenCV","YOLOv8","Detectron2","MMDetection","Albumentations","Tesseract OCR","ONNX","TensorRT","Gradio",
+      "Label Studio","Roboflow"
+    ],
+    "Full Stack Developer": [
+      "HTML","CSS","JavaScript","TypeScript","React","Next.js","Node.js","Express","TailwindCSS","PostgreSQL",
+      "Prisma","Vercel","Docker","Git"
+    ],
+  };
+
+  // Role → extra role-specific questions
+  const ROLE_QUESTIONS: Record<string, { id: string; label: string; placeholder?: string; required?: boolean }[]> = {
+    "Data Scientist": [
+      { id: "ds-project", label: "Describe a recent ML project you built. What was the metric and how did you improve it?", required: true },
+      { id: "ds-validation", label: "How do you avoid data leakage / ensure robust validation?", required: true },
+    ],
+    "Data Analyst": [
+      { id: "da-dashboard", label: "Share a KPI dashboard you designed. What insights did it unblock?", required: true },
+      { id: "da-sql", label: "What’s your favorite SQL window function and why?", required: true },
+    ],
+    "Machine Learning Engineer": [
+      { id: "ml-pipeline", label: "Outline an ML pipeline you productionized (data → training → serving).", required: true },
+      { id: "ml-deploy", label: "What’s your preferred deployment pattern for models and why?", required: true },
+    ],
+    "Business Intelligence Developer": [
+      { id: "bi-modeling", label: "How do you approach dimensional modeling for self-serve analytics?", required: true },
+      { id: "bi-performance", label: "A large report is slow. How do you troubleshoot and fix it?", required: true },
+    ],
+    "Python Developer": [
+      { id: "py-api", label: "Share an API you built (auth, pagination, testing).", required: true },
+      { id: "py-quality", label: "How do you enforce code quality in a team (tests, linting, CI)?", required: true },
+    ],
+    "AI Engineer": [
+      { id: "ai-rag", label: "Describe a RAG system you would design for FAQs (chunking, retrieval, eval).", required: true },
+      { id: "ai-eval", label: "How do you evaluate LLM systems beyond accuracy (hallucinations, safety, UX)?", required: true },
+    ],
+    "Deep Learning Engineer": [
+      { id: "dl-training", label: "Tips to stabilize training for transformers/CNNs?", required: true },
+      { id: "dl-optim", label: "Explain quantization/distillation trade-offs you’ve used.", required: true },
+    ],
+    "Computer Vision Engineer": [
+      { id: "cv-data", label: "Data strategy for detection/segmentation (labeling, aug, imbalance).", required: true },
+      { id: "cv-serve", label: "How would you serve a real-time CV model on edge/cloud?", required: true },
+    ],
+    "Full Stack Developer": [
+      { id: "fs-architecture", label: "Sketch the architecture of a feature you shipped (frontend/backend).", required: true },
+      { id: "fs-state", label: "How do you manage state and data fetching (React/Next.js)?", required: true },
+    ],
+  };
+
+  // Description content per role (for the switcher)
+  const ROLE_BLURBS: Record<string, { lead: string; bullets: string[] }> = {
+    "Data Scientist": {
+      lead: "Work on end-to-end ML: from data cleaning to model evaluation and iteration.",
+      bullets: [
+        "Prototype predictive models and measure real business impact.",
+        "Own feature engineering and experiment tracking.",
+        "Collaborate with product to choose the right metrics.",
+      ],
+    },
+    "Data Analyst": {
+      lead: "Turn raw data into crisp dashboards and actionable insights.",
+      bullets: [
+        "Model data for self-serve analytics and executive reporting.",
+        "Build KPIs, cohorts, funnels, and A/B test analyses.",
+        "Partner with engineering to improve data quality.",
+      ],
+    },
+    "Machine Learning Engineer": {
+      lead: "Productionize models with reliable data pipelines and CI/CD for ML.",
+      bullets: ["Ship APIs for inference", "Monitor latency/accuracy", "Scale training/inference cost-effectively"],
+    },
+    "Business Intelligence Developer": {
+      lead: "Design semantic models and dashboards that power decisions across the org.",
+      bullets: ["LookML/DAX modeling", "Report performance tuning", "Governance & versioning best practices"],
+    },
+    "Python Developer": {
+      lead: "Build clean, well-tested backends and automation tooling.",
+      bullets: ["Own REST/GraphQL services", "Write reliable jobs and workers", "Ship with CI and observability"],
+    },
+    "AI Engineer": {
+      lead: "Prototype LLM/RAG systems with rigorous evaluation and safety.",
+      bullets: ["Prompt & retrieval design", "Latency/quality trade-offs", "Human-in-the-loop improvement"],
+    },
+    "Deep Learning Engineer": {
+      lead: "Train and optimize deep nets for NLP/CV; profile and deploy efficiently.",
+      bullets: ["Experiment tracking", "Quantization/distillation", "GPU-aware training"],
+    },
+    "Computer Vision Engineer": {
+      lead: "Ship detection/segmentation/OCR pipelines for real-world data.",
+      bullets: ["Dataset curation/augmentation", "Serving with ONNX/TensorRT", "Edge/real-time constraints"],
+    },
+    "Full Stack Developer": {
+      lead: "Deliver polished UIs with robust APIs and data layers.",
+      bullets: ["Design systems with React/Tailwind", "Node/DB performance", "Auth and caching patterns"],
+    },
+  };
+
+  // Read role from URL (support slug or pretty name, optional)
+  const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
+  const queryRole = params.get("role") || "";
+  const guessFromSlug = SLUG_TO_ROLE[queryRole as keyof typeof SLUG_TO_ROLE] || "";
+  const initialRole = guessFromSlug || queryRole;
+
+  const [submitting, setSubmitting] = React.useState(false);
+  const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
+  const [submitted, setSubmitted] = React.useState(false);
+  const [role, setRole] = React.useState<string>(initialRole);
+  const [stackFilter, setStackFilter] = React.useState("");
+  const [selectedStacks, setSelectedStacks] = React.useState<string[]>([]);
+
+  const formRef = React.useRef<HTMLFormElement | null>(null);
+
+  const stacks = TECH_STACKS[role] || [];
+  const filteredStacks = stacks.filter((s) => s.toLowerCase().includes(stackFilter.toLowerCase()));
+  const roleIsOpen = !!ROLE_OPEN[role];
+
+  // If a closed role is pre-selected via URL, clear it on mount
+  React.useEffect(() => {
+    if (role && !ROLE_OPEN[role]) setRole("");
+  }, []); // run once
+
+  function toggleStack(s: string) {
+    setSelectedStacks((prev) => {
+      if (prev.includes(s)) return prev.filter((x) => x !== s);
+      if (prev.length >= 10) return prev; // cap at 10
+      return [...prev, s];
+    });
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!role || !ROLE_OPEN[role]) {
+      setErrorMsg("This position is currently closed for applications.");
+      return;
+    }
+    setSubmitting(true);
+    setErrorMsg(null);
+
+    const form = e.currentTarget as HTMLFormElement;
+    const fd = new FormData(form);
+
+    if (role) fd.set("role", role);
+    fd.set("techStack", selectedStacks.join(", "));
+
+    fd.append("page", window.location.href);
+    fd.append("ua", navigator.userAgent);
+
+    try {
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        body: fd,
+        mode: "cors",
+        headers: { Accept: "application/json" },
+      });
+
+      let data: any = {};
+      const ct = res.headers.get("content-type") || "";
+      if (ct.includes("application/json")) data = await res.json();
+      else {
+        const text = await res.text();
+        try { data = JSON.parse(text || "{}"); } catch { data = {}; }
+      }
+
+      if (!res.ok || (data as any)?.ok === false) throw new Error((data as any)?.error || `HTTP ${res.status}`);
+
+      setSubmitted(true);
+      form.reset();
+      setSelectedStacks([]);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err: any) {
+      setErrorMsg("❌ Submit failed: " + (err?.message || String(err)));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  // Theme helpers
+  const bgMain = dark ? "bg-[#0a2540] text-white" : "bg-white text-[#0a2540]";
+  const card = dark ? "bg-white/5 border-white/15 text-white" : "bg-white border-[#0a2540]/10";
+  const subtle = dark ? "text-white/80" : "text-[#0a2540]/70";
+  const chip = dark ? "bg-white/10" : "bg-[#0a2540]/5";
+
+  // Share helpers
+  const pageUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const encUrl = encodeURIComponent(pageUrl || '');
+  const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encUrl}`;
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent('Apply for Technocolabs internships — ')}${encUrl}`;
+
+  const handleShare = async () => {
+    try {
+      if (pageUrl) {
+        try { await navigator.clipboard?.writeText(pageUrl); } catch {}
+      }
+      if (typeof window !== 'undefined' && window.alert) {
+        window.alert('Link copied. You can paste it anywhere (WhatsApp, LinkedIn, email, etc.).');
+      }
+      setShareToast(true);
+      setTimeout(() => setShareToast(false), 2000);
+    } catch {
+      if (typeof window !== 'undefined' && window.alert) {
+        window.alert('Unable to auto-copy. Use the address bar to copy the link.');
+      }
+    }
+  };
+
+  return (
+    <div className={`${bgMain} min-h-screen`}>
+      {/* Toast */}
+      {shareToast && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 rounded-lg px-4 py-2 text-sm shadow-md bg-[#0a2540] text-white">
+          Link copied to clipboard
+        </div>
+      )}
+
+      {/* HERO */}
+      <section className={`${dark ? "from-[#081c34] to-[#0a2540]" : "from-[#f0f7ff] to-white"} bg-gradient-to-b relative overflow-hidden`}>
+        <div className="absolute -top-20 -right-20 h-72 w-72 rounded-full blur-3xl opacity-20" style={{background: dark?"#3aa0ff":"#1e90ff"}} />
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pt-16 pb-10">
+          <div className="flex items-start sm:items-center justify-between gap-4">
+            <div className="max-w-3xl">
+              <h1 className={`font-bold ${dark?"text-white":"text-[#0a2540]"} text-3xl sm:text-4xl`}>Technocolabs Internship — Application</h1>
+              <p className={`mt-3 ${subtle}`}>Pick your role, select up to 10 tech stacks, and answer a few smart questions.</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setDark(d => !d)}
+                className={`rounded-xl px-3 py-2 text-sm border ${dark?"border-white/20 bg-white/10":"border-[#0a2540]/10 bg-white"}`}
+                aria-label="Toggle theme"
+              >{dark ? "🌙 Dark" : "☀️ Light"}</button>
+
+              <button
+                onClick={handleShare}
+                className="rounded-xl bg-[#1e90ff] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-lg"
+              >Share</button>
+
+              <a
+                href={linkedinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`rounded-xl px-3 py-2 text-sm border ${dark?"border-white/20 bg-white/10":"border-[#0a2540]/10 bg-white"}`}
+                aria-label="Share on LinkedIn"
+              >LinkedIn</a>
+
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`rounded-xl px-3 py-2 text-sm border ${dark?"border-white/20 bg-white/10":"border-[#0a2540]/10 bg-white"}`}
+                aria-label="Share on WhatsApp"
+              >WhatsApp</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* BODY */}
+      <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10">
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Left: role switcher */}
+          <div className={`${card} rounded-2xl border p-4 h-max sticky top-4`}>
+            <div className="text-sm font-semibold mb-2">Explore roles</div>
+            <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
+              {ROLES.map(r => {
+                const open = !!ROLE_OPEN[r];
+                return (
+                  <button
+                    key={r}
+                    onClick={() => open && setRole(r)}
+                    disabled={!open}
+                    className={`text-left rounded-xl px-3 py-2 border ${
+                      role===r && open ? "bg-[#1e90ff] text-white border-[#1e90ff]" : ""
+                    } ${open
+                      ? (dark?"border-transparent bg-white/5 hover:bg-white/10":"border-transparent bg-[#0a2540]/5 hover:bg-[#0a2540]/10")
+                      : (dark?"bg-white/5 border-white/15 text-white/50 cursor-not-allowed":"bg-[#0a2540]/5 border-[#0a2540]/10 text-[#0a2540]/40 cursor-not-allowed")}`}
+                    title={open ? `Open — ${r}` : `Closed — ${r}`}
+                  >
+                    {r} {!open && <span className="ml-2 text-xs opacity-70">(Closed)</span>}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Right: description */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className={`${card} rounded-2xl border p-6`}>
+              <h2 className="text-xl font-semibold mb-3">🌐 Internships at Technocolabs Softwares</h2>
+              <p className={`mb-4 text-justify ${subtle}`}>At Technocolabs Softwares, we believe innovation begins with curiosity and the drive to make a difference. Our internship program offers a unique opportunity for talented students and early-career professionals to gain hands-on experience in a collaborative, high-impact environment.</p>
+              <p className={`mb-4 text-justify ${subtle}`}>As a Technocolabs intern, you’ll work alongside experienced professionals on live projects that address real business challenges. From day one, you’ll be empowered to learn, experiment, and contribute ideas that shape products, solutions, and technologies used by organizations worldwide.</p>
+              <blockquote className={`border-l-4 border-[#1e90ff] pl-4 italic ${subtle}`}>“Your journey to professional excellence starts here.”</blockquote>
+            </div>
+
+            {/* Role panel */}
+            <div className={`${card} rounded-2xl border p-6`}>
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold">About the {role || "selected"} role</h3>
+                {!!role && <span className={`text-xs px-2 py-1 rounded-full ${chip}`}>{(TECH_STACKS[role]||[]).length} suggested tools</span>}
+              </div>
+              <p className={`mt-2 ${subtle}`}>{ROLE_BLURBS[role]?.lead || "Pick a role on the left to see a quick brief."}</p>
+              {!!ROLE_BLURBS[role]?.bullets?.length && (
+                <ul className={`mt-3 list-disc ml-5 space-y-1 ${subtle}`}>
+                  {ROLE_BLURBS[role].bullets.map((b,i)=>(<li key={i}>{b}</li>))}
+                </ul>
+              )}
+              {!roleIsOpen && role && (
+                <div className={`mt-4 text-sm ${subtle}`}>Applications for <strong>{role}</strong> are currently closed.</div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SUCCESS / FORM */}
+      {submitted ? (
+        <section className="max-w-3xl mx-auto px-6 py-10">
+          <div className={`rounded-2xl border p-8 text-center ${card}`}>
+            <div className="mx-auto mb-4 h-14 w-14 rounded-full border-4 border-[#1e90ff] flex items-center justify-center">
+              <svg viewBox="0 0 24 24" className="h-8 w-8" fill="none" stroke="#1e90ff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-semibold">Application submitted</h2>
+            <p className={`mt-2 text-sm ${subtle}`}>We’ll review your profile and get back within 1–2 business days.</p>
+            <div className="mt-6">
+              <a href="/careers" className="inline-flex items-center justify-center rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:shadow-lg">Back to Careers</a>
+            </div>
+          </div>
+        </section>
+      ) : (
+        roleIsOpen ? (
+          <section id="apply-form" className="max-w-3xl mx-auto px-6 py-8">
+            {errorMsg && (
+              <div className={`mb-4 p-4 rounded-xl border ${dark?"border-red-400/40 bg-red-900/20 text-red-100":"border-red-200 bg-red-50 text-red-700"}`}>{errorMsg}</div>
+            )}
+
+            <form ref={formRef} onSubmit={handleSubmit} className={`rounded-2xl border p-6 shadow-sm ${card}`}>
+              <div className="grid gap-6">
+                {/* Role */}
+                <div>
+                  <label className="block text-sm font-medium">Role*</label>
+                  <select
+                    name="role"
+                    required
+                    value={role}
+                    onChange={(e) => {
+                      setRole(e.target.value);
+                      setSelectedStacks([]);
+                      setStackFilter("");
+                    }}
+                    className={`mt-1 w-full rounded-xl border px-3 py-2 ${dark?"bg-white/5 border-white/15":"bg-white border-[#0a2540]/20"}`}
+                  >
+                    <option value="">Select a role</option>
+                    {ROLES.map((r) => (
+                      <option key={r} value={r} disabled={!ROLE_OPEN[r]}>
+                        {r}{!ROLE_OPEN[r] ? " (Closed)" : ""}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Name */}
+                <div>
+                  <label className="block text-sm font-medium">Full Name*</label>
+                  <input name="fullName" required className={`mt-1 w-full rounded-xl border px-3 py-2 ${dark?"bg-white/5 border-white/15":"bg-white border-[#0a2540]/20"}`} />
+                </div>
+
+                {/* Email + Phone */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium">Email*</label>
+                    <input type="email" name="email" required className={`mt-1 w-full rounded-xl border px-3 py-2 ${dark?"bg-white/5 border-white/15":"bg-white border-[#0a2540]/20"}`} />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium">Phone</label>
+                    <input name="phone" className={`mt-1 w-full rounded-xl border px-3 py-2 ${dark?"bg-white/5 border-white/15":"bg-white border-[#0a2540]/20"}`} />
+                  </div>
+                </div>
+
+                {/* Location + Education */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium">Location (City, Country)</label>
+                    <input name="location" className={`mt-1 w-full rounded-xl border px-3 py-2 ${dark?"bg-white/5 border-white/15":"bg-white border-[#0a2540]/20"}`} />
+                  </div>
+                  <div>
+                    <label className="block text sm font-medium">Education</label>
+                    <input name="education" placeholder="e.g., B.Tech CSE, 2026" className={`mt-1 w-full rounded-xl border px-3 py-2 ${dark?"bg-white/5 border-white/15":"bg-white border-[#0a2540]/20"}`} />
+                  </div>
+                </div>
+
+                {/* Resume + GitHub + LinkedIn */}
+                <div>
+                  <label className="block text-sm font-medium">Resume URL*</label>
+                  <input name="resumeUrl" type="url" required placeholder="Public Google Drive/Dropbox link" className={`mt-1 w-full rounded-xl border px-3 py-2 ${dark?"bg-white/5 border-white/15":"bg-white border-[#0a2540]/20"}`} />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium">GitHub Portfolio</label>
+                    <input name="github" type="url" className={`mt-1 w-full rounded-xl border px-3 py-2 ${dark?"bg-white/5 border-white/15":"bg-white border-[#0a2540]/20"}`} />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium">LinkedIn</label>
+                    <input name="linkedin" type="url" className={`mt-1 w-full rounded-xl border px-3 py-2 ${dark?"bg-white/5 border-white/15":"bg-white border-[#0a2540]/20"}`} />
+                  </div>
+                </div>
+
+                {/* Tech Stack */}
+                <div>
+                  <div className="flex items-end justify-between gap-3">
+                    <label className="block text-sm font-medium">Tech Stack (pick up to 10)</label>
+                    <input
+                      value={stackFilter}
+                      onChange={(e) => setStackFilter(e.target.value)}
+                      placeholder="Filter tech…"
+                      className={`rounded-xl border px-3 py-1 text-sm ${dark?"bg-white/5 border-white/15":"bg-white border-[#0a2540]/20"}`}
+                    />
+                  </div>
+
+                  {/* selected chips */}
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {selectedStacks.map((s) => (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => toggleStack(s)}
+                        className={`rounded-full px-3 py-1 text-xs border ${dark?"bg-white/10 border-white/15 hover:bg-white/15":"bg-[#0a2540]/5 border-[#0a2540]/10 hover:bg-[#0a2540]/10"}`}
+                      >
+                        {s} ×
+                      </button>
+                    ))}
+                    {!selectedStacks.length && (
+                      <span className={`text-xs ${subtle}`}>No items selected.</span>
+                    )}
+                  </div>
+
+                  {/* options */}
+                  <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {(stackFilter ? filteredStacks : stacks).map((s) => {
+                      const active = selectedStacks.includes(s);
+                      const disabled = !active && selectedStacks.length >= 10;
+                      return (
+                        <button
+                          type="button"
+                          key={s}
+                          onClick={() => toggleStack(s)}
+                          disabled={disabled}
+                          className={`rounded-xl border px-3 py-2 text-sm text-left hover:shadow-sm ${
+                            active ? "bg-[#1e90ff] text-white border-[#1e90ff]" : (dark?"bg-white/5 border-white/15":"bg-white border-[#0a2540]/20")
+                          } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                        >
+                          {s}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <input type="hidden" name="techStack" value={selectedStacks.join(", ")} />
+                  <div className={`mt-2 text-xs ${subtle}`}>{selectedStacks.length}/10 selected</div>
+                </div>
+
+                {/* Registration fee consent */}
+                <div>
+                  <label className="block text-sm font-medium">Registration Charge*</label>
+                  <p className={`mt-1 text-xs ${subtle}`}>As part of our commitment to ensuring a dedicated and deserving cohort, we require a nominal Registration Charge of <strong>₹855 + GST</strong> (or <strong>$15 USD</strong>). Are you willing to proceed with this registration charge to secure your spot in the program?</p>
+                  <label className="mt-2 inline-flex items-center gap-2">
+                    <input type="radio" name="registrationConsent" value="Yes" required className="accent-[#1e90ff]" />
+                    <span className="text-sm">Yes, I agree to proceed with the registration charge.</span>
+                  </label>
+                </div>
+
+                {/* Role-specific questions */}
+                {!!ROLE_QUESTIONS[role]?.length && (
+                  <div className="grid gap-4">
+                    <div className="text-sm font-semibold">Role Questions</div>
+                    {ROLE_QUESTIONS[role].map((q) => (
+                      <div key={q.id}>
+                        <label className="block text-sm font-medium">{q.label}</label>
+                        <textarea
+                          name={q.id}
+                          rows={4}
+                          required={q.required}
+                          placeholder={q.placeholder || "Your answer"}
+                          className={`mt-1 w-full rounded-xl border px-3 py-2 ${dark?"bg-white/5 border-white/15":"bg-white border-[#0a2540]/20"}`}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Cover Letter (optional) */}
+                <div>
+                  <label className="block text-sm font-medium">Cover Letter / Note (optional)</label>
+                  <textarea name="coverLetter" rows={4} className={`mt-1 w-full rounded-xl border px-3 py-2 ${dark?"bg-white/5 border-white/15":"bg-white border-[#0a2540]/20"}`} />
+                </div>
+
+                {/* Submit */}
+                <button
+                  type="submit"
+                  disabled={submitting || !role || !ROLE_OPEN[role]}
+                  className={`inline-flex items-center justify-center rounded-xl w-full sm:w-auto px-6 py-3 text-sm font-semibold text-white shadow-sm ${
+                    submitting || !role || !ROLE_OPEN[role]
+                      ? "bg-[#1e90ff]/60 cursor-not-allowed" : "bg-[#1e90ff] hover:shadow-lg"
+                  }`}
+                >
+                  {submitting ? "Submitting…" : "Submit Application"}
+                </button>
+              </div>
+            </form>
+          </section>
+        ) : (
+          role ? (
+            <section className="max-w-3xl mx-auto px-6 py-10">
+              <div className={`${card} rounded-2xl border p-8 text-center`}>
+                <h2 className="text-lg font-semibold">Applications closed</h2>
+                <p className={`mt-2 ${subtle}`}>Applications for <strong>{role}</strong> are currently closed. Please select another role from the left panel.</p>
+              </div>
+            </section>
+          ) : null
+        )
+      )}
+    </div>
+  );
+}
+
 // --------------------------- APP -------------------------------------------
 export default function App() {
   // 🔗 Read params from the URL
@@ -4501,7 +5098,7 @@ export default function App() {
     'home','services','service','careers','contact','apply','svc','privacy','terms','cookies',
     'bigdata','data-architecture','data-warehouse','bi-visualization','predictive-analytics-bd',
     'cloud-services','about','success-stories','blog','write-for-us','verify',
-    'applications-closed','apply-form','spotlight','spotlight-apply' // ✅ spotlight included
+    'applications-closed','apply-form','spotlight','spotlight-apply', 'internship-apply' // ✅ spotlight included
   ]);
 
   // ✅ If roleId exists (route is /apply-form/:roleId), force 'apply-form'
@@ -4582,6 +5179,7 @@ export default function App() {
   if (tab === 'verify') content = <VerifyInternshipPage />;
   if (tab === 'applications-closed') content = <ApplicationsClosedPage />;
   if (tab === 'spotlight-apply') content = <SpotlightApplyPage />;
+  if (tab === 'internship-apply') content = <InternshipApplyInline />;
 
 
   // ✅ FIX: pass roleId (not roleSlug)
@@ -4589,6 +5187,16 @@ export default function App() {
 
   // ✅ Spotlight standalone page
   if (tab === 'spotlight') content = <InternSpotlightPage />;
+
+  // DEBUG: ensure router + tab logic are alive
+console.log("[App] params", { tabParam, roleId }, "routeTab:", routeTab, "tab:", tab);
+
+// Emergency fallback: if router didn't set params but the URL matches, render inline page
+const pathname = typeof window !== "undefined" ? window.location.pathname : "/";
+if (!tabParam && pathname === "/internship-apply") {
+  content = <InternshipApplyInline />;
+}
+
 
   return (
     <CurrentTabContext.Provider value={tab}>
