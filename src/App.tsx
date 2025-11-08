@@ -3266,6 +3266,7 @@ function Footer() {
   <li><button onClick={()=>navigate('success-stories')} className="hover:underline">Success Stories</button></li>
   <li><button onClick={()=>navigate('blog')} className="hover:underline">Blog</button></li>
   <li><button onClick={()=>navigate('careers')} className="hover:underline">Careers</button></li>
+  <li><button onClick={() => navigate('grow')} className="...">Grow with Technocolabs</button></li>
   <li><button onClick={()=>navigate('about')} className="hover:underline">About</button></li>
   <li><button onClick={()=>navigate('write-for-us')} className="hover:underline">Write for Us</button></li>
 </ul>
@@ -5241,7 +5242,7 @@ function GrowWithTechnocolabsPage() {
         <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full blur-3xl opacity-20 bg-[#0A66C2]" />
         <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12 pt-24 pb-16">
           <h1 className="text-4xl sm:text-6xl font-bold max-w-3xl">
-            Grow with Technocolabs — Build Real, Production-Ready Work
+            Grow with Technocolabs Build Real, Production Ready Work
           </h1>
           <p className="mt-4 text-lg text-[#0a2540]/70 max-w-2xl">
             A big-tech style internship: sprints, PR reviews, deployments, and a mentor guiding every step.
