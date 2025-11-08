@@ -55,7 +55,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 // --------------------------- ROUTING & CONTEXT ------------------------------
-type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies'| 'bigdata' | 'data-architecture' | 'data-warehouse'| 'bi-visualization' | 'predictive-analytics-bd' | 'cloud-services'| 'about' | 'success-stories' | 'blog' | 'write-for-us'|'verify'|'applications-closed'|'apply-form'|'spotlight' |'spotlight-apply'|'internship-apply';
+type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies'| 'bigdata' | 'data-architecture' | 'data-warehouse'| 'bi-visualization' | 'predictive-analytics-bd' | 'cloud-services'| 'about' | 'success-stories' | 'blog' | 'write-for-us'|'verify'|'applications-closed'|'apply-form'|'spotlight' |'spotlight-apply'|'internship-apply'|'grow';
 const NavContext = React.createContext<(t: Tab) => void>(() => {});
 const ServiceDetailContext = React.createContext<(slug: string | null) => void>(() => {});
 const ActiveServiceContext = React.createContext<string | null>(null);
@@ -5088,6 +5088,505 @@ function InternshipApplyInline() {
   );
 }
 
+// ---------- Grow With Technocolabs (inline, light LinkedIn-style) ----------
+function GrowWithTechnocolabsPage() {
+  // ——— helpers kept local to avoid polluting global scope ———
+  const Pill = ({ children }: { children: React.ReactNode }) => (
+    <span className="rounded-full bg-blue-50 text-[#0a2540] px-3 py-1 text-xs font-medium">
+      {children}
+    </span>
+  );
+
+  const Stat = ({ label, value }: { label: string; value: string }) => (
+    <div className="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 border border-gray-200 shadow-sm">
+      <span className="text-lg font-semibold text-[#0a2540]">{value}</span>
+      <span className="text-xs text-[#0a2540]/60">{label}</span>
+    </div>
+  );
+
+  const Section = ({
+    id,
+    title,
+    children,
+  }: {
+    id?: string;
+    title: string;
+    children: React.ReactNode;
+  }) => (
+    <section id={id} className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12 py-14">
+      <h2 className="text-3xl font-bold text-[#0a2540]">{title}</h2>
+      <div className="mt-6">{children}</div>
+    </section>
+  );
+
+  const Roadmap = ({ title, steps }: { title: string; steps: string[] }) => (
+    <details className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      <summary className="cursor-pointer text-[#0a2540] font-semibold">{title}</summary>
+      <ol className="mt-3 list-decimal pl-5 space-y-1 text-sm text-[#0a2540]/80">
+        {steps.map((s, i) => (
+          <li key={i}>{s}</li>
+        ))}
+      </ol>
+    </details>
+  );
+
+  const CompanyLogoCard = ({ name, domain }: { name: string; domain: string }) => {
+    const imgRef = React.useRef<HTMLImageElement | null>(null);
+    const fallbackRef = React.useRef<HTMLDivElement | null>(null);
+    const onErr = () => {
+      if (imgRef.current) imgRef.current.style.display = "none";
+      if (fallbackRef.current) fallbackRef.current.style.display = "flex";
+    };
+    const logo = `https://logo.clearbit.com/${domain}?size=128`;
+    const initials = name
+      .split(" ")
+      .map((w) => w[0])
+      .join("")
+      .slice(0, 3)
+      .toUpperCase();
+    return (
+      <div className="rounded-2xl border border-gray-200 bg-white p-4 flex flex-col items-center justify-center text-center shadow-sm">
+        <img
+          ref={imgRef}
+          src={logo}
+          alt={`${name} logo`}
+          className="h-10 object-contain"
+          loading="lazy"
+          onError={onErr}
+        />
+        <div
+          ref={fallbackRef}
+          className="hidden h-10 w-10 items-center justify-center rounded bg-blue-50 text-[#0a2540]/70 text-xs font-semibold"
+          aria-hidden
+        >
+          {initials}
+        </div>
+        <div className="mt-2 text-sm font-medium text-[#0a2540]">{name}</div>
+      </div>
+    );
+  };
+
+  // ——— component state & small utilities ———
+  const [copied, setCopied] = React.useState(false);
+  const shareCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1200);
+      alert("Link copied! Share it anywhere.");
+    } catch {
+      alert("Couldn't copy. Please copy manually.");
+    }
+  };
+
+  const tracks = React.useMemo(
+    () => [
+      {
+        slug: "ds",
+        title: "Data Science",
+        bullets: ["Scope with client", "Model + metrics", "Production handoff"],
+        tools: ["Python", "pandas", "scikit-learn", "MLflow", "Plotly"],
+      },
+      {
+        slug: "ml",
+        title: "Machine Learning",
+        bullets: ["Pipeline design", "Train/Tune", "Serve & monitor"],
+        tools: ["Python", "sklearn", "FastAPI", "MLflow", "Docker"],
+      },
+      {
+        slug: "cv",
+        title: "Computer Vision",
+        bullets: ["Data to labels", "Train/Export", "Edge/Cloud deploy"],
+        tools: ["PyTorch", "OpenCV", "YOLOv8", "ONNX", "TensorRT"],
+      },
+      {
+        slug: "bi",
+        title: "Business Intelligence",
+        bullets: ["Semantic model", "Dashboards", "Stakeholder rollout"],
+        tools: ["Power BI", "Tableau", "SQL", "DAX", "Looker Studio"],
+      },
+      {
+        slug: "py",
+        title: "Python Development",
+        bullets: ["API spec", "Implement + tests", "Prod-ready ops"],
+        tools: ["FastAPI", "Postgres", "Docker", "PyTest", "CI/CD"],
+      },
+      {
+        slug: "web",
+        title: "Full-Stack Web",
+        bullets: ["UI/UX", "API integration", "Auth + production"],
+        tools: ["React", "Next.js", "Node", "Tailwind", "Vercel"],
+      },
+      {
+        slug: "ai",
+        title: "AI / GenAI",
+        bullets: ["RAG design", "Eval & safety", "Ship to app"],
+        tools: ["Transformers", "LangChain", "Vector DB", "OpenAI API"],
+      },
+      {
+        slug: "da",
+        title: "Data Analytics",
+        bullets: ["SQL + KPIs", "Dashboards", "Insights to decisions"],
+        tools: ["SQL", "Looker Studio", "Power BI", "Spreadsheets"],
+      },
+    ],
+    []
+  );
+
+  // ——— page ———
+  return (
+    <div className="bg-[#f7f9fb] text-[#0a2540]">
+      {/* HERO */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-white to-[#f7f9fb]">
+        <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full blur-3xl opacity-20 bg-[#0A66C2]" />
+        <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12 pt-24 pb-16">
+          <h1 className="text-4xl sm:text-6xl font-bold max-w-3xl">
+            Grow with Technocolabs — Build Real, Production-Ready Work
+          </h1>
+          <p className="mt-4 text-lg text-[#0a2540]/70 max-w-2xl">
+            A big-tech style internship: sprints, PR reviews, deployments, and a mentor guiding every step.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <a
+              href="/internship-apply"
+              className="rounded-xl bg-[#0A66C2] px-6 py-3 text-white font-semibold shadow-sm hover:shadow"
+            >
+              Apply Now
+            </a>
+            <a
+              href="/careers"
+              className="rounded-xl border border-gray-200 bg-white px-6 py-3 font-semibold shadow-sm hover:shadow"
+            >
+              Explore Roles
+            </a>
+            <button
+              onClick={shareCopy}
+              className="rounded-xl border border-gray-200 bg-white px-6 py-3 font-semibold shadow-sm hover:shadow"
+            >
+              Copy Link
+            </button>
+          </div>
+          <div className="mt-8 flex flex-wrap gap-4 text-sm">
+            <Stat label="Learners" value="6,000+" />
+            <Stat label="Countries" value="25+" />
+            <Stat label="Avg. Projects" value="2–3" />
+            <Stat label="Hiring Partners" value="40+" />
+          </div>
+        </div>
+      </section>
+
+      {copied && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 rounded-lg px-4 py-2 text-sm shadow-md bg-[#0A66C2] text-white">
+          Link copied
+        </div>
+      )}
+
+      {/* What you’ll gain */}
+      <Section title="What you’ll gain">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-2xl bg-white p-6 border border-gray-200 shadow-sm">
+            <h3 className="font-semibold">Production Experience</h3>
+            <p className="text-sm text-[#0a2540]/70 mt-1">Workflows used at Google, Microsoft, Netflix.</p>
+          </div>
+          <div className="rounded-2xl bg-white p-6 border border-gray-200 shadow-sm">
+            <h3 className="font-semibold">Mentorship</h3>
+            <p className="text-sm text-[#0a2540]/70 mt-1">1:1 guidance from Yasin Shah.</p>
+          </div>
+          <div className="rounded-2xl bg-white p-6 border border-gray-200 shadow-sm">
+            <h3 className="font-semibold">Portfolio Projects</h3>
+            <p className="text-sm text-[#0a2540]/70 mt-1">Work you can present in interviews.</p>
+          </div>
+          <div className="rounded-2xl bg-white p-6 border border-gray-200 shadow-sm">
+            <h3 className="font-semibold">Career Acceleration</h3>
+            <p className="text-sm text-[#0a2540]/70 mt-1">Mock interviews, resume review, referrals.</p>
+          </div>
+        </div>
+      </Section>
+
+      {/* Skill badges */}
+      <Section title="Skill badges (earn as you build)">
+        <div className="flex flex-wrap gap-2">
+          {[
+            "Algorithmic Thinking",
+            "API Engineering",
+            "Model Evaluation (F1/ROUGE/BLEU)",
+            "Cloud Deployment (AWS/GCP/Azure)",
+            "Security & Compliance",
+            "Accessibility (WCAG)",
+          ].map((b) => (
+            <Pill key={b}>{b}</Pill>
+          ))}
+        </div>
+      </Section>
+
+      {/* Learning tracks */}
+      <Section title="Learning tracks">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {tracks.map((t, idx) => (
+            <div
+              key={t.slug}
+              className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md"
+            >
+              <div className="text-sm font-semibold text-[#0A66C2]">Track</div>
+              <h3 className="text-lg font-semibold mt-1">{t.title}</h3>
+              <ul className="mt-2 list-disc pl-5 space-y-1 text-sm text-[#0a2540]/80">
+                {t.bullets.map((b) => (
+                  <li key={b}>{b}</li>
+                ))}
+              </ul>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {t.tools.map((tool) => (
+                  <Pill key={tool}>{tool}</Pill>
+                ))}
+              </div>
+              <details className="mt-4 group">
+                <summary className="cursor-pointer text-sm font-semibold text-[#0a2540] group-open:text-[#0A66C2]">
+                  View curriculum
+                </summary>
+                <ul className="mt-2 list-disc pl-5 space-y-1 text-sm text-[#0a2540]/80">
+                  {[
+                    "Weeks 1–2: Foundations & setup",
+                    "Weeks 3–5: Build & iterate",
+                    "Weeks 6–7: Stabilize & test",
+                    "Week 8+: Deploy & handoff",
+                  ].map((c) => (
+                    <li key={c + idx}>{c}</li>
+                  ))}
+                </ul>
+              </details>
+              <div className="mt-4 flex gap-3">
+                <a
+                  href={`/internship-apply?role=${encodeURIComponent(
+                    ["ds", "ml", "cv", "web", "bi", "ai", "py", "da"][idx] || ""
+                  )}`}
+                  className="inline-flex items-center rounded-xl bg-[#0A66C2] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow"
+                >
+                  Apply
+                </a>
+                <a
+                  href="#curriculum"
+                  className="text-sm font-medium text-[#0A66C2] hover:underline"
+                >
+                  Full curriculum
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* How it works */}
+      <Section title="How it works — big-tech style">
+        <ol className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+          {[
+            "Apply (10 minutes)",
+            "Kickoff — repo, sprint plan, success checklist",
+            "Build — weekly PRs, mentor QA, sprints",
+            "Demo Day — present like a real engineer",
+            "Production Handoff — docs, tests, deployment",
+          ].map((step, i) => (
+            <li
+              key={i}
+              className="rounded-2xl p-6 border bg-white border-gray-200 shadow-sm"
+            >
+              <div className="h-8 w-8 rounded-full bg-[#0A66C2] text-white flex items-center justify-center font-semibold mb-2">
+                {i + 1}
+              </div>
+              <p className="text-sm">{step}</p>
+            </li>
+          ))}
+        </ol>
+      </Section>
+
+      {/* Case studies */}
+      <Section title="Industry case studies we simulate">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            { t: "E-commerce Demand Forecasting", s: ["pandas", "XGBoost", "MLflow"] },
+            { t: "FinTech Fraud Scoring", s: ["sklearn", "FastAPI", "Docker"] },
+            { t: "Streaming Content Ranking", s: ["Python", "LightGBM", "Airflow"] },
+            { t: "Retail Shelf Vision", s: ["YOLOv8", "ONNX", "TensorRT"] },
+            { t: "Healthcare OCR", s: ["OpenCV", "Tesseract", "PyTorch"] },
+            { t: "Customer 360 BI", s: ["Power BI", "SQL", "DAX"] },
+          ].map((it) => (
+            <div
+              key={it.t}
+              className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md"
+            >
+              <div className="aspect-[16/9] w-full rounded-xl bg-blue-50 mb-3" />
+              <div className="font-semibold">{it.t}</div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {it.s.map((x) => (
+                  <Pill key={x}>{x}</Pill>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* Curriculum full */}
+      <Section id="curriculum" title="Curriculum (Internship)">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <Roadmap
+            title="Data Science"
+            steps={[
+              "Weeks 1–2: Data audit, KPIs, baseline",
+              "Weeks 3–5: Feature engineering, MLflow, iteration",
+              "Weeks 6–7: Validation, error analysis, reporting",
+              "Week 8+: Production handoff & dashboard",
+            ]}
+          />
+          <Roadmap
+            title="Machine Learning"
+            steps={[
+              "Weeks 1–2: Pipeline skeleton (ingest→train→eval)",
+              "Weeks 3–5: Tuning, cross-validation, artifacts",
+              "Weeks 6–7: FastAPI inference & perf tests",
+              "Week 8+: Containerize & monitor",
+            ]}
+          />
+          <Roadmap
+            title="Computer Vision"
+            steps={[
+              "Weeks 1–2: Labeling plan, augmentations, baseline",
+              "Weeks 3–5: Train + export (ONNX)",
+              "Weeks 6–7: Edge/cloud inference API",
+              "Week 8+: TensorRT/ONNXRuntime deploy",
+            ]}
+          />
+          <Roadmap
+            title="Full-Stack Web"
+            steps={[
+              "Weeks 1–2: Wireframes, components",
+              "Weeks 3–5: API integration & state",
+              "Weeks 6–7: Auth, caching, performance",
+              "Week 8+: Deploy & smoke tests",
+            ]}
+          />
+          <Roadmap
+            title="Business Intelligence"
+            steps={[
+              "Weeks 1–2: Sources & semantic model",
+              "Weeks 3–5: KPIs & RLS",
+              "Weeks 6–7: Performance tuning",
+              "Week 8+: Rollout & docs",
+            ]}
+          />
+          <Roadmap
+            title="AI / GenAI"
+            steps={[
+              "Weeks 1–2: RAG design & prompts",
+              "Weeks 3–5: Eval set & metrics",
+              "Weeks 6–7: Guardrails & feedback loop",
+              "Week 8+: Ship app with analytics",
+            ]}
+          />
+        </div>
+      </Section>
+
+      {/* Companies */}
+      <Section title="Companies our interns join">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {[
+            { name: "Google", domain: "google.com" },
+            { name: "Microsoft", domain: "microsoft.com" },
+            { name: "Amazon", domain: "amazon.com" },
+            { name: "NVIDIA", domain: "nvidia.com" },
+            { name: "Adobe", domain: "adobe.com" },
+            { name: "Accenture", domain: "accenture.com" },
+            { name: "Deloitte", domain: "deloitte.com" },
+            { name: "TCS", domain: "tcs.com" },
+            { name: "Infosys", domain: "infosys.com" },
+            { name: "Razorpay", domain: "razorpay.com" },
+            { name: "Freshworks", domain: "freshworks.com" },
+            { name: "Zomato", domain: "zomato.com" },
+          ].map((c) => (
+            <CompanyLogoCard key={c.name} name={c.name} domain={c.domain} />
+          ))}
+        </div>
+        <p className="mt-3 text-xs text-[#0a2540]/60">
+          Logos served via <code className="px-1 py-0.5 rounded bg-blue-50">logo.clearbit.com</code>. If a logo fails to load, the
+          company initials will be shown automatically.
+        </p>
+      </Section>
+
+      {/* Mentorship & support */}
+      <Section title="Mentorship & support">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="rounded-2xl border bg-white p-6 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-full bg-blue-50" />
+              <div>
+                <div className="font-semibold">Yasin Shah</div>
+                <div className="text-sm text-[#0a2540]/70">Lead Mentor</div>
+              </div>
+            </div>
+            <div className="mt-3 text-sm text-[#0a2540]/70">
+              Guides interns from kickoff to client-side production handoff.
+            </div>
+          </div>
+          <div className="rounded-2xl border bg-white p-6 shadow-sm">
+            <h3 className="font-semibold">Community</h3>
+            <p className="text-sm text-[#0a2540]/70 mt-1">
+              Slack workspace • Daily Q&A • Weekly mentor sessions • Collaboration rooms
+            </p>
+          </div>
+          <div className="rounded-2xl border bg-white p-6 shadow-sm">
+            <h3 className="font-semibold">AI Career Assistant</h3>
+            <p className="text-sm text-[#0a2540]/70 mt-1">
+              Resume/LinkedIn feedback • Mock interviews • Skill gap analysis • Portfolio review
+            </p>
+          </div>
+        </div>
+      </Section>
+
+      {/* FAQs */}
+      <Section title="FAQs">
+        <div className="grid gap-4 md:grid-cols-2">
+          {[
+            { q: "Who is it for?", a: "Students and early-career engineers who want portfolio-grade projects." },
+            { q: "Do I need prior experience?", a: "Basics in your track (e.g., Python for DS/ML) are recommended." },
+            { q: "Is it remote?", a: "Yes — global participation with async reviews and periodic live sessions." },
+            { q: "How many projects will I ship?", a: "Most learners ship 2–3 projects in 8–12 weeks." },
+            { q: "Do I get a certificate?", a: "Yes, upon successful completion and project review." },
+            { q: "What about fees?", a: "Nominal registration charge (₹855 + GST / $15) after acceptance." },
+          ].map((x) => (
+            <details key={x.q} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+              <summary className="font-semibold cursor-pointer">{x.q}</summary>
+              <p className="text-sm text-[#0a2540]/70 mt-2">{x.a}</p>
+            </details>
+          ))}
+        </div>
+      </Section>
+
+      {/* Final CTA */}
+      <section className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12 py-14">
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
+          <div>
+            <h3 className="text-xl font-semibold">Ready to grow?</h3>
+            <p className="text-[#0a2540]/70 mt-1">Apply now and join our next cohort.</p>
+          </div>
+          <div className="flex gap-3">
+            <a
+              href="/internship-apply"
+              className="inline-flex items-center justify-center rounded-xl bg-[#0A66C2] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:shadow"
+            >
+              Apply Now
+            </a>
+            <a
+              href="/careers"
+              className="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-semibold shadow-sm hover:shadow"
+            >
+              See Roles
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 // --------------------------- APP -------------------------------------------
 export default function App() {
   // 🔗 Read params from the URL
@@ -5098,7 +5597,7 @@ export default function App() {
     'home','services','service','careers','contact','apply','svc','privacy','terms','cookies',
     'bigdata','data-architecture','data-warehouse','bi-visualization','predictive-analytics-bd',
     'cloud-services','about','success-stories','blog','write-for-us','verify',
-    'applications-closed','apply-form','spotlight','spotlight-apply', 'internship-apply' // ✅ spotlight included
+    'applications-closed','apply-form','spotlight','spotlight-apply', 'internship-apply','grow' // ✅ spotlight included
   ]);
 
   // ✅ If roleId exists (route is /apply-form/:roleId), force 'apply-form'
@@ -5180,6 +5679,7 @@ export default function App() {
   if (tab === 'applications-closed') content = <ApplicationsClosedPage />;
   if (tab === 'spotlight-apply') content = <SpotlightApplyPage />;
   if (tab === 'internship-apply') content = <InternshipApplyInline />;
+  if (tab === 'grow') content = <GrowWithTechnocolabsPage />;
 
 
   // ✅ FIX: pass roleId (not roleSlug)
