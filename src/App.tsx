@@ -5626,12 +5626,6 @@ function RoleRotator({
     </div>
   );
 }
-
-// read optional slug after "/:tab"
-const roleSlug =
-  typeof window !== "undefined"
-    ? (window.location.pathname.split("/")[2] || "")
-    : "";
 // --------------------------- APP -------------------------------------------
 export default function App() {
   // 🔗 Read params from the URL
