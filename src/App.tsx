@@ -5375,7 +5375,7 @@ function RoleRotator({
 
             {/* Stats */}
             <div className="mt-7 flex flex-wrap gap-4 text-sm">
-              <Stat label="Learners" value="6=10,000+" />
+              <Stat label="Learners" value="10,000+" />
               <Stat label="Countries" value="25+" />
               <Stat label="Avg. Projects" value="2–3" />
               <Stat label="Hiring Partners" value="40+" />
