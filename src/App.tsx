@@ -1767,6 +1767,108 @@ function ServiceDetailPage() {
 }
 // ---------- ADD THESE IMPORTS AT THE TOP OF App.tsx ----------
 
+// ---------- HERO BANNER WITH TABS ----------
+function CareersHeroBanner({ sub, setSub, navigate }) {
+  return (
+    <section className="relative overflow-hidden bg-[#011a45] pb-10">
+
+      {/* Purple blob */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute right-[8%] top-1/2 -translate-y-1/2 
+        h-72 w-72 rounded-full bg-fuchsia-500/40 blur-3xl"
+      />
+
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16">
+        <div className="grid gap-10 lg:grid-cols-2 items-center">
+
+          {/* LEFT */}
+          <div className="text-center lg:text-left">
+            <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white">
+              Join Us! at Early careers at Technocolabs Sofwares Inc.
+            </h2>
+
+            <p className="mt-5 max-w-2xl mx-auto lg:mx-0 text-lg text-white/90">
+              Shape the future with us as we make the impossible possible. Ready to
+              change the world and learn from the best minds in technology? Join us!
+            </p>
+
+            {/* CTA */}
+            <div className="mt-8 flex justify-center lg:justify-start">
+              <a
+                href="/internship-apply"
+                className="inline-flex items-center rounded-xl bg-white 
+                px-5 py-3 text-sm font-semibold text-[#011b47] shadow-sm hover:shadow"
+              >
+                Launch your career
+              </a>
+            </div>
+
+            {/* ✅ TABS INSIDE HERO */}
+            <div className="mt-10 inline-flex rounded-xl bg-white/10 p-1 max-w-full overflow-x-auto no-scrollbar">
+              <div className="flex gap-1">
+
+                <button
+                  onClick={() => setSub('internships')}
+                  className={`px-4 py-2 text-sm font-semibold rounded-lg ${
+                    sub === 'internships'
+                      ? 'bg-white text-[#011b47]'
+                      : 'text-blue hover:bg-blue/10'
+                  }`}
+                >
+                  Internships
+                </button>
+
+                <button
+                  onClick={() => setSub('openroles')}
+                  className={`px-4 py-2 text-sm font-semibold rounded-lg ${
+                    sub === 'openroles'
+                      ? 'bg-white text-[#011b47]'
+                      : 'text-white hover:bg-white/10'
+                  }`}
+                >
+                  Open Roles
+                </button>
+
+                <button
+                  onClick={() => setSub('fulltime')}
+                  className={`px-4 py-2 text-sm font-semibold rounded-lg ${
+                    sub === 'fulltime'
+                      ? 'bg-white text-[#011b47]'
+                      : 'text-white hover:bg-white/10'
+                  }`}
+                >
+                  Full-Time (Coming Soon)
+                </button>
+
+                <button
+                  onClick={() => navigate('spotlight')}
+                  className="px-4 py-2 text-sm font-semibold rounded-lg text-white hover:bg-white/10"
+                >
+                  ⭐ Intern Spotlight
+                </button>
+
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT (IMAGE) */}
+          <div className="relative flex justify-center lg:justify-end">
+            <img
+              src="/career-banner-1.png"
+              alt="Career Banner"
+              className="relative z-10 h-[350px] w-full object-cover rounded-2xl 
+              border border-white/20 shadow-2xl"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
 // ---------- CAREERS PAGE (with Internships, Open Roles, Full-Time, Spotlight) ----------
 function CareersPage() {
   const navigate = useContext(NavContext);
@@ -1842,53 +1944,7 @@ function CareersPage() {
   return (
     <div className="bg-[#0a2540] text-white">
       {/* Hero + Sub-tabs */}
-      <section className="relative overflow-clip">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-6">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Careers</h1>
-
-          {/* Tabs + Spotlight (scrollable on mobile) */}
-          <div className="mt-6 inline-flex rounded-xl bg-white/10 p-1 max-w-full overflow-x-auto no-scrollbar">
-            <div className="flex gap-1">
-              <button
-                onClick={() => setSub('internships')}
-                className={`px-4 py-2 text-sm font-semibold rounded-lg ${
-                  sub === 'internships' ? 'bg-white text-[#0a2540]' : 'text-white hover:bg-white/10'
-                }`}
-              >
-                Internships
-              </button>
-
-              <button
-                onClick={() => setSub('openroles')}
-                className={`px-4 py-2 text-sm font-semibold rounded-lg ${
-                  sub === 'openroles' ? 'bg-white text-[#0a2540]' : 'text-white hover:bg-white/10'
-                }`}
-              >
-                Open Roles
-              </button>
-
-              <button
-                onClick={() => setSub('fulltime')}
-                className={`px-4 py-2 text-sm font-semibold rounded-lg ${
-                  sub === 'fulltime' ? 'bg-white text-[#0a2540]' : 'text-white hover:bg-white/10'
-                }`}
-              >
-                Full-Time (Coming Soon)
-              </button>
-
-              {/* ⭐ Intern Spotlight – navigates to standalone page */}
-              <button
-                onClick={() => navigate('spotlight')}
-                className="px-4 py-2 text-sm font-semibold rounded-lg text-white hover:bg-white/10"
-                title="See standout intern projects and profiles"
-              >
-                ⭐ Intern Spotlight
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      <CareersHeroBanner sub={sub} setSub={setSub} navigate={navigate} />
       {/* BODY */}
       <section className="bg-white text-[#0a2540]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
