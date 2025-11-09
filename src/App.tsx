@@ -1767,11 +1767,11 @@ function ServiceDetailPage() {
 }
 // ---------- ADD THESE IMPORTS AT THE TOP OF App.tsx ----------
 
-// ---------- HERO BANNER WITH TABS (Mobile-friendly) ----------
+// ---------- HERO BANNER WITH TABS (Mobile-friendly, fixed) ----------
 function CareersHeroBanner({ sub, setSub, navigate }) {
   return (
     <section className="relative overflow-hidden bg-[#011a45]">
-      {/* Background accents (toned down on mobile) */}
+      {/* Background accent */}
       <div
         aria-hidden
         className="
@@ -1783,13 +1783,12 @@ function CareersHeroBanner({ sub, setSub, navigate }) {
       />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-14 pb-10">
-        {/* Stack on mobile, 2 columns on lg */}
         <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-10">
 
           {/* LEFT: Copy + CTA + Tabs */}
           <div className="text-center lg:text-left">
             <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white">
-              Careers — Work With Us
+              Careers - Work With Us
             </h2>
 
             <p className="mt-4 sm:mt-5 max-w-2xl mx-auto lg:mx-0 text-base sm:text-lg text-white/90">
@@ -1797,12 +1796,11 @@ function CareersHeroBanner({ sub, setSub, navigate }) {
               change the world and learn from the best minds in technology? Join us!
             </p>
 
-            {/* CTA */}
             <div className="mt-6 sm:mt-8 flex justify-center lg:justify-start">
               <a
                 href="/internship-apply"
-                className="inline-flex items-center rounded-xl bg-white
-                px-5 py-3 text-sm font-semibold text-[#011b47] shadow-sm hover:shadow"
+                className="inline-flex items-center rounded-xl bg-white px-5 py-3
+                           text-sm font-semibold text-[#011b47] shadow-sm hover:shadow"
               >
                 Launch your career
               </a>
@@ -1815,43 +1813,43 @@ function CareersHeroBanner({ sub, setSub, navigate }) {
                   mx-auto inline-flex max-w-full gap-1 rounded-xl bg-white/10 p-1
                   overflow-x-auto no-scrollbar justify-center
                 "
-                style={{ WebkitOverflowScrolling: 'touch' }}
+                style={{ WebkitOverflowScrolling: "touch" }}
               >
                 <button
-                  onClick={() => setSub('internships')}
+                  onClick={() => setSub("internships")}
                   className={`px-4 py-2 text-sm font-semibold rounded-lg whitespace-nowrap ${
-                    sub === 'internships'
-                      ? 'bg-white text-[#011b47]'
-                      : 'text-white hover:bg-white/10'
+                    sub === "internships"
+                      ? "bg-white text-[#011b47]"
+                      : "text-white hover:bg-white/10"
                   }`}
                 >
                   Internships
                 </button>
 
                 <button
-                  onClick={() => setSub('openroles')}
+                  onClick={() => setSub("openroles")}
                   className={`px-4 py-2 text-sm font-semibold rounded-lg whitespace-nowrap ${
-                    sub === 'openroles'
-                      ? 'bg-white text-[#011b47]'
-                      : 'text-white hover:bg-white/10'
+                    sub === "openroles"
+                      ? "bg-white text-[#011b47]"
+                      : "text-white hover:bg-white/10"
                   }`}
                 >
                   Open Roles
                 </button>
 
                 <button
-                  onClick={() => setSub('fulltime')}
+                  onClick={() => setSub("fulltime")}
                   className={`px-4 py-2 text-sm font-semibold rounded-lg whitespace-nowrap ${
-                    sub === 'fulltime'
-                      ? 'bg-white text-[#011b47]'
-                      : 'text-white hover:bg-white/10'
+                    sub === "fulltime"
+                      ? "bg-white text-[#011b47]"
+                      : "text-white hover:bg-white/10"
                   }`}
                 >
                   Full-Time (Coming Soon)
                 </button>
 
                 <button
-                  onClick={() => navigate('spotlight')}
+                  onClick={() => navigate("spotlight")}
                   className="px-4 py-2 text-sm font-semibold rounded-lg text-white hover:bg-white/10 whitespace-nowrap"
                 >
                   ⭐ Intern Spotlight
@@ -1862,25 +1860,17 @@ function CareersHeroBanner({ sub, setSub, navigate }) {
 
           {/* RIGHT: Image (no overlap, centered on mobile) */}
           <div className="relative z-10 flex justify-center lg:justify-end">
-            <div
-              className="
-                w-full max-w-md sm:max-w-lg
-                aspect-[4/3] sm:aspect-[16/10] lg:aspect-auto
-              "
-            >
+            <div className="w-full max-w-md sm:max-w-lg aspect-[4/3] sm:aspect-[16/10] lg:aspect-auto">
               <img
-                src="/career-banner-clean.png"        {/* replace with your image if needed */}
+                src="/career-banner-clean.png"
                 alt="Career Banner"
-                className="
-                  h-full w-full object-cover rounded-2xl
-                  border border-white/20 shadow-2xl
-                  lg:h-[350px]
-                "
+                className="h-full w-full object-cover rounded-2xl border border-white/20 shadow-2xl lg:h-[350px]"
                 loading="lazy"
                 decoding="async"
               />
             </div>
           </div>
+
         </div>
       </div>
     </section>
