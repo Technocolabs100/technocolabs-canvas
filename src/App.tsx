@@ -1855,7 +1855,7 @@ function CareersHeroBanner({ sub, setSub, navigate }) {
           {/* RIGHT (IMAGE) */}
           <div className="relative flex justify-center lg:justify-end">
             <img
-              src="/career-banner-1.png"
+              src="/career-banner-clean.png"
               alt="Career Banner"
               className="relative z-10 h-[350px] w-full object-cover rounded-2xl 
               border border-white/20 shadow-2xl"
