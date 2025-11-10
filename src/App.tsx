@@ -5891,14 +5891,14 @@ function PartnershipsSection() {
                 <a href="#benefits" className="rounded-xl border border-gray-200 bg-white px-5 py-3 font-semibold shadow-sm hover:shadow">See Benefits</a>
               </div>
             </div>
-            {/* Right Media — single image (no slider) */}
-            <div>
-              <img
-                src="https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=1600"
-                alt="Professional partnership meeting"
-                className="w-full h-64 sm:h-80 md:h-[24rem] object-cover rounded-2xl border border-[#0b1320]/10 shadow-sm"
-              />
-            </div>
+                       {/* Right Media – Poster fully filled with no extra white spacing */}
+<div className="rounded-2xl overflow-hidden border border-[#0b1320]/10 shadow-sm">
+  <img
+    src="partner.png"
+    alt="Partnership Poster"
+    className="w-full h-auto object-cover"
+  />
+</div>
           </div>
         </div>
       </section>
