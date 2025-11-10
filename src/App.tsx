@@ -5893,10 +5893,10 @@ function PartnershipsSection() {
   // Slider (Partnership images)
   function PartnershipsSlider() {
     const slides = [
-      { src: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=1600", caption: "Cross‑functional teams shipping together" },
-      { src: "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=1600", caption: "Whiteboard to production, fast" },
-      { src: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1600", caption: "Mentorship that scales" },
-      { src: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1600", caption: "Enterprise programs with SLAs" }
+     { src: "https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=1600", caption: "Professional partnership meeting" },
+      { src: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1600", caption: "Successful business handshake" },
+      { src: "https://images.unsplash.com/photo-1521790945508-bf2a36314e85?w=1600", caption: "Deal closed with confidence" },
+      { src: "https://images.unsplash.com/photo-1525182008055-f88b95ff7980?w=1600", caption: "Collaborative business agreement" }
     ];
     const [i, setI] = React.useState(0);
     const [hover, setHover] = React.useState(false);
