@@ -5869,108 +5869,6 @@ function PartnershipsSection() {
     );
   }
 
-  // Video Responsive Wrapper
-  function VideoEmbed({ src, title = "Why partner with us" }) {
-    return (
-      <div className="relative w-full overflow-hidden rounded-2xl border border-[#0b1320]/10 bg-white shadow-sm" style={{ paddingTop: "56.25%" }}>
-        {src ? (
-          <iframe
-            className="absolute inset-0 h-full w-full"
-            src={src}
-            title={title}
-            loading="lazy"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center text-[#0b1320]/60 text-sm">
-            <img src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=800" alt="Partnership collaboration" className="h-full w-full object-cover" />
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  // Slider (Partnership images)
-  function PartnershipsSlider() {
-    const slides = [
-      { src: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1600"},
-    ];
-    const [i, setI] = React.useState(0);
-    const [hover, setHover] = React.useState(false);
-    const timer = React.useRef(0);
-
-    const next = React.useCallback(() => setI((p) => (p + 1) % slides.length), [slides.length]);
-    const prev = React.useCallback(() => setI((p) => (p - 1 + slides.length) % slides.length), [slides.length]);
-
-    React.useEffect(() => {
-      if (hover) return () => {};
-      // Auto-advance every 4s
-      const id = window.setInterval(next, 4000);
-      timer.current = id as unknown as number;
-      return () => window.clearInterval(id);
-    }, [next, hover]);
-
-    // Touch swipe
-    const startX = React.useRef(0);
-    const onTouchStart = (e) => { startX.current = e.touches[0].clientX; };
-    const onTouchEnd = (e) => {
-      const dx = e.changedTouches[0].clientX - startX.current;
-      if (Math.abs(dx) > 40) { dx < 0 ? next() : prev(); }
-    };
-
-    return (
-      <div
-        className="relative w-full overflow-hidden rounded-2xl border border-[#0b1320]/10 bg-white shadow-sm"
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        onTouchStart={onTouchStart}
-        onTouchEnd={onTouchEnd}
-        aria-roledescription="carousel"
-      >
-        {/* Slides */}
-        <div className="relative h-64 sm:h-80 md:h-[24rem]">
-          {slides.map((s, idx) => (
-            <img
-              key={s.src}
-              src={s.src}
-              alt={s.caption}
-              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${idx === i ? 'opacity-100' : 'opacity-0'}`}
-              loading="lazy"
-            />
-          ))}
-        </div>
-
-        {/* Caption */}
-        <div className="absolute bottom-3 left-3 right-3">
-          <div className="inline-flex max-w-[90%] rounded-full bg-black/50 px-3 py-1 text-xs sm:text-sm text-white backdrop-blur">
-            {slides[i].caption}
-          </div>
-        </div>
-
-        {/* Controls */}
-        <button onClick={prev} aria-label="Previous slide" className="absolute left-2 top-1/2 -translate-y-1/2 grid place-items-center h-9 w-9 rounded-full bg-white/90 hover:bg-white shadow">
-          ‹
-        </button>
-        <button onClick={next} aria-label="Next slide" className="absolute right-2 top-1/2 -translate-y-1/2 grid place-items-center h-9 w-9 rounded-full bg-white/90 hover:bg-white shadow">
-          ›
-        </button>
-
-        {/* Dots */}
-        <div className="absolute bottom-3 left-0 right-0 flex items-center justify-center gap-2">
-          {slides.map((_, idx) => (
-            <button
-              key={idx}
-              aria-label={`Go to slide ${idx + 1}`}
-              onClick={() => setI(idx)}
-              className={`h-2.5 w-2.5 rounded-full ${idx === i ? 'bg-[#0A66C2]' : 'bg-white/80'} shadow outline-offset-2`}
-            />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   // ---------------- Render ----------------
   return (
     <div className="bg-[#f7f9fb] text-[#0a2540]">
@@ -5993,8 +5891,14 @@ function PartnershipsSection() {
                 <a href="#benefits" className="rounded-xl border border-gray-200 bg-white px-5 py-3 font-semibold shadow-sm hover:shadow">See Benefits</a>
               </div>
             </div>
-            {/* Right Media */}
-            <div><PartnershipsSlider /></div>
+            {/* Right Media — single image (no slider) */}
+            <div>
+              <img
+                src="https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=1600"
+                alt="Professional partnership meeting"
+                className="w-full h-64 sm:h-80 md:h-[24rem] object-cover rounded-2xl border border-[#0b1320]/10 shadow-sm"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -6192,6 +6096,7 @@ function PartnershipsSection() {
     </div>
   );
 }
+
 
 // --------------------------- APP -------------------------------------------
 export default function App() {
