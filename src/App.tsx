@@ -55,7 +55,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 // --------------------------- ROUTING & CONTEXT ------------------------------
-type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies'| 'bigdata' | 'data-architecture' | 'data-warehouse'| 'bi-visualization' | 'predictive-analytics-bd' | 'cloud-services'| 'about' | 'success-stories' | 'blog' | 'write-for-us'|'verify'|'applications-closed'|'apply-form'|'spotlight' |'spotlight-apply'|'internship-apply'|'grow';
+type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies'| 'bigdata' | 'data-architecture' | 'data-warehouse'| 'bi-visualization' | 'predictive-analytics-bd' | 'cloud-services'| 'about' | 'success-stories' | 'blog' | 'write-for-us'|'verify'|'applications-closed'|'apply-form'|'spotlight' |'spotlight-apply'|'internship-apply'|'grow'|'partnerships';
 const NavContext = React.createContext<(t: Tab) => void>(() => {});
 const ServiceDetailContext = React.createContext<(slug: string | null) => void>(() => {});
 const ActiveServiceContext = React.createContext<string | null>(null);
@@ -5691,6 +5691,510 @@ function RoleRotator({
     </div>
   );
 }
+
+function PartnershipsSection() {
+  // ---------------- State & utilities for new features ----------------
+  const [yearly, setYearly] = React.useState(true);
+  const [faqQuery, setFaqQuery] = React.useState("");
+  const [showTop, setShowTop] = React.useState(false);
+  const price = (m, y) => (yearly ? `$${y.toLocaleString()}/yr` : `$${m}/mo`);
+
+  React.useEffect(() => {
+    // UTM capture for the inline form (if present)
+    const p = new URLSearchParams(window.location.search);
+    const setVal = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.setAttribute("value", val || "");
+    };
+    setVal("utm_source", p.get("utm_source"));
+    setVal("utm_medium", p.get("utm_medium"));
+    setVal("utm_campaign", p.get("utm_campaign"));
+
+    // Back-to-top visibility
+    const onScroll = () => setShowTop(window.scrollY > 400);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // ---------------- Small primitives (scoped here) ----------------
+  const Kicker = ({ children }) => (
+    <div className="text-xs font-semibold uppercase tracking-wider text-[#0A66C2]">{children}</div>
+  );
+
+  const Section = ({ id, title, kicker, children, actions }) => (
+    <section id={id} className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12 py-14">
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          {kicker && <Kicker>{kicker}</Kicker>}
+          <h2 className="mt-1 text-3xl sm:text-4xl font-bold text-[#0b1320]">{title}</h2>
+        </div>
+        {actions ? <div className="shrink-0">{actions}</div> : null}
+      </div>
+      <div className="mt-6">{children}</div>
+    </section>
+  );
+
+  const Badge = ({ children }) => (
+    <span className="inline-flex items-center rounded-full bg-[#0A66C2]/10 text-[#0A66C2] px-3 py-1 text-xs font-semibold">{children}</span>
+  );
+
+  // Animated Stat (counts up on view)
+  function StatCounter({ to, label, suffix = "" }) {
+    const ref = React.useRef(null);
+    const [val, setVal] = React.useState(0);
+
+    React.useEffect(() => {
+      const el = ref.current;
+      if (!el) return;
+      let frame;
+      let start = null;
+      const dur = 900; // ms
+
+      const io = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return;
+          io.disconnect();
+          const step = (t) => {
+            if (start === null) start = t;
+            const p = Math.min(1, (t - start) / dur);
+            setVal(Math.floor(p * to));
+            if (p < 1) frame = requestAnimationFrame(step);
+          };
+          frame = requestAnimationFrame(step);
+        },
+        { threshold: 0.2 }
+      );
+
+      io.observe(el);
+      return () => {
+        if (frame) cancelAnimationFrame(frame);
+        io.disconnect();
+      };
+    }, [to]);
+
+    return (
+      <div ref={ref} className="rounded-2xl border border-[#0b1320]/10 bg-white px-5 py-4 shadow-sm text-center">
+        <div className="text-2xl sm:text-3xl font-extrabold text-[#0b1320]">
+          {val.toLocaleString()}
+          <span className="text-[#0b1320]/70 font-bold">{suffix}</span>
+        </div>
+        <div className="text-xs text-[#0b1320]/60 mt-1">{label}</div>
+      </div>
+    );
+  }
+
+  // Company Logo with Clearbit + initials fallback
+  function CompanyLogo({ name, domain }) {
+    const imgRef = React.useRef(null);
+    const fallbackRef = React.useRef(null);
+    const onErr = () => {
+      if (imgRef.current) imgRef.current.style.display = "none";
+      if (fallbackRef.current) fallbackRef.current.style.display = "flex";
+    };
+    const initials = name
+      .split(" ")
+      .map((w) => w[0])
+      .join("")
+      .slice(0, 3)
+      .toUpperCase();
+    return (
+      <div className="rounded-2xl border border-[#0b1320]/10 bg-white p-4 text-center shadow-sm">
+        <img
+          ref={imgRef}
+          src={`https://logo.clearbit.com/${domain}?size=128`}
+          alt={`${name} logo`}
+          className="mx-auto h-10 object-contain"
+          loading="lazy"
+          onError={onErr}
+        />
+        <div
+          ref={fallbackRef}
+          className="hidden mx-auto h-10 w-10 items-center justify-center rounded bg-[#0b1320]/5 text-[#0b1320]/70 text-xs font-semibold"
+        >
+          {initials}
+        </div>
+        <div className="mt-2 text-sm font-medium text-[#0b1320]">{name}</div>
+      </div>
+    );
+  }
+
+  // Tier Card
+  function TierCard({ name, price, features, highlight }) {
+    return (
+      <div
+        className={`rounded-2xl border ${
+          highlight ? "border-[#0A66C2] ring-2 ring-[#0A66C2]/20" : "border-[#0b1320]/10"
+        } bg-white p-6 shadow-sm flex flex-col`}
+      >
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-[#0b1320]">{name}</h3>
+          {highlight && <Badge>Most Popular</Badge>}
+        </div>
+        <div className="mt-2 text-2xl font-extrabold text-[#0b1320]">{price}</div>
+        <ul className="mt-4 space-y-2 text-sm text-[#0b1320]/80">
+          {features.map((f) => (
+            <li key={f} className="flex items-start gap-2">
+              <span>✅</span>
+              <span>{f}</span>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-5">
+          <a
+            href="#partner-contact"
+            className="inline-flex items-center rounded-xl bg-[#0A66C2] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow"
+          >
+            Choose {name}
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  // Case Study Card
+  function CaseStudy({ partner, outcome, bullets }) {
+    return (
+      <div className="rounded-2xl border border-[#0b1320]/10 bg-white p-6 shadow-sm hover:shadow-md transition">
+        <div className="text-sm font-semibold text-[#0A66C2]">Case Study</div>
+        <div className="mt-1 text-lg font-semibold text-[#0b1320]">{partner}</div>
+        <p className="mt-1 text-sm text-[#0b1320]/70">{outcome}</p>
+        <ul className="mt-3 space-y-1 text-sm text-[#0b1320]/80">
+          {bullets.map((b) => (
+            <li key={b}>• {b}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+
+  // Video Responsive Wrapper
+  function VideoEmbed({ src, title = "Why partner with us" }) {
+    return (
+      <div className="relative w-full overflow-hidden rounded-2xl border border-[#0b1320]/10 bg-white shadow-sm" style={{ paddingTop: "56.25%" }}>
+        {src ? (
+          <iframe
+            className="absolute inset-0 h-full w-full"
+            src={src}
+            title={title}
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center text-[#0b1320]/60 text-sm">
+            <img src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=800" alt="Partnership collaboration" className="h-full w-full object-cover" />
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Slider (Partnership images)
+  function PartnershipsSlider() {
+    const slides = [
+      { src: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=1600", caption: "Cross‑functional teams shipping together" },
+      { src: "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=1600", caption: "Whiteboard to production, fast" },
+      { src: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1600", caption: "Mentorship that scales" },
+      { src: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1600", caption: "Enterprise programs with SLAs" }
+    ];
+    const [i, setI] = React.useState(0);
+    const [hover, setHover] = React.useState(false);
+    const timer = React.useRef(0);
+
+    const next = React.useCallback(() => setI((p) => (p + 1) % slides.length), [slides.length]);
+    const prev = React.useCallback(() => setI((p) => (p - 1 + slides.length) % slides.length), [slides.length]);
+
+    React.useEffect(() => {
+      if (hover) return () => {};
+      // Auto-advance every 4s
+      const id = window.setInterval(next, 4000);
+      timer.current = id as unknown as number;
+      return () => window.clearInterval(id);
+    }, [next, hover]);
+
+    // Touch swipe
+    const startX = React.useRef(0);
+    const onTouchStart = (e) => { startX.current = e.touches[0].clientX; };
+    const onTouchEnd = (e) => {
+      const dx = e.changedTouches[0].clientX - startX.current;
+      if (Math.abs(dx) > 40) { dx < 0 ? next() : prev(); }
+    };
+
+    return (
+      <div
+        className="relative w-full overflow-hidden rounded-2xl border border-[#0b1320]/10 bg-white shadow-sm"
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+        aria-roledescription="carousel"
+      >
+        {/* Slides */}
+        <div className="relative h-64 sm:h-80 md:h-[24rem]">
+          {slides.map((s, idx) => (
+            <img
+              key={s.src}
+              src={s.src}
+              alt={s.caption}
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${idx === i ? 'opacity-100' : 'opacity-0'}`}
+              loading="lazy"
+            />
+          ))}
+        </div>
+
+        {/* Caption */}
+        <div className="absolute bottom-3 left-3 right-3">
+          <div className="inline-flex max-w-[90%] rounded-full bg-black/50 px-3 py-1 text-xs sm:text-sm text-white backdrop-blur">
+            {slides[i].caption}
+          </div>
+        </div>
+
+        {/* Controls */}
+        <button onClick={prev} aria-label="Previous slide" className="absolute left-2 top-1/2 -translate-y-1/2 grid place-items-center h-9 w-9 rounded-full bg-white/90 hover:bg-white shadow">
+          ‹
+        </button>
+        <button onClick={next} aria-label="Next slide" className="absolute right-2 top-1/2 -translate-y-1/2 grid place-items-center h-9 w-9 rounded-full bg-white/90 hover:bg-white shadow">
+          ›
+        </button>
+
+        {/* Dots */}
+        <div className="absolute bottom-3 left-0 right-0 flex items-center justify-center gap-2">
+          {slides.map((_, idx) => (
+            <button
+              key={idx}
+              aria-label={`Go to slide ${idx + 1}`}
+              onClick={() => setI(idx)}
+              className={`h-2.5 w-2.5 rounded-full ${idx === i ? 'bg-[#0A66C2]' : 'bg-white/80'} shadow outline-offset-2`}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // ---------------- Render ----------------
+  return (
+    <div className="bg-[#f7f9fb] text-[#0a2540]">
+      {/* ================= HERO ================= */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-white to-[#f7f9fb]">
+        <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full blur-3xl opacity-20 bg-[#0A66C2]" aria-hidden />
+        <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12 pt-16 pb-10">
+          <div className="grid gap-10 lg:grid-cols-2 items-center">
+            {/* Left Copy */}
+            <div className="text-center lg:text-left">
+              <Kicker>Partnerships</Kicker>
+              <h1 className="mt-2 text-4xl sm:text-6xl font-bold text-[#0b1320] leading-tight">Build with Technocolabs</h1>
+              <p className="mt-4 text-lg text-[#0a2540]/70 max-w-2xl mx-auto lg:mx-0">
+                Co-create products, scale delivery, and unlock growth. We partner with startups, enterprises,
+                universities and agencies to bring developer-first solutions to production.
+              </p>
+              <div className="mt-7 flex flex-wrap gap-3 justify-center lg:justify-start">
+                <a href="#partner-contact" className="rounded-xl bg-[#0A66C2] px-5 py-3 text-white font-semibold shadow-sm hover:shadow">Become a Partner</a>
+                <a href="#tiers" className="rounded-xl border border-gray-200 bg-white px-5 py-3 font-semibold shadow-sm hover:shadow">View Tiers</a>
+                <a href="#benefits" className="rounded-xl border border-gray-200 bg-white px-5 py-3 font-semibold shadow-sm hover:shadow">See Benefits</a>
+              </div>
+            </div>
+            {/* Right Media */}
+            <div><PartnershipsSlider /></div>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= STICKY SUB-NAV ================= */}
+      <nav className="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-[#0b1320]/10">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-2 flex gap-2 sm:gap-4 text-sm overflow-x-auto">
+          {[
+            { href: "#benefits", label: "Benefits" },
+            { href: "#tiers", label: "Tiers" },
+            { href: "#case-studies", label: "Case Studies" },
+            { href: "#faq", label: "FAQ" },
+            { href: "#partner-contact", label: "Contact" },
+          ].map((i) => (
+            <a key={i.href} href={i.href} className="px-3 py-1 rounded-lg hover:bg-[#0b1320]/5">{i.label}</a>
+          ))}
+        </div>
+      </nav>
+
+      {/* ================= STATS ================= */}
+      <Section kicker="Proof" title="Why partners choose us">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCounter to={10000} label="Developers trained" />
+          <StatCounter to={230} label="Companies served" />
+          <StatCounter to={4.9} label="Mentor rating" suffix="★" />
+          <StatCounter to={95} label="Project completion rate" suffix="%" />
+        </div>
+      </Section>
+
+      {/* ================= BENEFITS ================= */}
+      <Section id="benefits" kicker="Value" title="Partnership benefits">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            { t: "Co-branded programs", d: "Launch branded learning or hiring pipelines together." },
+            { t: "Joint product development", d: "Ship features with our engineering pods." },
+            { t: "White-label solutions", d: "Offer our accelerators under your brand." },
+            { t: "Priority talent access", d: "Hire top performers from live project tracks." },
+            { t: "Enterprise support", d: "SLA-backed guidance, solution architects, and PM." },
+            { t: "Developer community", d: "Tap into events, hackathons, and 1:1 mentorship." },
+            { t: "Revenue share", d: "Flexible models: referral, rev-share, or fixed." },
+            { t: "University alliances", d: "Curriculum mapping, capstone labs, faculty upskilling." },
+            { t: "Startup packages", d: "Credits for prototypes, audits, and GTM launch." },
+          ].map((b) => (
+            <div key={b.t} className="rounded-2xl border border-[#0b1320]/10 bg-white p-6 shadow-sm hover:shadow-md transition">
+              <div className="text-lg font-semibold text-[#0b1320]">{b.t}</div>
+              <p className="mt-1 text-sm text-[#0b1320]/70">{b.d}</p>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* ================= TIERS (with pricing toggle) ================= */}
+      <Section
+        id="tiers"
+        kicker="Levels"
+        title="Partnership tiers"
+        actions={
+          <div className="flex items-center gap-3">
+            <span className={`text-sm ${!yearly ? "font-semibold" : "text-[#0b1320]/60"}`}>Monthly</span>
+            <button onClick={() => setYearly((v) => !v)} className="relative w-12 h-6 rounded-full bg-[#0b1320]/20" aria-label="Toggle pricing">
+              <span className={`absolute top-0.5 transition-all ${yearly ? "left-6" : "left-0.5"} inline-block w-5 h-5 rounded-full bg-white shadow`} />
+            </button>
+            <span className={`text-sm ${yearly ? "font-semibold" : "text-[#0b1320]/60"}`}>
+              Yearly <span className="ml-1 text-xs px-2 py-0.5 rounded bg-[#0A66C2]/10 text-[#0A66C2]">Save 20%</span>
+            </span>
+          </div>
+        }
+      >
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <TierCard name="Bronze" price="Free" features={["Partner newsletter showcase", "Access to community events", "Listing on partner page"]} />
+          <TierCard name="Silver" price={price(249, 2000)} features={["All Bronze benefits", "Talent referrals (pre-screened)", "Technical office hours (monthly)"]} />
+          <TierCard name="Gold" price={price(999, 10000)} highlight features={["All Silver benefits", "Dedicated success manager", "Joint webinars & co-marketing", "Early access to tracks"]} />
+          <TierCard name="Platinum" price="Custom" features={["All Gold benefits", "Co-built product lines", "Private cohorts & NDAs", "On-site workshops & SLAs"]} />
+        </div>
+      </Section>
+
+      {/* ================= CASE STUDIES ================= */}
+      <Section id="case-studies" kicker="Impact" title="Recent partner stories">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <CaseStudy partner="Fintech Startup (Series A)" outcome="Shipped a fraud detection MVP in 6 weeks" bullets={["85% faster time-to-market", "CI/CD on cloud", "Model monitoring & alerts"]} />
+          <CaseStudy partner="E-commerce Scale-up" outcome="Cut infra cost by 35% with caching & BI" bullets={["Power BI executive suite", "Edge caching for APIs", "Incident playbooks"]} />
+          <CaseStudy partner="University Alliance" outcome="Capstone lab with 120 students" bullets={["Industry mentors", "RAG & CV tracks", "Job-ready portfolios"]} />
+        </div>
+      </Section>
+
+      {/* ================= LOGOS ================= */}
+      <Section kicker="Trusted by" title="Companies our alumni join">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {[
+            { name: "Google", domain: "google.com" },
+            { name: "Microsoft", domain: "microsoft.com" },
+            { name: "Amazon", domain: "amazon.com" },
+            { name: "NVIDIA", domain: "nvidia.com" },
+            { name: "Adobe", domain: "adobe.com" },
+            { name: "Accenture", domain: "accenture.com" },
+            { name: "Deloitte", domain: "deloitte.com" },
+            { name: "TCS", domain: "tcs.com" },
+            { name: "Infosys", domain: "infosys.com" },
+            { name: "Razorpay", domain: "razorpay.com" },
+            { name: "Freshworks", domain: "freshworks.com" },
+            { name: "Zomato", domain: "zomato.com" },
+          ].map((c) => (
+            <CompanyLogo key={c.name} name={c.name} domain={c.domain} />
+          ))}
+        </div>
+        <p className="mt-3 text-xs text-[#0b1320]/60">
+          Logos via <code className="px-1 py-0.5 rounded bg-[#0b1320]/5">logo.clearbit.com</code>. If a logo fails to load, we show company initials.
+        </p>
+      </Section>
+
+      {/* ================= CONTACT FORM (inline lead) ================= */}
+      <Section id="contact-form" kicker="Get in touch" title="Tell us about your goals">
+        <form
+          action="https://formspree.io/f/your_id_here" // TODO: replace with your Formspree ID or your API endpoint
+          method="POST"
+          className="grid gap-4 sm:grid-cols-2 rounded-2xl border border-[#0b1320]/10 bg-white p-6 shadow-sm"
+        >
+          <input name="name" required placeholder="Your name" className="col-span-1 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30" />
+          <input name="email" type="email" required placeholder="Work email" className="col-span-1 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30" />
+          <input name="company" placeholder="Company" className="col-span-1 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30" />
+          <input name="role" placeholder="Role" className="col-span-1 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30" />
+          <textarea name="message" required placeholder="What would you like to build?" className="col-span-2 rounded-xl border p-3 h-28 outline-none focus:ring-2 ring-[#0A66C2]/30" />
+          {/* Hidden UTM fields */}
+          <input type="hidden" name="utm_source" id="utm_source" />
+          <input type="hidden" name="utm_medium" id="utm_medium" />
+          <input type="hidden" name="utm_campaign" id="utm_campaign" />
+          <div className="col-span-2 flex items-center justify-between">
+            <label className="text-xs text-[#0b1320]/60">
+              By submitting, you agree to our <a className="underline" href="/privacy">Privacy Policy</a>.
+            </label>
+            <button className="rounded-xl bg-[#0A66C2] px-5 py-3 text-white font-semibold shadow-sm hover:shadow">Send</button>
+          </div>
+        </form>
+      </Section>
+
+      {/* ================= FAQ (with search) ================= */}
+      <Section
+        id="faq"
+        kicker="Answers"
+        title="Partner FAQs"
+        actions={
+          <input
+            value={faqQuery}
+            onChange={(e) => setFaqQuery(e.target.value)}
+            placeholder="Search FAQs…"
+            className="w-60 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30"
+          />
+        }
+      >
+        <div className="grid gap-4 md:grid-cols-2">
+          {[
+            { q: "How do we start?", a: "Apply below. We'll schedule a 30-minute scoping call and propose the best tier for your goals." },
+            { q: "What are the commercial models?", a: "Referral, rev-share, or fixed SOW. We support NDAs and MSAs for enterprises." },
+            { q: "Do you support universities?", a: "Yes — co-create capstones, map curriculum, and run mentorship cohorts." },
+            { q: "What support do partners get?", a: "From office hours to SLAs and solution architects, depending on tier." },
+            { q: "Can we white-label?", a: "Yes — customized tracks, portals, and certificates under your brand." },
+            { q: "What about data privacy?", a: "We follow best practices for security, access control, and data handling." },
+          ]
+            .filter((item) => (item.q + item.a).toLowerCase().includes(faqQuery.toLowerCase()))
+            .map((f) => (
+              <details key={f.q} className="rounded-2xl border border-[#0b1320]/10 bg-white p-5 shadow-sm">
+                <summary className="cursor-pointer font-semibold text-[#0b1320]">{f.q}</summary>
+                <p className="mt-2 text-sm text-[#0b1320]/70">{f.a}</p>
+              </details>
+            ))}
+        </div>
+      </Section>
+
+      {/* ================= FINAL CTA ================= */}
+      <section id="partner-contact" className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12 py-14">
+        <div className="rounded-2xl border border-[#0b1320]/10 bg-white p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <h3 className="text-xl font-semibold text-[#0b1320]">Ready to build together?</h3>
+            <p className="text-[#0b1320]/70 mt-1">Tell us about your goals — we'll suggest a partnership path in 48 hours.</p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <a href="mailto:contact@technocolabs.com?subject=Partnership%20Inquiry" className="inline-flex items-center justify-center rounded-xl bg-[#0A66C2] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:shadow">Email Partnerships</a>
+            <a href="/contact" className="inline-flex items-center justify-center rounded-xl border border-[#0b1320]/20 bg-white px-5 py-3 text-sm font-semibold shadow-sm hover:shadow">Book Strategy Call</a>
+            <a href="#tiers" className="inline-flex items-center justify-center rounded-xl border border-[#0b1320]/20 bg-white px-5 py-3 text-sm font-semibold shadow-sm hover:shadow">Compare Tiers</a>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= Back to top (LEFT) ================= */}
+      {showTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="fixed bottom-6 left-6 h-12 w-12 flex items-center justify-center rounded-full bg-[#0A66C2] text-white shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse"
+          aria-label="Back to top"
+          title="Back to top"
+        >
+          ↑
+        </button>
+      )}
+    </div>
+  );
+}
+
 // --------------------------- APP -------------------------------------------
 export default function App() {
   // 🔗 Read params from the URL
@@ -5701,7 +6205,7 @@ export default function App() {
     'home','services','service','careers','contact','apply','svc','privacy','terms','cookies',
     'bigdata','data-architecture','data-warehouse','bi-visualization','predictive-analytics-bd',
     'cloud-services','about','success-stories','blog','write-for-us','verify',
-    'applications-closed','apply-form','spotlight','spotlight-apply', 'internship-apply','grow' // ✅ spotlight included
+    'applications-closed','apply-form','spotlight','spotlight-apply', 'internship-apply','grow', 'partnerships' // ✅ spotlight included
   ]);
 
   // ✅ If roleId exists (route is /apply-form/:roleId), force 'apply-form'
@@ -5784,6 +6288,7 @@ export default function App() {
   if (tab === 'spotlight-apply') content = <SpotlightApplyPage />;
   if (tab === 'internship-apply') content = <InternshipApplyInline />;
   if (tab === 'grow') content = <GrowWithTechnocolabsPage />;
+  if (tab === 'partnerships') content = <PartnershipsSection />;
 
 
   // ✅ FIX: pass roleId (not roleSlug)
