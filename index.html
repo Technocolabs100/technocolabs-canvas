@@ -4,11 +4,73 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Technocolabs Softwares Inc.</title>
-    <meta name="description" content=" Technocolabs" />
+    <meta name="description" content=" Technocolabs Softwares Inc." />
     <link rel="icon" href="/public/favicon.svg" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- DEBUG: Cookie banner that always shows (to verify rendering & clicks) -->
+<script>
+(function () {
+  // 🔧 DEBUG: force-show for testing (remove this line after you confirm it works)
+  try { localStorage.removeItem("cookieConsent"); } catch(_) {}
+
+  const KEY = "cookieConsent";
+
+  // Build banner
+  const banner = document.createElement("div");
+  banner.id = "cookie-banner";
+  banner.style.cssText = `
+    position:fixed; left:0; right:0; bottom:0;
+    z-index:2147483647; background:#0b1320; color:#fff;
+    padding:14px 18px; display:flex; gap:14px; align-items:center;
+    justify-content:space-between; flex-wrap:wrap; box-shadow:0 -5px 15px rgba(0,0,0,.35);
+  `;
+
+  const msg = document.createElement("div");
+  msg.style.cssText = "font-size:14px; line-height:1.4; max-width:900px;";
+  msg.innerHTML = `We use cookies to improve your experience and to analyze traffic.
+    See our <a href="/privacy" style="color:#4ea8ff; text-decoration:underline;">Privacy Policy</a>.`;
+
+  const actions = document.createElement("div");
+  actions.style.cssText = "display:flex; gap:10px;";
+
+  function makeBtn(label, primary) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = label;
+    b.style.cssText = primary
+      ? "padding:8px 14px; border-radius:8px; background:#0A66C2; color:#fff; border:none; cursor:pointer;"
+      : "padding:8px 14px; border-radius:8px; background:transparent; color:#fff; border:1px solid #ffffff55; cursor:pointer;";
+    return b;
+  }
+
+  const reject = makeBtn("Reject", false);
+  const accept = makeBtn("Accept", true);
+
+  function choose(value) {
+    try { localStorage.setItem(KEY, value); } catch(_){}
+    banner.remove();
+  }
+
+  reject.addEventListener("click", (e) => { e.preventDefault(); choose("rejected"); });
+  accept.addEventListener("click", (e) => { e.preventDefault(); choose("accepted"); });
+
+  actions.appendChild(reject);
+  actions.appendChild(accept);
+  banner.appendChild(msg);
+  banner.appendChild(actions);
+
+  // Append after DOM is ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => document.body.appendChild(banner));
+  } else {
+    document.body.appendChild(banner);
+  }
+})();
+</script>
+
   </body>
 </html>
