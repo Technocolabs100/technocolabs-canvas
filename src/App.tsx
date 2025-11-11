@@ -5960,6 +5960,112 @@ const handleSheetSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         </div>
       </Section>
 
+      {/* BUILD A STRONG PARTNERSHIP IN AI */}
+<section className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12 py-16">
+
+  {/* Heading */}
+  <h2 className="text-center text-3xl sm:text-4xl font-bold text-[#0b1320]">
+    Build a Strong Partnership in AI
+  </h2>
+
+  {/* Subtitle */}
+  <p className="text-center max-w-3xl mx-auto mt-4 text-[#0b1320]/70 text-base sm:text-lg">
+    From any scale and anywhere in the world, businesses can boost AI capabilities with Technocolabs.
+    We apply the latest AI development methodologies and provide reliable co-development services to
+    enhance business opportunities.
+  </p>
+
+  {/* Features Row */}
+  <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-10">
+
+    {/* Feature 1 */}
+    <div className="flex items-start gap-4">
+      <img
+        src="https://cdn-icons-png.flaticon.com/512/4712/4712074.png"
+        alt="AI Expertise"
+        className="w-16 h-16"
+      />
+      <p className="text-[#0b1320] font-medium leading-relaxed">
+        Strong expertise in the development & support of AI solutions and deep-tech products.
+      </p>
+    </div>
+
+    {/* Feature 2 */}
+    <div className="flex items-start gap-4">
+      <img
+        src="https://cdn-icons-png.flaticon.com/512/4783/4783968.png"
+        alt="Transparency"
+        className="w-16 h-16"
+      />
+      <p className="text-[#0b1320] font-medium leading-relaxed">
+        Full transparency of all workflows, reporting, and project progress.
+      </p>
+    </div>
+
+    {/* Feature 3 */}
+    <div className="flex items-start gap-4">
+      <img
+        src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png"
+        alt="Staff Augmentation"
+        className="w-16 h-16"
+      />
+      <p className="text-[#0b1320] font-medium leading-relaxed">
+        Dedicated AI engineers available through our staff augmentation program.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+
+     {/* WHY TECHNOCOLABS — FULL WIDTH CARD */}
+<section id="why" className="w-full bg-[#f7f9fb] py-12 sm:py-16">
+
+  {/* Wide Card */}
+  <div className="mx-auto max-w-7xl rounded-2xl bg-white shadow-xl ring-1 ring-black/5 px-6 sm:px-12 py-12">
+
+    {/* Heading */}
+    <h3 className="text-center text-3xl sm:text-4xl font-bold text-[#0b1320]">
+      Why Technocolabs?
+    </h3>
+
+    {/* Grid */}
+    <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+
+      <WhyItem
+        icon={<SvgTeam />}
+        title="Robust engineering team"
+        text="Full-stack, data & ML engineers for product-grade delivery."
+      />
+      <WhyItem
+        icon={<SvgRnd />}
+        title="Ownership of R&D"
+        text="Dedicated pods to validate ideas fast and de-risk execution."
+      />
+      <WhyItem
+        icon={<SvgLight />}
+        title="Continuous improvement"
+        text="Playbooks, post-mortems, and guilds to keep quality climbing."
+      />
+      <WhyItem
+        icon={<SvgGraph />}
+        title="Deep data/ML experience"
+        text="Data platforms, MLOps, and applied AI projects."
+      />
+      <WhyItem
+        icon={<SvgTrophy />}
+        title="Top delivery track record"
+        text="On-time launches with reliable SLAs & monitoring."
+      />
+      <WhyItem
+        icon={<SvgStars />}
+        title="Proven custom solutions"
+        text="From quick POCs to enterprise builds—designed for scale."
+      />
+
+    </div>
+  </div>
+</section>
     
       {/* ================= BENEFITS ================= */}
       <Section id="benefits" kicker="Value" title="Partnership benefits">
