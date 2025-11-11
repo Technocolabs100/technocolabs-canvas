@@ -5694,6 +5694,38 @@ function RoleRotator({
 }
 
 function PartnershipsSection() {
+  // Inline success UX (no redirect / no JSON page)
+const [sent, setSent] = React.useState(false);
+const [submitting, setSubmitting] = React.useState(false);
+const [errorMsg, setErrorMsg] = React.useState("");
+const SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbyk9KRwgUkuT0yWxujEhdN19Yn2uH07VP6hf3zFMM6tJYTavQTBbZy95bW4GBHW_MLsnA/exec";
+
+const handleSheetSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  setErrorMsg("");
+  const form = e.currentTarget;
+  const fd = new FormData(form);
+
+  try {
+    setSubmitting(true);
+    // no-cors prevents the browser from navigating to JSON
+    await fetch(SCRIPT_URL, { method: "POST", body: fd, mode: "no-cors" });
+    form.reset();
+    setSent(true);
+    // auto-hide success note after 6s (optional)
+    setTimeout(() => setSent(false), 6000);
+  } catch (err) {
+    console.error(err);
+    setErrorMsg("Something went wrong. Please try again.");
+  } finally {
+    setSubmitting(false);
+  }
+};
+
+  // 👉 Change this to your poster path or URL
+  const POSTER_URL = "partner.png"; // e.g. "/poster.png" or "https://…/poster.jpg"
+
   // ---------------- State & utilities for new features ----------------
   const [yearly, setYearly] = React.useState(true);
   const [faqQuery, setFaqQuery] = React.useState("");
@@ -5891,7 +5923,7 @@ function PartnershipsSection() {
                 <a href="#benefits" className="rounded-xl border border-gray-200 bg-white px-5 py-3 font-semibold shadow-sm hover:shadow">See Benefits</a>
               </div>
             </div>
-                       {/* Right Media – Poster fully filled with no extra white spacing */}
+            {/* Right Media – Poster fully filled with no extra white spacing */}
 <div className="rounded-2xl overflow-hidden border border-[#0b1320]/10 shadow-sm">
   <img
     src="partner.png"
@@ -5899,6 +5931,7 @@ function PartnershipsSection() {
     className="w-full h-auto object-cover"
   />
 </div>
+
           </div>
         </div>
       </section>
@@ -6005,34 +6038,82 @@ function PartnershipsSection() {
           ))}
         </div>
         <p className="mt-3 text-xs text-[#0b1320]/60">
-          Logos via <code className="px-1 py-0.5 rounded bg-[#0b1320]/5">logo.clearbit.com</code>. If a logo fails to load, we show company initials.
+          Join Us and <code className="px-1 py-0.5 rounded bg-[#0b1320]/5">Work Together</code>. We have tranformed 10000+ careers.
         </p>
       </Section>
 
-      {/* ================= CONTACT FORM (inline lead) ================= */}
-      <Section id="contact-form" kicker="Get in touch" title="Tell us about your goals">
-        <form
-          action="https://formspree.io/f/your_id_here" // TODO: replace with your Formspree ID or your API endpoint
-          method="POST"
-          className="grid gap-4 sm:grid-cols-2 rounded-2xl border border-[#0b1320]/10 bg-white p-6 shadow-sm"
-        >
-          <input name="name" required placeholder="Your name" className="col-span-1 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30" />
-          <input name="email" type="email" required placeholder="Work email" className="col-span-1 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30" />
-          <input name="company" placeholder="Company" className="col-span-1 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30" />
-          <input name="role" placeholder="Role" className="col-span-1 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30" />
-          <textarea name="message" required placeholder="What would you like to build?" className="col-span-2 rounded-xl border p-3 h-28 outline-none focus:ring-2 ring-[#0A66C2]/30" />
-          {/* Hidden UTM fields */}
-          <input type="hidden" name="utm_source" id="utm_source" />
-          <input type="hidden" name="utm_medium" id="utm_medium" />
-          <input type="hidden" name="utm_campaign" id="utm_campaign" />
-          <div className="col-span-2 flex items-center justify-between">
-            <label className="text-xs text-[#0b1320]/60">
-              By submitting, you agree to our <a className="underline" href="/privacy">Privacy Policy</a>.
-            </label>
-            <button className="rounded-xl bg-[#0A66C2] px-5 py-3 text-white font-semibold shadow-sm hover:shadow">Send</button>
-          </div>
-        </form>
-      </Section>
+     {/* ================= CONTACT FORM (inline lead) ================= */}
+<Section id="contact-form" kicker="Get in touch" title="Tell us about your goals">
+  <form
+    onSubmit={handleSheetSubmit}
+    className="grid gap-4 sm:grid-cols-2 rounded-2xl border border-[#0b1320]/10 bg-white p-6 shadow-sm"
+    noValidate
+  >
+    {/* Success message (inline, no redirect) */}
+    {sent && (
+      <div className="col-span-2 rounded-lg border border-green-200 bg-green-50 text-green-700 text-sm px-3 py-2">
+        ✅ Thanks! We’ve received your message. We’ll get back within 48 hours.
+      </div>
+    )}
+
+    {/* Error (if any) */}
+    {errorMsg && (
+      <div className="col-span-2 rounded-lg border border-red-200 bg-red-50 text-red-700 text-sm px-3 py-2">
+        {errorMsg}
+      </div>
+    )}
+
+    <input
+      name="name"
+      required
+      placeholder="Your name"
+      className="col-span-1 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30"
+    />
+    <input
+      name="email"
+      type="email"
+      required
+      placeholder="Work email"
+      className="col-span-1 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30"
+    />
+    <input
+      name="company"
+      placeholder="Company"
+      className="col-span-1 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30"
+    />
+    <input
+      name="role"
+      placeholder="Role"
+      className="col-span-1 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30"
+    />
+    <textarea
+      name="message"
+      required
+      placeholder="What would you like to build?"
+      className="col-span-2 rounded-xl border p-3 h-28 outline-none focus:ring-2 ring-[#0A66C2]/30"
+    />
+
+    {/* Hidden UTM fields (your existing effect fills these) */}
+    <input type="hidden" name="utm_source" id="utm_source" />
+    <input type="hidden" name="utm_medium" id="utm_medium" />
+    <input type="hidden" name="utm_campaign" id="utm_campaign" />
+
+    <div className="col-span-2 flex items-center justify-between">
+      <label className="text-xs text-[#0b1320]/60">
+        By submitting, you agree to our <a className="underline" href="/privacy">Privacy Policy</a>.
+      </label>
+
+      <button
+        type="submit"
+        disabled={submitting}
+        className="rounded-xl bg-[#0A66C2] px-5 py-3 text-white font-semibold shadow-sm hover:shadow disabled:opacity-60"
+        aria-busy={submitting}
+      >
+        {submitting ? "Sending…" : "Send"}
+      </button>
+    </div>
+  </form>
+</Section>
 
       {/* ================= FAQ (with search) ================= */}
       <Section
