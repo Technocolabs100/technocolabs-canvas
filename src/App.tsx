@@ -3332,8 +3332,7 @@ function Footer() {
   <li><button onClick={()=>navigate('blog')} className="hover:underline">Blog</button></li>
   <li><button onClick={()=>navigate('careers')} className="hover:underline">Careers</button></li>
   <li><button onClick={() => navigate('grow')} className="hover:underline">Grow with Technocolabs</button></li>
-  <li><button onClick={() => navigate('partnerships')} className="hover:underline">Partnership</button></li>
-  <li><button onClick={()=>navigate('about')} className="hover:underline">About</button></li>
+  <li><button onClick={() => navigate('partnerships')} className="hover:underline">Partner with Us</button></li>
   <li><button onClick={()=>navigate('write-for-us')} className="hover:underline">Write for Us</button></li>
 </ul>
           </div>
