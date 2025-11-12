@@ -2822,8 +2822,6 @@ function AboutPage() {
             </div>
           </div>
         </div>
-
-
         {/* WHY CLIENTS CHOOSE TECHNOCOLABS */}
 <section className="w-full bg-white py-16">
   <div className="mx-auto max-w-5xl px-6">
@@ -2894,7 +2892,7 @@ function AboutPage() {
     </div>
   </div>
 </section>
-
+        
         {/* WHO WE ARE — collage + roles (like your screenshot) */}
         <div className="grid gap-10 lg:grid-cols-2 items-center">
           {/* Collage */}
@@ -2908,7 +2906,7 @@ function AboutPage() {
               />
               {/* top-right small */}
               <img
-                src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=1600"
+                src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=1600&auto=format&fit=crop"
                 alt="Engineering discussion"
                 className="rounded-2xl shadow-xl ring-1 ring-black/5 object-cover h-48 w-full"
               />
