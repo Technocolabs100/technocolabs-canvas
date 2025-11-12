@@ -5868,7 +5868,7 @@ function PartnershipsSection() {
   };
 
   // ---------- Config ----------
-  const POSTER_URL = "partner.png"; // update if needed
+  const POSTER_URL = "partner.png";
 
   // ---------- Page state ----------
   const [yearly, setYearly] = React.useState(true);
@@ -5912,11 +5912,14 @@ function PartnershipsSection() {
     children: React.ReactNode;
     actions?: React.ReactNode;
   }) => (
-    <section id={id} className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12 py-14">
-      <div className="flex items-end justify-between gap-4">
+    <section
+      id={id}
+      className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-12 py-10 sm:py-14"
+    >
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
           {kicker && <Kicker>{kicker}</Kicker>}
-          <h2 className="mt-1 text-3xl sm:text-4xl font-bold text-[#0b1320]">{title}</h2>
+          <h2 className="mt-1 text-2xl sm:text-4xl font-bold text-[#0b1320]">{title}</h2>
         </div>
         {actions ? <div className="shrink-0">{actions}</div> : null}
       </div>
@@ -5960,8 +5963,8 @@ function PartnershipsSection() {
       };
     }, [to]);
     return (
-      <div ref={ref} className="rounded-2xl border border-[#0b1320]/10 bg-white px-5 py-4 shadow-sm text-center">
-        <div className="text-2xl sm:text-3xl font-extrabold text-[#0b1320]">
+      <div ref={ref} className="rounded-2xl border border-[#0b1320]/10 bg-white px-4 py-4 shadow-sm text-center">
+        <div className="text-xl sm:text-3xl font-extrabold text-[#0b1320]">
           {val.toLocaleString()}
           <span className="text-[#0b1320]/70 font-bold">{suffix}</span>
         </div>
@@ -5989,7 +5992,7 @@ function PartnershipsSection() {
           ref={imgRef}
           src={`https://logo.clearbit.com/${domain}?size=128`}
           alt={`${name} logo`}
-          className="mx-auto h-10 object-contain"
+          className="mx-auto h-8 sm:h-10 object-contain"
           loading="lazy"
           onError={onErr}
         />
@@ -5999,7 +6002,7 @@ function PartnershipsSection() {
         >
           {initials}
         </div>
-        <div className="mt-2 text-sm font-medium text-[#0b1320]">{name}</div>
+        <div className="mt-2 text-xs sm:text-sm font-medium text-[#0b1320]">{name}</div>
       </div>
     );
   }
@@ -6019,13 +6022,13 @@ function PartnershipsSection() {
       <div
         className={`rounded-2xl border ${
           highlight ? "border-[#0A66C2] ring-2 ring-[#0A66C2]/20" : "border-[#0b1320]/10"
-        } bg-white p-6 shadow-sm flex flex-col`}
+        } bg-white p-5 sm:p-6 shadow-sm flex flex-col`}
       >
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-[#0b1320]">{name}</h3>
+          <h3 className="text-base sm:text-lg font-semibold text-[#0b1320]">{name}</h3>
           {highlight && <Badge>Most Popular</Badge>}
         </div>
-        <div className="mt-2 text-2xl font-extrabold text-[#0b1320]">{price}</div>
+        <div className="mt-2 text-xl sm:text-2xl font-extrabold text-[#0b1320]">{price}</div>
         <ul className="mt-4 space-y-2 text-sm text-[#0b1320]/80">
           {features.map((f) => (
             <li key={f} className="flex items-start gap-2">
@@ -6037,7 +6040,7 @@ function PartnershipsSection() {
         <div className="mt-5">
           <a
             href="#partner-contact"
-            className="inline-flex items-center rounded-xl bg-[#0A66C2] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow"
+            className="inline-flex items-center justify-center rounded-xl bg-[#0A66C2] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow w-full sm:w-auto"
           >
             Choose {name}
           </a>
@@ -6048,9 +6051,9 @@ function PartnershipsSection() {
 
   function CaseStudy({ partner, outcome, bullets }: { partner: string; outcome: string; bullets: string[] }) {
     return (
-      <div className="rounded-2xl border border-[#0b1320]/10 bg-white p-6 shadow-sm hover:shadow-md transition">
-        <div className="text-sm font-semibold text-[#0A66C2]">Case Study</div>
-        <div className="mt-1 text-lg font-semibold text-[#0b1320]">{partner}</div>
+      <div className="rounded-2xl border border-[#0b1320]/10 bg-white p-5 sm:p-6 shadow-sm hover:shadow-md transition">
+        <div className="text-xs sm:text-sm font-semibold text-[#0A66C2]">Case Study</div>
+        <div className="mt-1 text-base sm:text-lg font-semibold text-[#0b1320]">{partner}</div>
         <p className="mt-1 text-sm text-[#0b1320]/70">{outcome}</p>
         <ul className="mt-3 space-y-1 text-sm text-[#0b1320]/80">
           {bullets.map((b) => (
@@ -6063,89 +6066,68 @@ function PartnershipsSection() {
 
   // ---------- Why-section helpers (icons + items) ----------
   const IconWrap = ({ children }: { children: React.ReactNode }) => (
-    <span className="grid h-12 w-12 place-items-center rounded-full bg-[#0A66C2]/10 text-[#0A66C2]">
+    <span className="grid h-10 w-10 sm:h-12 sm:w-12 place-items-center rounded-full bg-[#0A66C2]/10 text-[#0A66C2]">
       {children}
     </span>
   );
   const WhyItem = ({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) => (
-    <div className="flex flex-col items-center text-center gap-3">
+    <div className="flex items-start gap-3 sm:gap-4">
       <IconWrap>{icon}</IconWrap>
-      <div className="text-sm font-semibold text-[#0b1320]">{title}</div>
-      <p className="text-xs leading-relaxed text-[#0b1320]/70 max-w-[18rem]">{text}</p>
+      <div>
+        <div className="text-sm sm:text-base font-semibold text-[#0b1320]">{title}</div>
+        <p className="text-xs sm:text-sm leading-relaxed text-[#0b1320]/70">{text}</p>
+      </div>
     </div>
   );
-  const SvgTeam = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="opacity-90">
-      <path d="M12 12a3 3 0 1 0-3-3 3 3 0 0 0 3 3Zm6 8v-1a4 4 0 0 0-4-4H10a4 4 0 0 0-4 4v1z" />
-      <circle cx="18" cy="8" r="2" />
-      <circle cx="6" cy="8" r="2" />
-    </svg>
-  );
-  const SvgRnd = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="opacity-90">
-      <path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 15h-2v-5h2Zm0-7h-2V8h2Z" />
-    </svg>
-  );
-  const SvgLight = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="opacity-90">
-      <path d="M12 3a7 7 0 0 0-4 12.9V18a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.1A7 7 0 0 0 12 3Z" />
-    </svg>
-  );
-  const SvgGraph = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="opacity-90">
-      <path d="M4 20h16v-2H4Zm2-3h2v-7H6Zm4 0h2V7h-2Zm4 0h2v-4h-2Z" />
-    </svg>
-  );
-  const SvgTrophy = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="opacity-90">
-      <path d="M18 4V2H6v2H2v3a4 4 0 0 0 4 4h.1A6.002 6.002 0 0 0 11 15v3H8v2h8v-2h-3v-3a6.002 6.002 0 0 0 4.9-4H18a4 4 0 0 0 4-4V4Zm-2 5a4 4 0 0 1-4 4 4 4 0 0 1-4-4V4h8ZM4 7V6h2v3a2 2 0 0 1-2-2Zm16 0a2 2 0 0 1-2 2V6h2Z" />
-    </svg>
-  );
-  const SvgStars = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="opacity-90">
-      <path d="m12 3 2.2 4.7 5.2.7-3.8 3.6.9 5.1L12 14.9 7.5 17l.9-5.1L4.6 8.4l5.2-.7Z" />
-      <path d="M5 21h2l-1-3zM17 21h2l-1-3z" />
-    </svg>
-  );
+  const SvgTeam = () => (<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" className="opacity-90"><path d="M12 12a3 3 0 1 0-3-3 3 3 0 0 0 3 3Zm6 8v-1a4 4 0 0 0-4-4H10a4 4 0 0 0-4 4v1z"/><circle cx="18" cy="8" r="2"/><circle cx="6" cy="8" r="2"/></svg>);
+  const SvgRnd = () => (<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" className="opacity-90"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 15h-2v-5h2Zm0-7h-2V8h2Z"/></svg>);
+  const SvgLight = () => (<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" className="opacity-90"><path d="M12 3a7 7 0 0 0-4 12.9V18a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.1A7 7 0 0 0 12 3Z"/></svg>);
+  const SvgGraph = () => (<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" className="opacity-90"><path d="M4 20h16v-2H4Zm2-3h2v-7H6Zm4 0h2V7h-2Zm4 0h2v-4h-2Z"/></svg>);
+  const SvgTrophy = () => (<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" className="opacity-90"><path d="M18 4V2H6v2H2v3a4 4 0 0 0 4 4h.1A6.002 6.002 0 0 0 11 15v3H8v2h8v-2h-3v-3a6.002 6.002 0 0 0 4.9-4H18a4 4 0 0 0 4-4V4Zm-2 5a4 4 0 0 1-4 4 4 4 0 0 1-4-4V4h8ZM4 7V6h2v3a2 2 0 0 1-2-2Zm16 0a2 2 0 0 1-2 2V6h2Z"/></svg>);
+  const SvgStars = () => (<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" className="opacity-90"><path d="m12 3 2.2 4.7 5.2.7-3.8 3.6.9 5.1L12 14.9 7.5 17l.9-5.1-4.1-4 5.2-.7Z"/><path d="M5 21h2l-1-3zM17 21h2l-1-3z"/></svg>);
 
   // ---------- Render ----------
   return (
-    <div className="bg-[#f7f9fb] text-[#0a2540]">
+    <div className="bg-[#f7f9fb] text-[#0a2540] [padding-bottom:env(safe-area-inset-bottom)]">
       {/* HERO */}
       <section className="relative overflow-hidden bg-gradient-to-b from-white to-[#f7f9fb]">
         <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full blur-3xl opacity-20 bg-[#0A66C2]" aria-hidden />
-        <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12 pt-16 pb-10">
-          <div className="grid gap-10 lg:grid-cols-2 items-center">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-12 pt-14 sm:pt-16 pb-8 sm:pb-10">
+          <div className="grid gap-6 sm:gap-10 lg:grid-cols-2 items-center">
             <div className="text-center lg:text-left">
               <Kicker>Partnerships</Kicker>
-              <h1 className="mt-2 text-4xl sm:text-6xl font-bold text-[#0b1320] leading-tight">Build with Technocolabs</h1>
-              <p className="mt-4 text-lg text-[#0a2540]/70 max-w-2xl mx-auto lg:mx-0">
+              <h1 className="mt-2 text-3xl sm:text-5xl font-bold text-[#0b1320] leading-tight">
+                Build with Technocolabs
+              </h1>
+              <p className="mt-3 sm:mt-4 text-base sm:text-lg text-[#0a2540]/70 max-w-2xl mx-auto lg:mx-0">
                 Co-create products, scale delivery, and unlock growth. We partner with startups, enterprises,
                 universities and agencies to bring developer-first solutions to production.
               </p>
-              <div className="mt-7 flex flex-wrap gap-3 justify-center lg:justify-start">
-                <a href="#partner-contact" className="rounded-xl bg-[#0A66C2] px-5 py-3 text-white font-semibold shadow-sm hover:shadow">
+              <div className="mt-6 sm:mt-7 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+                <a href="#partner-contact" className="rounded-xl bg-[#0A66C2] px-5 py-3 text-white font-semibold shadow-sm hover:shadow text-center">
                   Become a Partner
                 </a>
-                <a href="#tiers" className="rounded-xl border border-gray-200 bg-white px-5 py-3 font-semibold shadow-sm hover:shadow">
+                <a href="#tiers" className="rounded-xl border border-gray-200 bg-white px-5 py-3 font-semibold shadow-sm hover:shadow text-center">
                   View Tiers
                 </a>
-                <a href="#benefits" className="rounded-xl border border-gray-200 bg-white px-5 py-3 font-semibold shadow-sm hover:shadow">
+                <a href="#benefits" className="rounded-xl border border-gray-200 bg-white px-5 py-3 font-semibold shadow-sm hover:shadow text-center">
                   See Benefits
                 </a>
               </div>
             </div>
-            {/* Poster */}
+            {/* Poster (mobile aspect) */}
             <div className="rounded-2xl overflow-hidden border border-[#0b1320]/10 shadow-sm">
-              <img src={POSTER_URL} alt="Partnership Poster" className="w-full h-auto object-cover" />
+              <div className="w-full aspect-[4/3] sm:aspect-auto sm:h-auto">
+                <img src={POSTER_URL} alt="Partnership Poster" className="w-full h-full object-cover" />
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* STICKY SUB-NAV */}
-      <nav className="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-[#0b1320]/10">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-2 flex gap-2 sm:gap-4 text-sm overflow-x-auto">
+      <nav className="sticky top-0 z-30 bg-white/90 backdrop-blur border-b border-[#0b1320]/10">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-12 py-2 flex gap-1.5 sm:gap-3 text-sm overflow-x-auto no-scrollbar">
           {[
             { href: "#benefits", label: "Benefits" },
             { href: "#why", label: "Why Us" },
@@ -6154,7 +6136,7 @@ function PartnershipsSection() {
             { href: "#faq", label: "FAQ" },
             { href: "#partner-contact", label: "Contact" },
           ].map((i) => (
-            <a key={i.href} href={i.href} className="px-3 py-1 rounded-lg hover:bg-[#0b1320]/5">
+            <a key={i.href} href={i.href} className="px-3 py-1 rounded-lg hover:bg-[#0b1320]/5 whitespace-nowrap">
               {i.label}
             </a>
           ))}
@@ -6163,7 +6145,7 @@ function PartnershipsSection() {
 
       {/* STATS */}
       <Section kicker="Proof" title="Why partners choose us">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCounter to={10000} label="Developers trained" />
           <StatCounter to={230} label="Companies served" />
           <StatCounter to={5} label="Avg. satisfaction" suffix="★" />
@@ -6171,117 +6153,57 @@ function PartnershipsSection() {
         </div>
       </Section>
 
+      {/* BUILD A STRONG PARTNERSHIP IN AI */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-12 py-12 sm:py-16">
+        <h2 className="text-center text-2xl sm:text-4xl font-bold text-[#0b1320]">
+          Build a Strong Partnership in AI
+        </h2>
+        <p className="text-center max-w-3xl mx-auto mt-3 sm:mt-4 text-[#0b1320]/70 text-sm sm:text-lg">
+          From any scale and anywhere in the world, businesses can boost AI capabilities with Technocolabs.
+          We apply the latest AI development methodologies and provide reliable co-development services to
+          enhance business opportunities.
+        </p>
 
-    {/* BUILD A STRONG PARTNERSHIP IN AI */}
-<section className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12 py-16">
+        <div className="mt-10 sm:mt-14 grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-10">
+          <div className="flex items-start gap-4">
+            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712074.png" alt="AI Expertise" className="w-12 h-12 sm:w-16 sm:h-16" />
+            <p className="text-[#0b1320] text-sm sm:text-base font-medium leading-relaxed">
+              Strong expertise in the development & support of AI solutions and deep-tech products.
+            </p>
+          </div>
+          <div className="flex items-start gap-4">
+            <img src="https://cdn-icons-png.flaticon.com/512/4783/4783968.png" alt="Transparency" className="w-12 h-12 sm:w-16 sm:h-16" />
+            <p className="text-[#0b1320] text-sm sm:text-base font-medium leading-relaxed">
+              Full transparency of all workflows, reporting, and project progress.
+            </p>
+          </div>
+          <div className="flex items-start gap-4">
+            <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt="Staff Augmentation" className="w-12 h-12 sm:w-16 sm:h-16" />
+            <p className="text-[#0b1320] text-sm sm:text-base font-medium leading-relaxed">
+              Dedicated AI engineers available through our staff augmentation program.
+            </p>
+          </div>
+        </div>
+      </section>
 
-  {/* Heading */}
-  <h2 className="text-center text-3xl sm:text-4xl font-bold text-[#0b1320]">
-    Build a Strong Partnership in AI
-  </h2>
-
-  {/* Subtitle */}
-  <p className="text-center max-w-3xl mx-auto mt-4 text-[#0b1320]/70 text-base sm:text-lg">
-    From any scale and anywhere in the world, businesses can boost AI capabilities with Technocolabs.
-    We apply the latest AI development methodologies and provide reliable co-development services to
-    enhance business opportunities.
-  </p>
-
-  {/* Features Row */}
-  <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-10">
-
-    {/* Feature 1 */}
-    <div className="flex items-start gap-4">
-      <img
-        src="https://cdn-icons-png.flaticon.com/512/4712/4712074.png"
-        alt="AI Expertise"
-        className="w-16 h-16"
-      />
-      <p className="text-[#0b1320] font-medium leading-relaxed">
-        Strong expertise in the development & support of AI solutions and deep-tech products.
-      </p>
-    </div>
-
-    {/* Feature 2 */}
-    <div className="flex items-start gap-4">
-      <img
-        src="https://cdn-icons-png.flaticon.com/512/4783/4783968.png"
-        alt="Transparency"
-        className="w-16 h-16"
-      />
-      <p className="text-[#0b1320] font-medium leading-relaxed">
-        Full transparency of all workflows, reporting, and project progress.
-      </p>
-    </div>
-
-    {/* Feature 3 */}
-    <div className="flex items-start gap-4">
-      <img
-        src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png"
-        alt="Staff Augmentation"
-        className="w-16 h-16"
-      />
-      <p className="text-[#0b1320] font-medium leading-relaxed">
-        Dedicated AI engineers available through our staff augmentation program.
-      </p>
-    </div>
-
-  </div>
-</section>
-
-
-     {/* WHY TECHNOCOLABS — FULL WIDTH CARD */}
-<section id="why" className="w-full bg-[#f7f9fb] py-12 sm:py-16">
-
-  {/* Wide Card */}
-  <div className="mx-auto max-w-7xl rounded-2xl bg-white shadow-xl ring-1 ring-black/5 px-6 sm:px-12 py-12">
-
-    {/* Heading */}
-    <h3 className="text-center text-3xl sm:text-4xl font-bold text-[#0b1320]">
-      Why Technocolabs?
-    </h3>
-
-    {/* Grid */}
-    <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-
-      <WhyItem
-        icon={<SvgTeam />}
-        title="Robust engineering team"
-        text="Full-stack, data & ML engineers for product-grade delivery."
-      />
-      <WhyItem
-        icon={<SvgRnd />}
-        title="Ownership of R&D"
-        text="Dedicated pods to validate ideas fast and de-risk execution."
-      />
-      <WhyItem
-        icon={<SvgLight />}
-        title="Continuous improvement"
-        text="Playbooks, post-mortems, and guilds to keep quality climbing."
-      />
-      <WhyItem
-        icon={<SvgGraph />}
-        title="Deep data/ML experience"
-        text="Data platforms, MLOps, and applied AI projects."
-      />
-      <WhyItem
-        icon={<SvgTrophy />}
-        title="Top delivery track record"
-        text="On-time launches with reliable SLAs & monitoring."
-      />
-      <WhyItem
-        icon={<SvgStars />}
-        title="Proven custom solutions"
-        text="From quick POCs to enterprise builds—designed for scale."
-      />
-
-    </div>
-  </div>
-</section>
+      {/* WHY TECHNOCOLABS — FULL WIDTH CARD */}
+      <section id="why" className="w-full bg-[#f7f9fb] py-10 sm:py-16">
+        <div className="mx-auto max-w-7xl rounded-2xl bg-white shadow-xl ring-1 ring-black/5 px-4 sm:px-12 py-10 sm:py-12">
+          <h3 className="text-center text-2xl sm:text-4xl font-bold text-[#0b1320]">Why Technocolabs?</h3>
+          <div className="mt-10 sm:mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10">
+            <WhyItem icon={<SvgTeam />} title="Robust engineering team" text="Full-stack, data & ML engineers for product-grade delivery." />
+            <WhyItem icon={<SvgRnd />} title="Ownership of R&D" text="Dedicated pods to validate ideas fast and de-risk execution." />
+            <WhyItem icon={<SvgLight />} title="Continuous improvement" text="Playbooks, post-mortems, and guilds to keep quality climbing." />
+            <WhyItem icon={<SvgGraph />} title="Deep data/ML experience" text="Data platforms, MLOps, and applied AI projects." />
+            <WhyItem icon={<SvgTrophy />} title="Top delivery track record" text="On-time launches with reliable SLAs & monitoring." />
+            <WhyItem icon={<SvgStars />} title="Proven custom solutions" text="From quick POCs to enterprise builds—designed for scale." />
+          </div>
+        </div>
+      </section>
 
       {/* BENEFITS */}
       <Section id="benefits" kicker="Value" title="Partnership benefits">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {[
             { t: "Co-branded programs", d: "Launch branded learning or hiring pipelines together." },
             { t: "Joint product development", d: "Ship features with our engineering pods." },
@@ -6293,8 +6215,8 @@ function PartnershipsSection() {
             { t: "University alliances", d: "Curriculum mapping, capstone labs, faculty upskilling." },
             { t: "Startup packages", d: "Credits for prototypes, audits, and GTM launch." },
           ].map((b) => (
-            <div key={b.t} className="rounded-2xl border border-[#0b1320]/10 bg-white p-6 shadow-sm hover:shadow-md transition">
-              <div className="text-lg font-semibold text-[#0b1320]">{b.t}</div>
+            <div key={b.t} className="rounded-2xl border border-[#0b1320]/10 bg-white p-5 sm:p-6 shadow-sm hover:shadow-md transition">
+              <div className="text-base sm:text-lg font-semibold text-[#0b1320]">{b.t}</div>
               <p className="mt-1 text-sm text-[#0b1320]/70">{b.d}</p>
             </div>
           ))}
@@ -6318,7 +6240,7 @@ function PartnershipsSection() {
           </div>
         }
       >
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
           <TierCard name="Bronze" price="Free" features={["Partner newsletter showcase", "Access to community events", "Listing on partner page"]} />
           <TierCard name="Silver" price={price(249, 2000)} features={["All Bronze benefits", "Talent referrals (pre-screened)", "Technical office hours (monthly)"]} />
           <TierCard name="Gold" price={price(999, 10000)} highlight features={["All Silver benefits", "Dedicated success manager", "Joint webinars & co-marketing", "Early access to tracks"]} />
@@ -6328,7 +6250,7 @@ function PartnershipsSection() {
 
       {/* CASE STUDIES */}
       <Section id="case-studies" kicker="Impact" title="Recent partner stories">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           <CaseStudy partner="Fintech Startup (Series A)" outcome="Shipped a fraud detection MVP in 6 weeks" bullets={["85% faster time-to-market", "CI/CD on cloud", "Model monitoring & alerts"]} />
           <CaseStudy partner="E-commerce Scale-up" outcome="Cut infra cost by 35% with caching & BI" bullets={["Power BI executive suite", "Edge caching for APIs", "Incident playbooks"]} />
           <CaseStudy partner="University Alliance" outcome="Capstone lab with 120 students" bullets={["Industry mentors", "RAG & CV tracks", "Job-ready portfolios"]} />
@@ -6360,9 +6282,9 @@ function PartnershipsSection() {
         </p>
       </Section>
 
-      {/* CONTACT FORM (inline to Google Sheet) */}
+      {/* CONTACT FORM */}
       <Section id="contact-form" kicker="Get in touch" title="Tell us about your goals">
-        <form onSubmit={handleSheetSubmit} className="grid gap-4 sm:grid-cols-2 rounded-2xl border border-[#0b1320]/10 bg-white p-6 shadow-sm" noValidate>
+        <form onSubmit={handleSheetSubmit} className="grid gap-4 sm:grid-cols-2 rounded-2xl border border-[#0b1320]/10 bg-white p-5 sm:p-6 shadow-sm" noValidate>
           {sent && (
             <div className="col-span-2 rounded-lg border border-green-200 bg-green-50 text-green-700 text-sm px-3 py-2">
               ✅ Thanks! We’ve received your message. We’ll get back within 48 hours.
@@ -6383,14 +6305,14 @@ function PartnershipsSection() {
           <input type="hidden" name="utm_medium" id="utm_medium" />
           <input type="hidden" name="utm_campaign" id="utm_campaign" />
 
-          <div className="col-span-2 flex items-center justify-between">
+          <div className="col-span-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <label className="text-xs text-[#0b1320]/60">
               By submitting, you agree to our <a className="underline" href="/privacy">Privacy Policy</a>.
             </label>
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-xl bg-[#0A66C2] px-5 py-3 text-white font-semibold shadow-sm hover:shadow disabled:opacity-60"
+              className="w-full sm:w-auto rounded-xl bg-[#0A66C2] px-5 py-3 text-white font-semibold shadow-sm hover:shadow disabled:opacity-60"
               aria-busy={submitting}
             >
               {submitting ? "Sending…" : "Send"}
@@ -6409,7 +6331,7 @@ function PartnershipsSection() {
             value={faqQuery}
             onChange={(e) => setFaqQuery(e.target.value)}
             placeholder="Search FAQs…"
-            className="w-60 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30"
+            className="w-full sm:w-60 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30"
           />
         }
       >
@@ -6433,20 +6355,20 @@ function PartnershipsSection() {
       </Section>
 
       {/* FINAL CTA */}
-      <section id="partner-contact" className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12 py-14">
-        <div className="rounded-2xl border border-[#0b1320]/10 bg-white p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <section id="partner-contact" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-12 py-12 sm:py-14">
+        <div className="rounded-2xl border border-[#0b1320]/10 bg-white p-5 sm:p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h3 className="text-xl font-semibold text-[#0b1320]">Ready to build together?</h3>
+            <h3 className="text-lg sm:text-xl font-semibold text-[#0b1320]">Ready to build together?</h3>
             <p className="text-[#0b1320]/70 mt-1">Tell us about your goals — we'll suggest a partnership path in 48 hours.</p>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <a href="mailto:contact@technocolabs.com?subject=Partnership%20Inquiry" className="inline-flex items-center justify-center rounded-xl bg-[#0A66C2] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:shadow">
+          <div className="w-full md:w-auto flex flex-col sm:flex-row flex-wrap gap-3">
+            <a href="mailto:contact@technocolabs.com?subject=Partnership%20Inquiry" className="inline-flex items-center justify-center rounded-xl bg-[#0A66C2] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:shadow w-full sm:w-auto">
               Email Partnerships
             </a>
-            <a href="/contact" className="inline-flex items-center justify-center rounded-xl border border-[#0b1320]/20 bg-white px-5 py-3 text-sm font-semibold shadow-sm hover:shadow">
+            <a href="/contact" className="inline-flex items-center justify-center rounded-xl border border-[#0b1320]/20 bg-white px-5 py-3 text-sm font-semibold shadow-sm hover:shadow w-full sm:w-auto">
               Book Strategy Call
             </a>
-            <a href="#tiers" className="inline-flex items-center justify-center rounded-xl border border-[#0b1320]/20 bg-white px-5 py-3 text-sm font-semibold shadow-sm hover:shadow">
+            <a href="#tiers" className="inline-flex items-center justify-center rounded-xl border border-[#0b1320]/20 bg-white px-5 py-3 text-sm font-semibold shadow-sm hover:shadow w-full sm:w-auto">
               Compare Tiers
             </a>
           </div>
@@ -6457,7 +6379,7 @@ function PartnershipsSection() {
       {showTop && (
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-6 left-6 h-12 w-12 flex items-center justify-center rounded-full bg-[#0A66C2] text-white shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse"
+          className="fixed bottom-6 left-6 h-12 w-12 hidden sm:flex items-center justify-center rounded-full bg-[#0A66C2] text-white shadow-lg hover:shadow-xl transition-all duration-300"
           aria-label="Back to top"
           title="Back to top"
         >
@@ -6467,6 +6389,7 @@ function PartnershipsSection() {
     </div>
   );
 }
+
 
 // --------------------------- APP -------------------------------------------
 export default function App() {
