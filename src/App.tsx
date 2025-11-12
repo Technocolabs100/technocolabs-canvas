@@ -2720,29 +2720,36 @@ function WriteForUsPage(){
   );
 }
 
-// --------------------------- ABOUT PAGE ---------------------------------------
+// --------------------------- ABOUT PAGE (production-safe, single function) ---------------------------------------
 function AboutPage() {
-  const navigate = useContext(NavContext);
-
+  // SEO (guarded)
   React.useEffect(() => {
-    if (typeof document !== "undefined") {
-      document.title = "About Us | Technocolabs Softwares Inc.";
-      const m =
-        (document.querySelector('meta[name="description"]') as HTMLMetaElement) ||
-        (() => {
-          const x = document.createElement("meta");
-          x.setAttribute("name", "description");
-          document.head.appendChild(x);
-          return x;
-        })();
-      m.setAttribute(
-        "content",
-        "About Technocolabs Softwares Inc: mission, values, who we are, and how we deliver reliable outcomes in AI, data, and cloud."
-      );
-    }
+    try {
+      if (typeof document !== "undefined") {
+        document.title = "About Us | Technocolabs Softwares Inc.";
+        const meta =
+          (document.querySelector('meta[name="description"]') as HTMLMetaElement) ||
+          (() => {
+            const x = document.createElement("meta");
+            x.setAttribute("name", "description");
+            document.head.appendChild(x);
+            return x;
+          })();
+        meta.setAttribute(
+          "content",
+          "About Technocolabs Softwares Inc: mission, values, who we are, and how we deliver reliable outcomes in AI, data, and cloud."
+        );
+      }
+    } catch {}
   }, []);
 
-  // simple stars component (for the Clutch line)
+  // Inline icon components (no external deps)
+  const IHands = (p:any)=>(<svg viewBox="0 0 24 24" fill="none" className={p.className}><path d="M7 12c-1.657 0-3-1.343-3-3V6a2 2 0 1 1 4 0v3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/><path d="M17 12c1.657 0 3-1.343 3-3V6a2 2 0 1 0-4 0v3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/><path d="M8 12l4 4 4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>);
+  const IGlobe = (p:any)=>(<svg viewBox="0 0 24 24" fill="none" className={p.className}><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6"/><ellipse cx="12" cy="12" rx="4" ry="9" stroke="currentColor" strokeWidth="1.6"/><path d="M3 12h18" stroke="currentColor" strokeWidth="1.6"/></svg>);
+  const IDatabaseCheck = (p:any)=>(<svg viewBox="0 0 24 24" fill="none" className={p.className}><ellipse cx="10" cy="5" rx="6" ry="3" stroke="currentColor" strokeWidth="1.6"/><path d="M4 5v6c0 1.657 2.686 3 6 3s6-1.343 6-3V5" stroke="currentColor" strokeWidth="1.6"/><path d="M4 11v6c0 1.657 2.686 3 6 3" stroke="currentColor" strokeWidth="1.6"/><path d="M14.5 17.5l1.8 1.8 3.7-3.7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>);
+  const IUsers = (p:any)=>(<svg viewBox="0 0 24 24" fill="none" className={p.className}><circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.6"/><path d="M2.5 19a5.5 5.5 0 0 1 11 0" stroke="currentColor" strokeWidth="1.6"/><circle cx="17" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.6"/><path d="M13.5 17.2c.8-.9 2-1.7 3.5-1.7 2.1 0 3.9 1.3 4.5 3.1" stroke="currentColor" strokeWidth="1.6"/></svg>);
+  const IStars = (p:any)=>(<svg viewBox="0 0 24 24" fill="none" className={p.className}><path d="M12 3l2.5 5.2 5.7.8-4.1 4 1 5.7L12 16.8 6.9 18.7l1-5.7-4.1-4 5.7-.8L12 3z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/></svg>);
+
   const Stars = ({ count = 5 }: { count?: number }) => (
     <div className="flex items-center gap-1" aria-label={`Rated ${count} stars`}>
       {Array.from({ length: count }).map((_, i) => (
@@ -2761,7 +2768,7 @@ function AboutPage() {
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">About Technocolabs</h1>
           <p className="mt-2 text-white/80 max-w-3xl">
             We are an engineering-first company delivering AI, analytics, automation, and cloud solutions
-            with measurable business outcomes not just dashboards or prototypes.
+            with measurable business outcomes — not just dashboards or prototypes.
           </p>
         </div>
       </section>
@@ -2790,7 +2797,7 @@ function AboutPage() {
           </div>
         </div>
 
-         {/* ESTABLISHED 2019 */}
+        {/* ESTABLISHED 2019 */}
         <div className="w-full rounded-2xl border border-[#0a2540]/10 bg-white p-6 sm:p-8 shadow-sm">
           <div className="grid gap-8 sm:grid-cols-[1fr,260px] items-center">
             <div>
@@ -2822,150 +2829,110 @@ function AboutPage() {
             </div>
           </div>
         </div>
-        {/* WHY CLIENTS CHOOSE TECHNOCOLABS */}
-<section className="w-full bg-white py-16">
-  <div className="mx-auto max-w-5xl px-6">
 
-    {/* Heading */}
-    <h3 className="text-center text-3xl sm:text-4xl font-bold text-[#0b1320]">
-      Why Clients Choose Technocolabs
-    </h3>
+        {/* WHY CLIENTS CHOOSE TECHNOCOLABS (centered) */}
+        <section className="w-full bg-white py-16">
+          <div className="mx-auto max-w-5xl px-6">
+            <h3 className="text-center text-3xl sm:text-4xl font-bold text-[#0b1320]">
+              Why Clients Choose Technocolabs
+            </h3>
 
-    {/* List */}
-    <div className="mt-14 space-y-14">
+            <div className="mt-14 space-y-14">
+              <div className="flex items-start gap-6 max-w-4xl mx-auto">
+                <IHands className="text-[#1e90ff] w-10 h-10" />
+                <div>
+                  <div className="font-semibold text-lg text-[#0b1320]">Since 2014</div>
+                  <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
+                    One of the most reliable AI, Data, and ML partners with a decade of experience delivering real business value.
+                  </p>
+                </div>
+              </div>
 
-      {/* ROW 1 */}
-      <div className="flex items-start gap-6 max-w-4xl mx-auto">
-        <IHands className="text-[#1e90ff] w-10 h-10" />
-        <div>
-          <div className="font-semibold text-lg text-[#0b1320]">Since 2014</div>
-          <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
-            One of the most reliable AI, Data, and ML partners with a decade of experience delivering real business value.
-          </p>
-        </div>
-      </div>
+              <div className="flex items-start gap-6 max-w-4xl mx-auto">
+                <IGlobe className="text-[#1e90ff] w-10 h-10" />
+                <div>
+                  <div className="font-semibold text-lg text-[#0b1320]">Global Experience</div>
+                  <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
+                    A strong track record across multiple industries and regions with successful Big Data and AI programs.
+                  </p>
+                </div>
+              </div>
 
-      {/* ROW 2 */}
-      <div className="flex items-start gap-6 max-w-4xl mx-auto">
-        <IGlobe className="text-[#1e90ff] w-10 h-10" />
-        <div>
-          <div className="font-semibold text-lg text-[#0b1320]">Global Experience</div>
-          <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
-            A strong track record across multiple industries and regions with successful Big Data and AI programs.
-          </p>
-        </div>
-      </div>
+              <div className="flex items-start gap-6 max-w-4xl mx-auto">
+                <IDatabaseCheck className="text-[#1e90ff] w-10 h-10" />
+                <div>
+                  <div className="font-semibold text-lg text-[#0b1320]">Value for Results</div>
+                  <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
+                    Highly qualified teams focus on accuracy, reliability, and quick turnaround — measured against your KPIs.
+                  </p>
+                </div>
+              </div>
 
-      {/* ROW 3 */}
-      <div className="flex items-start gap-6 max-w-4xl mx-auto">
-        <IDatabaseCheck className="text-[#1e90ff] w-10 h-10" />
-        <div>
-          <div className="font-semibold text-lg text-[#0b1320]">Value for Results</div>
-          <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
-            Highly qualified teams focus on accuracy, reliability, and quick turnaround — measured against your KPIs.
-          </p>
-        </div>
-      </div>
+              <div className="flex items-start gap-6 max-w-4xl mx-auto">
+                <IUsers className="text-[#1e90ff] w-10 h-10" />
+                <div>
+                  <div className="font-semibold text-lg text-[#0b1320]">Convenient Terms of Cooperation</div>
+                  <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
+                    Engagement models tailored to your goals — Fixed Price and T&amp;M options with transparent reporting.
+                  </p>
+                </div>
+              </div>
 
-      {/* ROW 4 */}
-      <div className="flex items-start gap-6 max-w-4xl mx-auto">
-        <IUsers className="text-[#1e90ff] w-10 h-10" />
-        <div>
-          <div className="font-semibold text-lg text-[#0b1320]">Convenient Terms of Cooperation</div>
-          <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
-            Engagement models tailored to your goals — Fixed Price and T&M options with transparent reporting.
-          </p>
-        </div>
-      </div>
+              <div className="flex items-start gap-6 max-w-4xl mx-auto">
+                <IStars className="text-[#1e90ff] w-10 h-10" />
+                <div>
+                  <div className="font-semibold text-lg text-[#0b1320]">High-Quality Results</div>
+                  <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
+                    Outcome-driven delivery — solutions aligned to your unique requirements and business-specific challenges.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-      {/* ROW 5 */}
-      <div className="flex items-start gap-6 max-w-4xl mx-auto">
-        <IStars className="text-[#1e90ff] w-10 h-10" />
-        <div>
-          <div className="font-semibold text-lg text-[#0b1320]">High-Quality Results</div>
-          <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
-            Outcome-driven delivery — solutions aligned to your unique requirements and business-specific challenges.
-          </p>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-        
-        {/* WHO WE ARE — collage + roles (like your screenshot) */}
+        {/* Collage + roles */}
         <div className="grid gap-10 lg:grid-cols-2 items-center">
-          {/* Collage */}
           <div className="relative w-full">
             <div className="grid grid-cols-2 gap-6">
-              {/* top-left small */}
               <img
                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&auto=format&fit=crop"
                 alt="Team member"
                 className="rounded-2xl shadow-xl ring-1 ring-black/5 object-cover h-48 w-full"
               />
-              {/* top-right small */}
               <img
                 src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=1600&auto=format&fit=crop"
                 alt="Engineering discussion"
                 className="rounded-2xl shadow-xl ring-1 ring-black/5 object-cover h-48 w-full"
               />
-              {/* bottom-left large (spans two rows visually by being tall) */}
               <img
                 src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=900&auto=format&fit=crop"
                 alt="Developer at work"
                 className="rounded-2xl shadow-xl ring-1 ring-black/5 object-cover h-72 w-full col-span-1"
               />
-              {/* decorative tile */}
               <div className="h-24 w-24 rounded-2xl bg-[#1e90ff]/20 ring-1 ring-[#1e90ff]/30 place-self-center" />
             </div>
           </div>
 
-          {/* Roles text (two columns on wide screens) */}
           <div>
             <h3 className="text-2xl sm:text-3xl font-bold">We are The Team of</h3>
-
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-6">
-              <div>
-                <div className="font-semibold text-[#1e90ff]">Data Scientists</div>
-                <p className="text-sm text-[#0a2540]/80 mt-1">
-                  Build ML pipelines and personalized data products.
-                </p>
-              </div>
-              <div>
-                <div className="font-semibold text-[#1e90ff]">Architects</div>
-                <p className="text-sm text-[#0a2540]/80 mt-1">
-                  Large-scale systems design and implementation experience.
-                </p>
-              </div>
-              <div>
-                <div className="font-semibold text-[#1e90ff]">Data Analysts</div>
-                <p className="text-sm text-[#0a2540]/80 mt-1">
-                  Turn raw data into valuable, decision-ready insights.
-                </p>
-              </div>
-              <div>
-                <div className="font-semibold text-[#1e90ff]">Engineers</div>
-                <p className="text-sm text-[#0a2540]/80 mt-1">
-                  Proficient in data platforms, MLOps and cloud-native delivery.
-                </p>
-              </div>
-              <div>
-                <div className="font-semibold text-[#1e90ff]">Consultants</div>
-                <p className="text-sm text-[#0a2540]/80 mt-1">
-                  Help you make the right product and platform decisions.
-                </p>
-              </div>
-              <div>
-                <div className="font-semibold text-[#1e90ff]">Designers</div>
-                <p className="text-sm text-[#0a2540]/80 mt-1">
-                  Years of UI/UX experience for usable, elegant interfaces.
-                </p>
-              </div>
+              {[
+                ["Data Scientists", "Build ML pipelines and personalized data products."],
+                ["Architects", "Large-scale systems design and implementation experience."],
+                ["Data Analysts", "Turn raw data into valuable, decision-ready insights."],
+                ["Engineers", "Proficient in data platforms, MLOps and cloud-native delivery."],
+                ["Consultants", "Help you make the right product and platform decisions."],
+                ["Designers", "Years of UI/UX experience for usable, elegant interfaces."],
+              ].map(([t, d]) => (
+                <div key={t as string}>
+                  <div className="font-semibold text-[#1e90ff]">{t}</div>
+                  <p className="text-sm text-[#0a2540]/80 mt-1">{d}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
-
 
         {/* VALUES + HOW WE DELIVER */}
         <div className="grid gap-6 lg:grid-cols-2">
@@ -2997,24 +2964,15 @@ function AboutPage() {
             <div className="text-white/80">Book a consultation or reach us at contact@technocolabs.com</div>
           </div>
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate("contact")}
-              className="rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold"
-            >
-              Book Consultation
-            </button>
-            <button
-              onClick={() => navigate("careers")}
-              className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold hover:bg-white/10"
-            >
-              Join Us
-            </button>
+            <a href="/contact" className="rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold">Book Consultation</a>
+            <a href="/careers" className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold hover:bg-white/10">Join Us</a>
           </div>
         </div>
       </section>
     </div>
   );
 }
+
 
 // --------------------------- LEGAL PAGES --------------------------------------
 function PrivacyPolicyPage() {
