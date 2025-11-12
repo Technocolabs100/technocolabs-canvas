@@ -408,7 +408,7 @@ function HomePage() {
   const stats = [
     { label: "Developers Trained", value: "10,000+" },
     { label: "Engineers Working", value: "250+" },
-    { label: "Projects Completed", value: "100+" },
+    { label: "Projects Completed", value: "500+" },
     { label: "Partner Companies", value: "50+" },
   ];
   const featured = [
