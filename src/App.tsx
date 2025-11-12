@@ -3429,11 +3429,26 @@ function NavBar() {
 
 function Footer() {
   const navigate = useContext(NavContext);
+
   return (
     <footer className="bg-[#0a2540] text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+
+        {/* ✅ Partner badge row (TOP of footer, above all options) */}
+        <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+          <img
+            src="/hackernoon.png"
+            alt="Google Cloud Partner Advantage Member"
+            className="h-16 w-auto opacity-90"
+
+          />
+          <div className="text-white/80 text-xs sm:text-sm">
+            HackerNoon's Startup of the Year 2024 — <span className="text-white font-semibold">Ranked #1 Indore, India.</span>
+          </div>
+        </div>
+
+        {/* Columns */}
         <div className="grid gap-10 md:grid-cols-4 items-start">
-          {/* Columns */}
           <div>
             <div className="text-base font-semibold">Expertise & Services</div>
             <ul className="mt-4 space-y-2 text-sm text-white/80">
@@ -3445,6 +3460,7 @@ function Footer() {
               <li><button onClick={()=>navigate('services')} className="hover:underline">Data Capture & OCR</button></li>
             </ul>
           </div>
+
           <div>
             <div className="text-base font-semibold">Big Data Solutions</div>
             <ul className="mt-4 space-y-2 text-sm text-white/80">
@@ -3456,23 +3472,25 @@ function Footer() {
               <li><button onClick={()=>navigate('cloud-services')} className="hover:underline">Cloud Services</button></li>
             </ul>
           </div>
+
           <div>
             <div className="text-base font-semibold">About Us</div>
-<ul className="mt-4 space-y-2 text-sm text-white/80">
-  <li><button onClick={()=>navigate('success-stories')} className="hover:underline">Success Stories</button></li>
-  <li><button onClick={()=>navigate('blog')} className="hover:underline">Blog</button></li>
-  <li><button onClick={()=>navigate('careers')} className="hover:underline">Careers</button></li>
-  <li><button onClick={() => navigate('grow')} className="hover:underline">Grow with Technocolabs</button></li>
-  <li><button onClick={() => navigate('partnerships')} className="hover:underline">Partner with Us</button></li>
-  <li><button onClick={()=>navigate('write-for-us')} className="hover:underline">Write for Us</button></li>
-</ul>
+            <ul className="mt-4 space-y-2 text-sm text-white/80">
+              <li><button onClick={()=>navigate('success-stories')} className="hover:underline">Success Stories</button></li>
+              <li><button onClick={()=>navigate('blog')} className="hover:underline">Blog</button></li>
+              <li><button onClick={()=>navigate('careers')} className="hover:underline">Careers</button></li>
+              <li><button onClick={() => navigate('grow')} className="hover:underline">Grow with Technocolabs</button></li>
+              <li><button onClick={() => navigate('partnerships')} className="hover:underline">Partner with Us</button></li>
+              <li><button onClick={()=>navigate('write-for-us')} className="hover:underline">Write for Us</button></li>
+            </ul>
           </div>
+
           {/* Contact + Social */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <a aria-label="LinkedIn" href={SOCIAL_LINKS.linkedin} className="hover:opacity-80"><Linkedin /></a>
               <a aria-label="Facebook" href={SOCIAL_LINKS.facebook} className="hover:opacity-80"><Facebook /></a>
-              <a aria-label="Instagram" href={SOCIAL_LINKS.instagram}className="hover:opacity-80"><Instagram /></a>
+              <a aria-label="Instagram" href={SOCIAL_LINKS.instagram} className="hover:opacity-80"><Instagram /></a>
               <a aria-label="X" href={SOCIAL_LINKS.twitter} className="hover:opacity-80"><Twitter /></a>
             </div>
             <div className="text-sm text-white/80 max-w-xs leading-relaxed">
@@ -3486,13 +3504,13 @@ function Footer() {
         {/* Divider */}
         <div className="mt-8 h-px w-full bg-white/20" />
 
-        {/* Bottom bar */}
+        {/* Bottom bar (no badge here now) */}
         <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-white/70">
           <div>© {new Date().getFullYear()} Technocolabs Softwares — All Rights Reserved</div>
           <div className="flex items-center gap-4">
             <button onClick={() => navigate('privacy')} className="hover:underline">Privacy Policy</button>
-        <button onClick={() => navigate('terms')} className="hover:underline">Terms of Use</button>
-        <button onClick={() => navigate('cookies')} className="hover:underline">Cookie Policy</button>
+            <button onClick={() => navigate('terms')} className="hover:underline">Terms of Use</button>
+            <button onClick={() => navigate('cookies')} className="hover:underline">Cookie Policy</button>
           </div>
         </div>
       </div>
