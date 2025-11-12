@@ -2823,6 +2823,78 @@ function AboutPage() {
           </div>
         </div>
 
+
+        {/* WHY CLIENTS CHOOSE TECHNOCOLABS */}
+<section className="w-full bg-white py-16">
+  <div className="mx-auto max-w-5xl px-6">
+
+    {/* Heading */}
+    <h3 className="text-center text-3xl sm:text-4xl font-bold text-[#0b1320]">
+      Why Clients Choose Technocolabs
+    </h3>
+
+    {/* List */}
+    <div className="mt-14 space-y-14">
+
+      {/* ROW 1 */}
+      <div className="flex items-start gap-6 max-w-4xl mx-auto">
+        <IHands className="text-[#1e90ff] w-10 h-10" />
+        <div>
+          <div className="font-semibold text-lg text-[#0b1320]">Since 2014</div>
+          <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
+            One of the most reliable AI, Data, and ML partners with a decade of experience delivering real business value.
+          </p>
+        </div>
+      </div>
+
+      {/* ROW 2 */}
+      <div className="flex items-start gap-6 max-w-4xl mx-auto">
+        <IGlobe className="text-[#1e90ff] w-10 h-10" />
+        <div>
+          <div className="font-semibold text-lg text-[#0b1320]">Global Experience</div>
+          <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
+            A strong track record across multiple industries and regions with successful Big Data and AI programs.
+          </p>
+        </div>
+      </div>
+
+      {/* ROW 3 */}
+      <div className="flex items-start gap-6 max-w-4xl mx-auto">
+        <IDatabaseCheck className="text-[#1e90ff] w-10 h-10" />
+        <div>
+          <div className="font-semibold text-lg text-[#0b1320]">Value for Results</div>
+          <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
+            Highly qualified teams focus on accuracy, reliability, and quick turnaround — measured against your KPIs.
+          </p>
+        </div>
+      </div>
+
+      {/* ROW 4 */}
+      <div className="flex items-start gap-6 max-w-4xl mx-auto">
+        <IUsers className="text-[#1e90ff] w-10 h-10" />
+        <div>
+          <div className="font-semibold text-lg text-[#0b1320]">Convenient Terms of Cooperation</div>
+          <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
+            Engagement models tailored to your goals — Fixed Price and T&M options with transparent reporting.
+          </p>
+        </div>
+      </div>
+
+      {/* ROW 5 */}
+      <div className="flex items-start gap-6 max-w-4xl mx-auto">
+        <IStars className="text-[#1e90ff] w-10 h-10" />
+        <div>
+          <div className="font-semibold text-lg text-[#0b1320]">High-Quality Results</div>
+          <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
+            Outcome-driven delivery — solutions aligned to your unique requirements and business-specific challenges.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
         {/* WHO WE ARE — collage + roles (like your screenshot) */}
         <div className="grid gap-10 lg:grid-cols-2 items-center">
           {/* Collage */}
@@ -2836,7 +2908,7 @@ function AboutPage() {
               />
               {/* top-right small */}
               <img
-                src="https://images.unsplash.com/photo-1529336953121-ad5a0d43d0d2?q=80&w=900&auto=format&fit=crop"
+                src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=1600"
                 alt="Engineering discussion"
                 className="rounded-2xl shadow-xl ring-1 ring-black/5 object-cover h-48 w-full"
               />
