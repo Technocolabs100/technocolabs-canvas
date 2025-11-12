@@ -2721,75 +2721,183 @@ function WriteForUsPage(){
 }
 
 // --------------------------- ABOUT PAGE ---------------------------------------
-function AboutPage(){
+function AboutPage() {
   const navigate = useContext(NavContext);
-  useEffect(()=>{
-    if (typeof document !== 'undefined') {
-      document.title = 'About Us | Technocolabs Softwares Inc.';
-      const m = document.querySelector('meta[name="description"]') || (()=>{ 
-        const x=document.createElement('meta'); 
-        x.setAttribute('name','description'); 
-        document.head.appendChild(x); 
-        return x; 
-      })();
-      m.setAttribute('content','About Technocolabs Softwares Inc: mission, leadership, values, culture, and how we deliver reliable outcomes in AI, data, and cloud.');
+
+  React.useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.title = "About Us | Technocolabs Softwares Inc.";
+      const m =
+        (document.querySelector('meta[name="description"]') as HTMLMetaElement) ||
+        (() => {
+          const x = document.createElement("meta");
+          x.setAttribute("name", "description");
+          document.head.appendChild(x);
+          return x;
+        })();
+      m.setAttribute(
+        "content",
+        "About Technocolabs Softwares Inc: mission, values, who we are, and how we deliver reliable outcomes in AI, data, and cloud."
+      );
     }
-  },[]);
+  }, []);
+
+  // simple stars component (for the Clutch line)
+  const Stars = ({ count = 5 }: { count?: number }) => (
+    <div className="flex items-center gap-1" aria-label={`Rated ${count} stars`}>
+      {Array.from({ length: count }).map((_, i) => (
+        <svg key={i} viewBox="0 0 20 20" className="h-4 w-4 fill-current text-[#ff4d4f]">
+          <path d="M10 1.5 12.9 7l6 .9-4.4 4.3 1 6-5.4-2.9L4.8 18l1-6L1.5 7.9l6-.9L10 1.5z" />
+        </svg>
+      ))}
+    </div>
+  );
 
   return (
     <div className="bg-white text-[#0a2540]">
-      {/* Hero */}
+      {/* HERO */}
       <section className="bg-[#0a2540] text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-10">
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">About Technocolabs</h1>
           <p className="mt-2 text-white/80 max-w-3xl">
             We are an engineering-first company delivering AI, analytics, automation, and cloud solutions
-            with measurable business outcomes — not just dashboards or prototypes.
+            with measurable business outcomes not just dashboards or prototypes.
           </p>
         </div>
       </section>
 
-      {/* Who We Are */}
+      {/* WHO WE ARE — metrics */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 grid gap-8">
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2 rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-semibold">Who we are</h2>
-            <p className="mt-2 text-sm text-[#0a2540]/80">
-              Founded in Central India, Technocolabs Softwares Inc. partners with organizations to design,
-              build, and operate production-grade AI and data systems. We align architecture, engineering,
-              and business goals into one measurable roadmap.
-            </p>
-            <div className="mt-6 grid gap-4 sm:grid-cols-3">
-              {[
-                ['10,000+','Interns Trained'],
-                ['100+','Projects Delivered'],
-                ['50+','Partner Companies']
-              ].map(([n,l])=> (
-                <div key={l} className="rounded-xl border border-[#0a2540]/10 p-4 text-center">
-                  <div className="text-2xl font-semibold">{n}</div>
-                  <div className="text-xs mt-1 text-[#0a2540]/70">{l}</div>
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold">Who we are</h2>
+          <p className="mt-2 text-sm text-[#0a2540]/80">
+            Founded in Central India, Indore, Technocolabs Softwares Inc. partners with organizations to design,
+            build, and operate production-grade AI and data systems. We align architecture, engineering,
+            and business goals into one measurable roadmap.
+          </p>
 
-          {/* Leadership */}
-          <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
-            <h3 className="font-semibold">Leadership</h3>
-            <div className="mt-3 flex items-center gap-3">
-              <img src="/yasin-profile.png" alt="Yasin Shah" className="h-12 w-12 rounded-full object-cover ring-2 ring-[#1e90ff]"/>
-              <div>
-                <div className="text-sm font-semibold">Yasin Shah</div>
-                <div className="text-xs text-[#0a2540]/70">Director & CEO</div>
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
+            {[
+              ["10,000+", "Developers Trained"],
+              ["500+", "Projects Delivered"],
+              ["50+", "Partner Companies"],
+            ].map(([n, l]) => (
+              <div key={l} className="rounded-xl border border-[#0a2540]/10 p-4 text-center">
+                <div className="text-2xl font-semibold">{n}</div>
+                <div className="text-xs mt-1 text-[#0a2540]/70">{l}</div>
               </div>
-            </div>
-            <p className="mt-3 text-sm text-[#0a2540]/80">
-              "We operate with an owner’s mindset: reliability first, clarity in communication, and execution without excuses."
-            </p>
+            ))}
           </div>
         </div>
 
-        {/* Values + Delivery */}
+         {/* ESTABLISHED 2019 */}
+        <div className="w-full rounded-2xl border border-[#0a2540]/10 bg-white p-6 sm:p-8 shadow-sm">
+          <div className="grid gap-8 sm:grid-cols-[1fr,260px] items-center">
+            <div>
+              <h3 className="text-2xl sm:text-3xl font-bold text-[#0b1320]">Established in 2019</h3>
+              <p className="mt-4 text-[#0b1320]/80 leading-relaxed">
+                Technocolabs was founded in 2019 by industry veterans who brought years of experience
+                in AI & big data to create a company focused on real-world, production-ready solutions.
+              </p>
+              <div className="mt-6 flex items-center gap-4">
+                <div className="text-xs uppercase tracking-wide text-[#0b1320]/60">Reviewed on</div>
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl font-black tracking-tight">Google</span>
+                  <Stars count={5} />
+                  <span className="text-sm text-[#0b1320]/70">100+ reviews</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="justify-self-center sm:justify-self-end text-center">
+              <img
+                src="/yasin-profile.png"
+                alt="Founder"
+                className="h-40 w-40 rounded-full object-cover ring-4 ring-[#f0f3f7]"
+              />
+              <div className="mt-3">
+                <div className="font-semibold text-[#0b1320]">Yasin Shah</div>
+                <div className="text-sm text-[#0b1320]/70">Founder & CEO</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* WHO WE ARE — collage + roles (like your screenshot) */}
+        <div className="grid gap-10 lg:grid-cols-2 items-center">
+          {/* Collage */}
+          <div className="relative w-full">
+            <div className="grid grid-cols-2 gap-6">
+              {/* top-left small */}
+              <img
+                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&auto=format&fit=crop"
+                alt="Team member"
+                className="rounded-2xl shadow-xl ring-1 ring-black/5 object-cover h-48 w-full"
+              />
+              {/* top-right small */}
+              <img
+                src="https://images.unsplash.com/photo-1529336953121-ad5a0d43d0d2?q=80&w=900&auto=format&fit=crop"
+                alt="Engineering discussion"
+                className="rounded-2xl shadow-xl ring-1 ring-black/5 object-cover h-48 w-full"
+              />
+              {/* bottom-left large (spans two rows visually by being tall) */}
+              <img
+                src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=900&auto=format&fit=crop"
+                alt="Developer at work"
+                className="rounded-2xl shadow-xl ring-1 ring-black/5 object-cover h-72 w-full col-span-1"
+              />
+              {/* decorative tile */}
+              <div className="h-24 w-24 rounded-2xl bg-[#1e90ff]/20 ring-1 ring-[#1e90ff]/30 place-self-center" />
+            </div>
+          </div>
+
+          {/* Roles text (two columns on wide screens) */}
+          <div>
+            <h3 className="text-2xl sm:text-3xl font-bold">We are The Team of</h3>
+
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-6">
+              <div>
+                <div className="font-semibold text-[#1e90ff]">Data Scientists</div>
+                <p className="text-sm text-[#0a2540]/80 mt-1">
+                  Build ML pipelines and personalized data products.
+                </p>
+              </div>
+              <div>
+                <div className="font-semibold text-[#1e90ff]">Architects</div>
+                <p className="text-sm text-[#0a2540]/80 mt-1">
+                  Large-scale systems design and implementation experience.
+                </p>
+              </div>
+              <div>
+                <div className="font-semibold text-[#1e90ff]">Data Analysts</div>
+                <p className="text-sm text-[#0a2540]/80 mt-1">
+                  Turn raw data into valuable, decision-ready insights.
+                </p>
+              </div>
+              <div>
+                <div className="font-semibold text-[#1e90ff]">Engineers</div>
+                <p className="text-sm text-[#0a2540]/80 mt-1">
+                  Proficient in data platforms, MLOps and cloud-native delivery.
+                </p>
+              </div>
+              <div>
+                <div className="font-semibold text-[#1e90ff]">Consultants</div>
+                <p className="text-sm text-[#0a2540]/80 mt-1">
+                  Help you make the right product and platform decisions.
+                </p>
+              </div>
+              <div>
+                <div className="font-semibold text-[#1e90ff]">Designers</div>
+                <p className="text-sm text-[#0a2540]/80 mt-1">
+                  Years of UI/UX experience for usable, elegant interfaces.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        {/* VALUES + HOW WE DELIVER */}
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
             <h3 className="font-semibold">Our Values</h3>
@@ -2819,14 +2927,25 @@ function AboutPage(){
             <div className="text-white/80">Book a consultation or reach us at contact@technocolabs.com</div>
           </div>
           <div className="flex items-center gap-3">
-           <button onClick={()=>navigate('contact')} className="rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold">Book Consultation</button>
-           <button onClick={()=>navigate('careers')} className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold hover:bg-white/10">Join Us</button>
+            <button
+              onClick={() => navigate("contact")}
+              className="rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold"
+            >
+              Book Consultation
+            </button>
+            <button
+              onClick={() => navigate("careers")}
+              className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold hover:bg-white/10"
+            >
+              Join Us
+            </button>
           </div>
         </div>
       </section>
     </div>
   );
 }
+
 // --------------------------- LEGAL PAGES --------------------------------------
 function PrivacyPolicyPage() {
   useEffect(() => { if (typeof document !== 'undefined') document.title = 'Privacy Policy | Technocolabs Softwares Inc.'; }, []);
