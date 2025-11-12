@@ -6282,44 +6282,80 @@ function PartnershipsSection() {
         </p>
       </Section>
 
-      {/* CONTACT FORM */}
-      <Section id="contact-form" kicker="Get in touch" title="Tell us about your goals">
-        <form onSubmit={handleSheetSubmit} className="grid gap-4 sm:grid-cols-2 rounded-2xl border border-[#0b1320]/10 bg-white p-5 sm:p-6 shadow-sm" noValidate>
-          {sent && (
-            <div className="col-span-2 rounded-lg border border-green-200 bg-green-50 text-green-700 text-sm px-3 py-2">
-              ✅ Thanks! We’ve received your message. We’ll get back within 48 hours.
-            </div>
-          )}
-          {errorMsg && (
-            <div className="col-span-2 rounded-lg border border-red-200 bg-red-50 text-red-700 text-sm px-3 py-2">{errorMsg}</div>
-          )}
+      {/* CONTACT FORM (mobile-first, Google Sheet) */}
+<Section id="contact-form" kicker="Get in touch" title="Tell us about your goals">
+  <form
+    onSubmit={handleSheetSubmit}
+    className="grid grid-cols-1 sm:grid-cols-2 gap-4 rounded-2xl border border-[#0b1320]/10 bg-white p-4 sm:p-6 shadow-sm"
+    noValidate
+  >
+    {/* Success / Error */}
+    {sent && (
+      <div className="sm:col-span-2 rounded-lg border border-green-200 bg-green-50 text-green-700 text-sm px-3 py-2">
+        ✅ Thanks! We’ve received your message. We’ll get back within 48 hours.
+      </div>
+    )}
+    {errorMsg && (
+      <div className="sm:col-span-2 rounded-lg border border-red-200 bg-red-50 text-red-700 text-sm px-3 py-2">
+        {errorMsg}
+      </div>
+    )}
 
-          <input name="name" required placeholder="Your name" className="col-span-1 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30" />
-          <input name="email" type="email" required placeholder="Work email" className="col-span-1 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30" />
-          <input name="company" placeholder="Company" className="col-span-1 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30" />
-          <input name="role" placeholder="Role" className="col-span-1 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30" />
-          <textarea name="message" required placeholder="What would you like to build?" className="col-span-2 rounded-xl border p-3 h-28 outline-none focus:ring-2 ring-[#0A66C2]/30" />
+    {/* Inputs — full width on mobile */}
+    <input
+      name="name"
+      required
+      placeholder="Your name"
+      className="w-full min-w-0 rounded-xl border p-3 h-12 text-base outline-none focus:ring-2 ring-[#0A66C2]/30"
+    />
+    <input
+      name="email"
+      type="email"
+      required
+      placeholder="Work email"
+      className="w-full min-w-0 rounded-xl border p-3 h-12 text-base outline-none focus:ring-2 ring-[#0A66C2]/30"
+    />
+    <input
+      name="company"
+      placeholder="Company"
+      className="w-full min-w-0 rounded-xl border p-3 h-12 text-base outline-none focus:ring-2 ring-[#0A66C2]/30"
+    />
+    <input
+      name="role"
+      placeholder="Role"
+      className="w-full min-w-0 rounded-xl border p-3 h-12 text-base outline-none focus:ring-2 ring-[#0A66C2]/30"
+    />
 
-          {/* Hidden UTM fields */}
-          <input type="hidden" name="utm_source" id="utm_source" />
-          <input type="hidden" name="utm_medium" id="utm_medium" />
-          <input type="hidden" name="utm_campaign" id="utm_campaign" />
+    {/* Textarea spans both columns on larger screens */}
+    <textarea
+      name="message"
+      required
+      placeholder="What would you like to build?"
+      className="sm:col-span-2 w-full min-w-0 rounded-xl border p-3 h-32 text-base outline-none focus:ring-2 ring-[#0A66C2]/30"
+    />
 
-          <div className="col-span-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <label className="text-xs text-[#0b1320]/60">
-              By submitting, you agree to our <a className="underline" href="/privacy">Privacy Policy</a>.
-            </label>
-            <button
-              type="submit"
-              disabled={submitting}
-              className="w-full sm:w-auto rounded-xl bg-[#0A66C2] px-5 py-3 text-white font-semibold shadow-sm hover:shadow disabled:opacity-60"
-              aria-busy={submitting}
-            >
-              {submitting ? "Sending…" : "Send"}
-            </button>
-          </div>
-        </form>
-      </Section>
+    {/* Hidden UTM fields */}
+    <input type="hidden" name="utm_source" id="utm_source" />
+    <input type="hidden" name="utm_medium" id="utm_medium" />
+    <input type="hidden" name="utm_campaign" id="utm_campaign" />
+
+    {/* Footer — stacks on mobile */}
+    <div className="sm:col-span-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <label className="text-xs text-[#0b1320]/60">
+        By submitting, you agree to our <a className="underline" href="/privacy">Privacy Policy</a>.
+      </label>
+      <button
+        type="submit"
+        disabled={submitting}
+        className="w-full sm:w-auto rounded-xl bg-[#0A66C2] px-5 py-3 text-white font-semibold shadow-sm hover:shadow disabled:opacity-60"
+        aria-busy={submitting}
+      >
+        {submitting ? "Sending…" : "Send"}
+      </button>
+    </div>
+  </form>
+</Section>
+
 
       {/* FAQ */}
       <Section
