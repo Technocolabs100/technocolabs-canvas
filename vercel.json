@@ -5,6 +5,6 @@
     { "source": "/traineeverification.html", "destination": "/verify", "permanent": true }
   ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
+   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
   ]
 }
