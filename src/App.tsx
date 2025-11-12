@@ -2720,9 +2720,9 @@ function WriteForUsPage(){
   );
 }
 
-// --------------------------- ABOUT PAGE (production-safe, single function) ---------------------------------------
+// --------------------------- ABOUT PAGE (mobile-first, production-safe) ---------------------------------------
 function AboutPage() {
-  // SEO (guarded)
+  // --- SEO (guarded) ---
   React.useEffect(() => {
     try {
       if (typeof document !== "undefined") {
@@ -2743,7 +2743,7 @@ function AboutPage() {
     } catch {}
   }, []);
 
-  // Inline icon components (no external deps)
+  // --- Inline icons (no deps) ---
   const IHands = (p:any)=>(<svg viewBox="0 0 24 24" fill="none" className={p.className}><path d="M7 12c-1.657 0-3-1.343-3-3V6a2 2 0 1 1 4 0v3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/><path d="M17 12c1.657 0 3-1.343 3-3V6a2 2 0 1 0-4 0v3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/><path d="M8 12l4 4 4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>);
   const IGlobe = (p:any)=>(<svg viewBox="0 0 24 24" fill="none" className={p.className}><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6"/><ellipse cx="12" cy="12" rx="4" ry="9" stroke="currentColor" strokeWidth="1.6"/><path d="M3 12h18" stroke="currentColor" strokeWidth="1.6"/></svg>);
   const IDatabaseCheck = (p:any)=>(<svg viewBox="0 0 24 24" fill="none" className={p.className}><ellipse cx="10" cy="5" rx="6" ry="3" stroke="currentColor" strokeWidth="1.6"/><path d="M4 5v6c0 1.657 2.686 3 6 3s6-1.343 6-3V5" stroke="currentColor" strokeWidth="1.6"/><path d="M4 11v6c0 1.657 2.686 3 6 3" stroke="currentColor" strokeWidth="1.6"/><path d="M14.5 17.5l1.8 1.8 3.7-3.7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>);
@@ -2762,161 +2762,144 @@ function AboutPage() {
 
   return (
     <div className="bg-white text-[#0a2540]">
-      {/* HERO */}
+      {/* ========== HERO (tighter on mobile) ========== */}
       <section className="bg-[#0a2540] text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-10">
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">About Technocolabs</h1>
-          <p className="mt-2 text-white/80 max-w-3xl">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-8 sm:pb-10">
+          <h1 className="text-2xl sm:text-4xl font-bold tracking-tight">About Technocolabs</h1>
+          <p className="mt-2 text-white/80 max-w-3xl text-sm sm:text-base">
             We are an engineering-first company delivering AI, analytics, automation, and cloud solutions
             with measurable business outcomes — not just dashboards or prototypes.
           </p>
         </div>
       </section>
 
-      {/* WHO WE ARE — metrics */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 grid gap-8">
-        <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-semibold">Who we are</h2>
-          <p className="mt-2 text-sm text-[#0a2540]/80">
+      {/* ========== WHO WE ARE — metrics (mobile stacks) ========== */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 grid gap-6 sm:gap-8">
+        <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-4 sm:p-6 shadow-sm">
+          <h2 className="text-lg sm:text-xl font-semibold">Who we are</h2>
+          <p className="mt-2 text-xs sm:text-sm text-[#0a2540]/80">
             Founded in Central India, Indore, Technocolabs Softwares Inc. partners with organizations to design,
             build, and operate production-grade AI and data systems. We align architecture, engineering,
             and business goals into one measurable roadmap.
           </p>
 
-          <div className="mt-6 grid gap-4 sm:grid-cols-3">
+          <div className="mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             {[
               ["10,000+", "Developers Trained"],
               ["500+", "Projects Delivered"],
               ["50+", "Partner Companies"],
             ].map(([n, l]) => (
-              <div key={l} className="rounded-xl border border-[#0a2540]/10 p-4 text-center">
-                <div className="text-2xl font-semibold">{n}</div>
-                <div className="text-xs mt-1 text-[#0a2540]/70">{l}</div>
+              <div key={l} className="rounded-xl border border-[#0a2540]/10 p-3 sm:p-4 text-center">
+                <div className="text-xl sm:text-2xl font-semibold">{n}</div>
+                <div className="text-[11px] sm:text-xs mt-1 text-[#0a2540]/70">{l}</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* ESTABLISHED 2019 */}
-        <div className="w-full rounded-2xl border border-[#0a2540]/10 bg-white p-6 sm:p-8 shadow-sm">
-          <div className="grid gap-8 sm:grid-cols-[1fr,260px] items-center">
+        {/* ========== ESTABLISHED 2019 (image scales, text first on mobile) ========== */}
+        <div className="w-full rounded-2xl border border-[#0a2540]/10 bg-white p-4 sm:p-6 shadow-sm">
+          <div className="grid gap-6 sm:gap-8 sm:grid-cols-[1fr,240px] items-center">
+            {/* Text */}
             <div>
-              <h3 className="text-2xl sm:text-3xl font-bold text-[#0b1320]">Established in 2019</h3>
-              <p className="mt-4 text-[#0b1320]/80 leading-relaxed">
+              <h3 className="text-xl sm:text-3xl font-bold text-[#0b1320]">Established in 2019</h3>
+              <p className="mt-3 sm:mt-4 text-[#0b1320]/80 text-sm sm:text-base leading-relaxed">
                 Technocolabs was founded in 2019 by industry veterans who brought years of experience
                 in AI & big data to create a company focused on real-world, production-ready solutions.
               </p>
-              <div className="mt-6 flex items-center gap-4">
-                <div className="text-xs uppercase tracking-wide text-[#0b1320]/60">Reviewed on</div>
+              <div className="mt-4 sm:mt-6 flex flex-wrap items-center gap-2 sm:gap-4">
+                <span className="text-[10px] sm:text-xs uppercase tracking-wide text-[#0b1320]/60">Reviewed on</span>
                 <div className="flex items-center gap-3">
-                  <span className="text-2xl font-black tracking-tight">Google</span>
+                  <span className="text-xl sm:text-2xl font-black tracking-tight">Google</span>
                   <Stars count={5} />
-                  <span className="text-sm text-[#0b1320]/70">100+ reviews</span>
+                  <span className="text-xs sm:text-sm text-[#0b1320]/70">100+ reviews</span>
                 </div>
               </div>
             </div>
 
+            {/* Portrait (keeps aspect on phones) */}
             <div className="justify-self-center sm:justify-self-end text-center">
-              <img
-                src="/yasin-profile.png"
-                alt="Founder"
-                className="h-40 w-40 rounded-full object-cover ring-4 ring-[#f0f3f7]"
-              />
+              <div className="mx-auto h-36 w-36 sm:h-40 sm:w-40 rounded-full overflow-hidden ring-4 ring-[#f0f3f7]">
+                <img
+                  src="/yasin-profile.png"
+                  alt="Founder"
+                  className="h-full w-full object-cover"
+                />
+              </div>
               <div className="mt-3">
-                <div className="font-semibold text-[#0b1320]">Yasin Shah</div>
-                <div className="text-sm text-[#0b1320]/70">Founder & CEO</div>
+                <div className="font-semibold text-[#0b1320] text-sm sm:text-base">Yasin Shah</div>
+                <div className="text-xs sm:text-sm text-[#0b1320]/70">Founder & CEO</div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* WHY CLIENTS CHOOSE TECHNOCOLABS (centered) */}
-        <section className="w-full bg-white py-16">
-          <div className="mx-auto max-w-5xl px-6">
-            <h3 className="text-center text-3xl sm:text-4xl font-bold text-[#0b1320]">
+        {/* ========== WHY CLIENTS CHOOSE (centered, comfortable line-length) ========== */}
+        <section className="w-full bg-white py-10 sm:py-16">
+          <div className="mx-auto max-w-5xl px-4 sm:px-6">
+            <h3 className="text-center text-2xl sm:text-4xl font-bold text-[#0b1320]">
               Why Clients Choose Technocolabs
             </h3>
 
-            <div className="mt-14 space-y-14">
-              <div className="flex items-start gap-6 max-w-4xl mx-auto">
-                <IHands className="text-[#1e90ff] w-10 h-10" />
-                <div>
-                  <div className="font-semibold text-lg text-[#0b1320]">Since 2014</div>
-                  <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
-                    One of the most reliable AI, Data, and ML partners with a decade of experience delivering real business value.
-                  </p>
+            <div className="mt-10 sm:mt-14 space-y-8 sm:space-y-14">
+              {[
+                [IHands, "Since 2014", "One of the most reliable AI, Data, and ML partners with a decade of experience delivering real business value."],
+                [IGlobe, "Global Experience", "A strong track record across multiple industries and regions with successful Big Data and AI programs."],
+                [IDatabaseCheck, "Value for Results", "Highly qualified teams focus on accuracy, reliability, and quick turnaround — measured against your KPIs."],
+                [IUsers, "Convenient Terms of Cooperation", "Engagement models tailored to your goals — Fixed Price and T&M options with transparent reporting."],
+                [IStars, "High-Quality Results", "Outcome-driven delivery — solutions aligned to your unique requirements and business-specific challenges."],
+              ].map(([Icon, title, desc], i) => (
+                <div key={i} className="flex items-start gap-4 sm:gap-6 max-w-4xl mx-auto">
+                  {/* bigger touch target on phones */}
+                  <div className="shrink-0 grid place-items-center h-10 w-10">
+                    {React.createElement(Icon as any, { className: "text-[#1e90ff] w-8 h-8 sm:w-10 sm:h-10" })}
+                  </div>
+                  <div>
+                    <div className="font-semibold text-base sm:text-lg text-[#0b1320]">{title as string}</div>
+                    <p className="mt-1 text-[#0a2540]/80 text-sm sm:text-base leading-relaxed">{desc as string}</p>
+                  </div>
                 </div>
-              </div>
-
-              <div className="flex items-start gap-6 max-w-4xl mx-auto">
-                <IGlobe className="text-[#1e90ff] w-10 h-10" />
-                <div>
-                  <div className="font-semibold text-lg text-[#0b1320]">Global Experience</div>
-                  <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
-                    A strong track record across multiple industries and regions with successful Big Data and AI programs.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-6 max-w-4xl mx-auto">
-                <IDatabaseCheck className="text-[#1e90ff] w-10 h-10" />
-                <div>
-                  <div className="font-semibold text-lg text-[#0b1320]">Value for Results</div>
-                  <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
-                    Highly qualified teams focus on accuracy, reliability, and quick turnaround — measured against your KPIs.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-6 max-w-4xl mx-auto">
-                <IUsers className="text-[#1e90ff] w-10 h-10" />
-                <div>
-                  <div className="font-semibold text-lg text-[#0b1320]">Convenient Terms of Cooperation</div>
-                  <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
-                    Engagement models tailored to your goals — Fixed Price and T&amp;M options with transparent reporting.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-6 max-w-4xl mx-auto">
-                <IStars className="text-[#1e90ff] w-10 h-10" />
-                <div>
-                  <div className="font-semibold text-lg text-[#0b1320]">High-Quality Results</div>
-                  <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
-                    Outcome-driven delivery — solutions aligned to your unique requirements and business-specific challenges.
-                  </p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* Collage + roles */}
-        <div className="grid gap-10 lg:grid-cols-2 items-center">
-          <div className="relative w-full">
-            <div className="grid grid-cols-2 gap-6">
+        {/* ========== Collage + roles (no fixed heights; uses aspect ratios) ========== */}
+        <div className="grid gap-8 sm:gap-10 lg:grid-cols-2 items-center">
+          {/* Collage */}
+          <div className="grid grid-cols-2 gap-4 sm:gap-6">
+            {/* top-left */}
+            <div className="rounded-2xl shadow-xl ring-1 ring-black/5 overflow-hidden">
               <img
                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&auto=format&fit=crop"
                 alt="Team member"
-                className="rounded-2xl shadow-xl ring-1 ring-black/5 object-cover h-48 w-full"
+                className="w-full h-full object-cover aspect-[4/3]"
               />
+            </div>
+            {/* top-right */}
+            <div className="rounded-2xl shadow-xl ring-1 ring-black/5 overflow-hidden">
               <img
                 src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=1600&auto=format&fit=crop"
                 alt="Engineering discussion"
-                className="rounded-2xl shadow-xl ring-1 ring-black/5 object-cover h-48 w-full"
+                className="w-full h-full object-cover aspect-[4/3]"
               />
+            </div>
+            {/* bottom-left (taller) */}
+            <div className="rounded-2xl shadow-xl ring-1 ring-black/5 overflow-hidden col-span-2 sm:col-span-1">
               <img
                 src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=900&auto=format&fit=crop"
                 alt="Developer at work"
-                className="rounded-2xl shadow-xl ring-1 ring-black/5 object-cover h-72 w-full col-span-1"
+                className="w-full h-full object-cover aspect-[3/2]"
               />
-              <div className="h-24 w-24 rounded-2xl bg-[#1e90ff]/20 ring-1 ring-[#1e90ff]/30 place-self-center" />
             </div>
+            {/* decorative tile (auto scales) */}
+            <div className="hidden sm:block h-24 w-24 rounded-2xl bg-[#1e90ff]/20 ring-1 ring-[#1e90ff]/30 place-self-center" />
           </div>
 
+          {/* Roles (grid stacks on mobile) */}
           <div>
-            <h3 className="text-2xl sm:text-3xl font-bold">We are The Team of</h3>
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-6">
+            <h3 className="text-xl sm:text-3xl font-bold">We are The Team of</h3>
+            <div className="mt-5 sm:mt-6 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5 sm:gap-y-6">
               {[
                 ["Data Scientists", "Build ML pipelines and personalized data products."],
                 ["Architects", "Large-scale systems design and implementation experience."],
@@ -2926,19 +2909,19 @@ function AboutPage() {
                 ["Designers", "Years of UI/UX experience for usable, elegant interfaces."],
               ].map(([t, d]) => (
                 <div key={t as string}>
-                  <div className="font-semibold text-[#1e90ff]">{t}</div>
-                  <p className="text-sm text-[#0a2540]/80 mt-1">{d}</p>
+                  <div className="font-semibold text-[#1e90ff] text-sm sm:text-base">{t}</div>
+                  <p className="text-xs sm:text-sm text-[#0a2540]/80 mt-1">{d}</p>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* VALUES + HOW WE DELIVER */}
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
-            <h3 className="font-semibold">Our Values</h3>
-            <ul className="mt-2 list-disc pl-5 text-sm space-y-1 text-[#0a2540]/80">
+        {/* ========== VALUES + HOW WE DELIVER (cards stack) ========== */}
+        <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+          <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-4 sm:p-6 shadow-sm">
+            <h3 className="font-semibold text-base sm:text-lg">Our Values</h3>
+            <ul className="mt-2 list-disc pl-5 text-xs sm:text-sm space-y-1 text-[#0a2540]/80">
               <li>Outcomes over outputs</li>
               <li>Security and governance by default</li>
               <li>Transparency and accountability</li>
@@ -2946,9 +2929,9 @@ function AboutPage() {
             </ul>
           </div>
 
-          <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
-            <h3 className="font-semibold">How We Deliver</h3>
-            <ol className="mt-2 list-decimal pl-5 text-sm space-y-1 text-[#0a2540]/80">
+          <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-4 sm:p-6 shadow-sm">
+            <h3 className="font-semibold text-base sm:text-lg">How We Deliver</h3>
+            <ol className="mt-2 list-decimal pl-5 text-xs sm:text-sm space-y-1 text-[#0a2540]/80">
               <li>Discovery & measurable KPI alignment</li>
               <li>Architecture & data foundations</li>
               <li>Iterative development with quality gates</li>
@@ -2957,15 +2940,15 @@ function AboutPage() {
           </div>
         </div>
 
-        {/* CTA */}
-        <div className="rounded-2xl bg-[#0a2540] text-white p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        {/* ========== CTA (buttons stack on mobile) ========== */}
+        <div className="rounded-2xl bg-[#0a2540] text-white p-5 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
           <div>
-            <div className="text-lg font-semibold">Want to work with us?</div>
-            <div className="text-white/80">Book a consultation or reach us at contact@technocolabs.com</div>
+            <div className="text-base sm:text-lg font-semibold">Want to work with us?</div>
+            <div className="text-white/80 text-sm sm:text-base">Book a consultation or reach us at contact@technocolabs.com</div>
           </div>
-          <div className="flex items-center gap-3">
-            <a href="/contact" className="rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold">Book Consultation</a>
-            <a href="/careers" className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold hover:bg-white/10">Join Us</a>
+          <div className="flex w-full sm:w-auto flex-col sm:flex-row gap-3">
+            <a href="/contact" className="text-center rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold">Book Consultation</a>
+            <a href="/careers" className="text-center inline-flex items-center justify-center rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold hover:bg-white/10">Join Us</a>
           </div>
         </div>
       </section>
