@@ -5694,7 +5694,7 @@ function RoleRotator({
 }
 
 function PartnershipsSection() {
-  // ---------------- Sheet submit (unchanged) ----------------
+  // ---------- Inline form (Google Sheet) ----------
   const [sent, setSent] = React.useState(false);
   const [submitting, setSubmitting] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState("");
@@ -5720,8 +5720,10 @@ function PartnershipsSection() {
     }
   };
 
-  // ---------------- State & utilities ----------------
-  const POSTER_URL = "/partner.png"; // ensure file is in /public/partner.png
+  // ---------- Config ----------
+  const POSTER_URL = "partner.png"; // update if needed
+
+  // ---------- Page state ----------
   const [yearly, setYearly] = React.useState(true);
   const [faqQuery, setFaqQuery] = React.useState("");
   const [showTop, setShowTop] = React.useState(false);
@@ -5738,14 +5740,14 @@ function PartnershipsSection() {
     setVal("utm_medium", p.get("utm_medium"));
     setVal("utm_campaign", p.get("utm_campaign"));
 
-    // Back-to-top visibility
+    // back-to-top
     const onScroll = () => setShowTop(window.scrollY > 400);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // ---------------- Small primitives (scoped) ----------------
+  // ---------- Small primitives ----------
   const Kicker = ({ children }: { children: React.ReactNode }) => (
     <div className="text-xs font-semibold uppercase tracking-wider text-[#0A66C2]">{children}</div>
   );
@@ -5760,8 +5762,8 @@ function PartnershipsSection() {
     id?: string;
     title: string;
     kicker?: string;
-    actions?: React.ReactNode;
     children: React.ReactNode;
+    actions?: React.ReactNode;
   }) => (
     <section id={id} className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12 py-14">
       <div className="flex items-end justify-between gap-4">
@@ -5781,24 +5783,15 @@ function PartnershipsSection() {
     </span>
   );
 
-  // Animated Stat (with prod-safe IO guard)
   function StatCounter({ to, label, suffix = "" }: { to: number; label: string; suffix?: string }) {
     const ref = React.useRef<HTMLDivElement | null>(null);
     const [val, setVal] = React.useState(0);
-
     React.useEffect(() => {
       const el = ref.current;
       if (!el) return;
-
-      if (typeof window === "undefined" || !(window as any).IntersectionObserver) {
-        setVal(Math.floor(to));
-        return;
-      }
-
       let frame = 0;
       let start: number | null = null;
       const dur = 900;
-
       const io = new IntersectionObserver(
         ([entry]) => {
           if (!entry.isIntersecting) return;
@@ -5813,14 +5806,12 @@ function PartnershipsSection() {
         },
         { threshold: 0.2 }
       );
-
       io.observe(el);
       return () => {
         if (frame) cancelAnimationFrame(frame);
         io.disconnect();
       };
     }, [to]);
-
     return (
       <div ref={ref} className="rounded-2xl border border-[#0b1320]/10 bg-white px-5 py-4 shadow-sm text-center">
         <div className="text-2xl sm:text-3xl font-extrabold text-[#0b1320]">
@@ -5832,65 +5823,40 @@ function PartnershipsSection() {
     );
   }
 
-  // Inline SVG icons (no external deps)
-  const SvgBox = ({ children }: { children: React.ReactNode }) => (
-    <div className="h-10 w-10 shrink-0 rounded-xl bg-[#0A66C2]/10 grid place-items-center">{children}</div>
-  );
-
-  const SvgTeam = () => (
-    <SvgBox>
-      <svg viewBox="0 0 24 24" className="h-6 w-6 text-[#0A66C2]" fill="currentColor">
-        <path d="M16 11c1.66 0 3-1.34 3-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3Zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3Zm0 2c-2.67 0-8 1.34-8 4v2h10v-2c0-1.07.43-2.05 1.14-2.86C9.83 13.43 6.86 13 8 13Zm8 0c-1.14 0-4 .43-5.14 1.14.71.81 1.14 1.79 1.14 2.86v2h10v-2c0-2.66-5.33-4-8-4Z" />
-      </svg>
-    </SvgBox>
-  );
-  const SvgRnd = () => (
-    <SvgBox>
-      <svg viewBox="0 0 24 24" className="h-6 w-6 text-[#0A66C2]" fill="currentColor">
-        <path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 15h-2v-2h2Zm0-4h-2V7h2Z" />
-      </svg>
-    </SvgBox>
-  );
-  const SvgLight = () => (
-    <SvgBox>
-      <svg viewBox="0 0 24 24" className="h-6 w-6 text-[#0A66C2]" fill="currentColor">
-        <path d="M9 21h6v-1H9v1Zm3-19a7 7 0 0 0-4 12.9V17h8v-2.1A7 7 0 0 0 12 2Z" />
-      </svg>
-    </SvgBox>
-  );
-  const SvgGraph = () => (
-    <SvgBox>
-      <svg viewBox="0 0 24 24" className="h-6 w-6 text-[#0A66C2]" fill="currentColor">
-        <path d="M3 3h2v18H3zM7 13h2v8H7zM11 9h2v12h-2zM15 5h2v16h-2zM19 2h2v19h-2z" />
-      </svg>
-    </SvgBox>
-  );
-  const SvgTrophy = () => (
-    <SvgBox>
-      <svg viewBox="0 0 24 24" className="h-6 w-6 text-[#0A66C2]" fill="currentColor">
-        <path d="M17 3V2H7v1H3v4a5 5 0 0 0 5 5h.1A5.002 5.002 0 0 0 11 15v2H8v2h8v-2h-3v-2a5.002 5.002 0 0 0 2.9-3H16a5 5 0 0 0 5-5V3h-4Zm-9 8a3 3 0 0 1-3-3V5h3v6Zm12-3a3 3 0 0 1-3 3V5h3v3Z" />
-      </svg>
-    </SvgBox>
-  );
-  const SvgStars = () => (
-    <SvgBox>
-      <svg viewBox="0 0 24 24" className="h-6 w-6 text-[#0A66C2]" fill="currentColor">
-        <path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-      </svg>
-    </SvgBox>
-  );
-
-  const WhyItem = ({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) => (
-    <div className="flex items-start gap-4">
-      {icon}
-      <div>
-        <div className="font-semibold text-[#0b1320]">{title}</div>
-        <p className="text-[#0b1320]/70 text-sm mt-1">{text}</p>
+  function CompanyLogo({ name, domain }: { name: string; domain: string }) {
+    const imgRef = React.useRef<HTMLImageElement | null>(null);
+    const fallbackRef = React.useRef<HTMLDivElement | null>(null);
+    const onErr = () => {
+      if (imgRef.current) imgRef.current.style.display = "none";
+      if (fallbackRef.current) fallbackRef.current.style.display = "flex";
+    };
+    const initials = name
+      .split(" ")
+      .map((w) => w[0])
+      .join("")
+      .slice(0, 3)
+      .toUpperCase();
+    return (
+      <div className="rounded-2xl border border-[#0b1320]/10 bg-white p-4 text-center shadow-sm">
+        <img
+          ref={imgRef}
+          src={`https://logo.clearbit.com/${domain}?size=128`}
+          alt={`${name} logo`}
+          className="mx-auto h-10 object-contain"
+          loading="lazy"
+          onError={onErr}
+        />
+        <div
+          ref={fallbackRef}
+          className="hidden mx-auto h-10 w-10 items-center justify-center rounded bg-[#0b1320]/5 text-[#0b1320]/70 text-xs font-semibold"
+        >
+          {initials}
+        </div>
+        <div className="mt-2 text-sm font-medium text-[#0b1320]">{name}</div>
       </div>
-    </div>
-  );
+    );
+  }
 
-  // Tier Card
   function TierCard({
     name,
     price,
@@ -5933,15 +5899,76 @@ function PartnershipsSection() {
     );
   }
 
-  // ---------------- Render ----------------
+  function CaseStudy({ partner, outcome, bullets }: { partner: string; outcome: string; bullets: string[] }) {
+    return (
+      <div className="rounded-2xl border border-[#0b1320]/10 bg-white p-6 shadow-sm hover:shadow-md transition">
+        <div className="text-sm font-semibold text-[#0A66C2]">Case Study</div>
+        <div className="mt-1 text-lg font-semibold text-[#0b1320]">{partner}</div>
+        <p className="mt-1 text-sm text-[#0b1320]/70">{outcome}</p>
+        <ul className="mt-3 space-y-1 text-sm text-[#0b1320]/80">
+          {bullets.map((b) => (
+            <li key={b}>• {b}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+
+  // ---------- Why-section helpers (icons + items) ----------
+  const IconWrap = ({ children }: { children: React.ReactNode }) => (
+    <span className="grid h-12 w-12 place-items-center rounded-full bg-[#0A66C2]/10 text-[#0A66C2]">
+      {children}
+    </span>
+  );
+  const WhyItem = ({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) => (
+    <div className="flex flex-col items-center text-center gap-3">
+      <IconWrap>{icon}</IconWrap>
+      <div className="text-sm font-semibold text-[#0b1320]">{title}</div>
+      <p className="text-xs leading-relaxed text-[#0b1320]/70 max-w-[18rem]">{text}</p>
+    </div>
+  );
+  const SvgTeam = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="opacity-90">
+      <path d="M12 12a3 3 0 1 0-3-3 3 3 0 0 0 3 3Zm6 8v-1a4 4 0 0 0-4-4H10a4 4 0 0 0-4 4v1z" />
+      <circle cx="18" cy="8" r="2" />
+      <circle cx="6" cy="8" r="2" />
+    </svg>
+  );
+  const SvgRnd = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="opacity-90">
+      <path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 15h-2v-5h2Zm0-7h-2V8h2Z" />
+    </svg>
+  );
+  const SvgLight = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="opacity-90">
+      <path d="M12 3a7 7 0 0 0-4 12.9V18a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.1A7 7 0 0 0 12 3Z" />
+    </svg>
+  );
+  const SvgGraph = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="opacity-90">
+      <path d="M4 20h16v-2H4Zm2-3h2v-7H6Zm4 0h2V7h-2Zm4 0h2v-4h-2Z" />
+    </svg>
+  );
+  const SvgTrophy = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="opacity-90">
+      <path d="M18 4V2H6v2H2v3a4 4 0 0 0 4 4h.1A6.002 6.002 0 0 0 11 15v3H8v2h8v-2h-3v-3a6.002 6.002 0 0 0 4.9-4H18a4 4 0 0 0 4-4V4Zm-2 5a4 4 0 0 1-4 4 4 4 0 0 1-4-4V4h8ZM4 7V6h2v3a2 2 0 0 1-2-2Zm16 0a2 2 0 0 1-2 2V6h2Z" />
+    </svg>
+  );
+  const SvgStars = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="opacity-90">
+      <path d="m12 3 2.2 4.7 5.2.7-3.8 3.6.9 5.1L12 14.9 7.5 17l.9-5.1L4.6 8.4l5.2-.7Z" />
+      <path d="M5 21h2l-1-3zM17 21h2l-1-3z" />
+    </svg>
+  );
+
+  // ---------- Render ----------
   return (
     <div className="bg-[#f7f9fb] text-[#0a2540]">
-      {/* ================= HERO ================= */}
+      {/* HERO */}
       <section className="relative overflow-hidden bg-gradient-to-b from-white to-[#f7f9fb]">
         <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full blur-3xl opacity-20 bg-[#0A66C2]" aria-hidden />
         <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12 pt-16 pb-10">
           <div className="grid gap-10 lg:grid-cols-2 items-center">
-            {/* Left Copy */}
             <div className="text-center lg:text-left">
               <Kicker>Partnerships</Kicker>
               <h1 className="mt-2 text-4xl sm:text-6xl font-bold text-[#0b1320] leading-tight">Build with Technocolabs</h1>
@@ -5950,13 +5977,18 @@ function PartnershipsSection() {
                 universities and agencies to bring developer-first solutions to production.
               </p>
               <div className="mt-7 flex flex-wrap gap-3 justify-center lg:justify-start">
-                <a href="#partner-contact" className="rounded-xl bg-[#0A66C2] px-5 py-3 text-white font-semibold shadow-sm hover:shadow">Become a Partner</a>
-                <a href="#tiers" className="rounded-xl border border-gray-200 bg-white px-5 py-3 font-semibold shadow-sm hover:shadow">View Tiers</a>
-                <a href="#benefits" className="rounded-XL border border-gray-200 bg-white px-5 py-3 font-semibold shadow-sm hover:shadow">See Benefits</a>
+                <a href="#partner-contact" className="rounded-xl bg-[#0A66C2] px-5 py-3 text-white font-semibold shadow-sm hover:shadow">
+                  Become a Partner
+                </a>
+                <a href="#tiers" className="rounded-xl border border-gray-200 bg-white px-5 py-3 font-semibold shadow-sm hover:shadow">
+                  View Tiers
+                </a>
+                <a href="#benefits" className="rounded-xl border border-gray-200 bg-white px-5 py-3 font-semibold shadow-sm hover:shadow">
+                  See Benefits
+                </a>
               </div>
             </div>
-
-            {/* Right Media — poster */}
+            {/* Poster */}
             <div className="rounded-2xl overflow-hidden border border-[#0b1320]/10 shadow-sm">
               <img src={POSTER_URL} alt="Partnership Poster" className="w-full h-auto object-cover" />
             </div>
@@ -5964,62 +5996,143 @@ function PartnershipsSection() {
         </div>
       </section>
 
-      {/* ================= STATS ================= */}
+      {/* STICKY SUB-NAV */}
+      <nav className="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-[#0b1320]/10">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-2 flex gap-2 sm:gap-4 text-sm overflow-x-auto">
+          {[
+            { href: "#benefits", label: "Benefits" },
+            { href: "#why", label: "Why Us" },
+            { href: "#tiers", label: "Tiers" },
+            { href: "#case-studies", label: "Case Studies" },
+            { href: "#faq", label: "FAQ" },
+            { href: "#partner-contact", label: "Contact" },
+          ].map((i) => (
+            <a key={i.href} href={i.href} className="px-3 py-1 rounded-lg hover:bg-[#0b1320]/5">
+              {i.label}
+            </a>
+          ))}
+        </div>
+      </nav>
+
+      {/* STATS */}
       <Section kicker="Proof" title="Why partners choose us">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCounter to={10000} label="Developers trained" />
           <StatCounter to={230} label="Companies served" />
+          <StatCounter to={5} label="Avg. satisfaction" suffix="★" />
           <StatCounter to={95} label="Project completion rate" suffix="%" />
-          <StatCounter to={5} label="Mentor rating" suffix="★" />
         </div>
       </Section>
 
-      {/* BUILD A STRONG PARTNERSHIP IN AI (icons left, text right) */}
-      <section className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12 py-16">
-        <h2 className="text-center text-3xl sm:text-4xl font-bold text-[#0b1320]">Build a Strong Partnership in AI</h2>
-        <p className="text-center max-w-3xl mx-auto mt-4 text-[#0b1320]/70 text-base sm:text-lg">
-          From any scale and anywhere in the world, businesses can boost AI capabilities with Technocolabs.
-          We apply the latest AI development methodologies and provide reliable co-development services to enhance business opportunities.
-        </p>
 
-        <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-10">
-          <div className="flex items-start gap-4">
-            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712074.png" alt="AI Expertise" className="w-16 h-16" />
-            <p className="text-[#0b1320] font-medium leading-relaxed">
-              Strong expertise in the development & support of AI solutions and deep-tech products.
-            </p>
-          </div>
-          <div className="flex items-start gap-4">
-            <img src="https://cdn-icons-png.flaticon.com/512/4783/4783968.png" alt="Transparency" className="w-16 h-16" />
-            <p className="text-[#0b1320] font-medium leading-relaxed">
-              Full transparency of all workflows, reporting, and project progress.
-            </p>
-          </div>
-          <div className="flex items-start gap-4">
-            <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt="Staff Augmentation" className="w-16 h-16" />
-            <p className="text-[#0b1320] font-medium leading-relaxed">
-              Dedicated AI engineers available through our staff augmentation program.
-            </p>
-          </div>
-        </div>
-      </section>
+    {/* BUILD A STRONG PARTNERSHIP IN AI */}
+<section className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12 py-16">
 
-      {/* WHY TECHNOCOLABS — FULL WIDTH CARD (all inline, no missing refs) */}
-      <section id="why" className="w-full bg-[#f7f9fb] py-12 sm:py-16">
-        <div className="mx-auto max-w-7xl rounded-2xl bg-white shadow-xl ring-1 ring-black/5 px-6 sm:px-12 py-12">
-          <h3 className="text-center text-3xl sm:text-4xl font-bold text-[#0b1320]">Why Technocolabs?</h3>
-          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-            <WhyItem icon={<SvgTeam />} title="Robust engineering team" text="Full-stack, data & ML engineers for product-grade delivery." />
-            <WhyItem icon={<SvgRnd />} title="Ownership of R&D" text="Dedicated pods to validate ideas fast and de-risk execution." />
-            <WhyItem icon={<SvgLight />} title="Continuous improvement" text="Playbooks, post-mortems, and guilds to keep quality climbing." />
-            <WhyItem icon={<SvgGraph />} title="Deep data/ML experience" text="Data platforms, MLOps, and applied AI projects." />
-            <WhyItem icon={<SvgTrophy />} title="Top delivery track record" text="On-time launches with reliable SLAs & monitoring." />
-            <WhyItem icon={<SvgStars />} title="Proven custom solutions" text="From quick POCs to enterprise builds—designed for scale." />
-          </div>
-        </div>
-      </section>
+  {/* Heading */}
+  <h2 className="text-center text-3xl sm:text-4xl font-bold text-[#0b1320]">
+    Build a Strong Partnership in AI
+  </h2>
 
-      {/* ================= BENEFITS ================= */}
+  {/* Subtitle */}
+  <p className="text-center max-w-3xl mx-auto mt-4 text-[#0b1320]/70 text-base sm:text-lg">
+    From any scale and anywhere in the world, businesses can boost AI capabilities with Technocolabs.
+    We apply the latest AI development methodologies and provide reliable co-development services to
+    enhance business opportunities.
+  </p>
+
+  {/* Features Row */}
+  <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-10">
+
+    {/* Feature 1 */}
+    <div className="flex items-start gap-4">
+      <img
+        src="https://cdn-icons-png.flaticon.com/512/4712/4712074.png"
+        alt="AI Expertise"
+        className="w-16 h-16"
+      />
+      <p className="text-[#0b1320] font-medium leading-relaxed">
+        Strong expertise in the development & support of AI solutions and deep-tech products.
+      </p>
+    </div>
+
+    {/* Feature 2 */}
+    <div className="flex items-start gap-4">
+      <img
+        src="https://cdn-icons-png.flaticon.com/512/4783/4783968.png"
+        alt="Transparency"
+        className="w-16 h-16"
+      />
+      <p className="text-[#0b1320] font-medium leading-relaxed">
+        Full transparency of all workflows, reporting, and project progress.
+      </p>
+    </div>
+
+    {/* Feature 3 */}
+    <div className="flex items-start gap-4">
+      <img
+        src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png"
+        alt="Staff Augmentation"
+        className="w-16 h-16"
+      />
+      <p className="text-[#0b1320] font-medium leading-relaxed">
+        Dedicated AI engineers available through our staff augmentation program.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+
+     {/* WHY TECHNOCOLABS — FULL WIDTH CARD */}
+<section id="why" className="w-full bg-[#f7f9fb] py-12 sm:py-16">
+
+  {/* Wide Card */}
+  <div className="mx-auto max-w-7xl rounded-2xl bg-white shadow-xl ring-1 ring-black/5 px-6 sm:px-12 py-12">
+
+    {/* Heading */}
+    <h3 className="text-center text-3xl sm:text-4xl font-bold text-[#0b1320]">
+      Why Technocolabs?
+    </h3>
+
+    {/* Grid */}
+    <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+
+      <WhyItem
+        icon={<SvgTeam />}
+        title="Robust engineering team"
+        text="Full-stack, data & ML engineers for product-grade delivery."
+      />
+      <WhyItem
+        icon={<SvgRnd />}
+        title="Ownership of R&D"
+        text="Dedicated pods to validate ideas fast and de-risk execution."
+      />
+      <WhyItem
+        icon={<SvgLight />}
+        title="Continuous improvement"
+        text="Playbooks, post-mortems, and guilds to keep quality climbing."
+      />
+      <WhyItem
+        icon={<SvgGraph />}
+        title="Deep data/ML experience"
+        text="Data platforms, MLOps, and applied AI projects."
+      />
+      <WhyItem
+        icon={<SvgTrophy />}
+        title="Top delivery track record"
+        text="On-time launches with reliable SLAs & monitoring."
+      />
+      <WhyItem
+        icon={<SvgStars />}
+        title="Proven custom solutions"
+        text="From quick POCs to enterprise builds—designed for scale."
+      />
+
+    </div>
+  </div>
+</section>
+
+      {/* BENEFITS */}
       <Section id="benefits" kicker="Value" title="Partnership benefits">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {[
@@ -6041,7 +6154,7 @@ function PartnershipsSection() {
         </div>
       </Section>
 
-      {/* ================= TIERS ================= */}
+      {/* TIERS */}
       <Section
         id="tiers"
         kicker="Levels"
@@ -6066,43 +6179,16 @@ function PartnershipsSection() {
         </div>
       </Section>
 
-      {/* ================= CASE STUDIES ================= */}
+      {/* CASE STUDIES */}
       <Section id="case-studies" kicker="Impact" title="Recent partner stories">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="rounded-2xl border border-[#0b1320]/10 bg-white p-6 shadow-sm hover:shadow-md transition">
-            <div className="text-sm font-semibold text-[#0A66C2]">Case Study</div>
-            <div className="mt-1 text-lg font-semibold text-[#0b1320]">Fintech Startup (Series A)</div>
-            <p className="mt-1 text-sm text-[#0b1320]/70">Shipped a fraud detection MVP in 6 weeks</p>
-            <ul className="mt-3 space-y-1 text-sm text-[#0b1320]/80">
-              <li>• 85% faster time-to-market</li>
-              <li>• CI/CD on cloud</li>
-              <li>• Model monitoring & alerts</li>
-            </ul>
-          </div>
-          <div className="rounded-2xl border border-[#0b1320]/10 bg-white p-6 shadow-sm hover:shadow-md transition">
-            <div className="text-sm font-semibold text-[#0A66C2]">Case Study</div>
-            <div className="mt-1 text-lg font-semibold text-[#0b1320]">E-commerce Scale-up</div>
-            <p className="mt-1 text-sm text-[#0b1320]/70">Cut infra cost by 35% with caching & BI</p>
-            <ul className="mt-3 space-y-1 text-sm text-[#0b1320]/80">
-              <li>• Power BI executive suite</li>
-              <li>• Edge caching for APIs</li>
-              <li>• Incident playbooks</li>
-            </ul>
-          </div>
-          <div className="rounded-2xl border border-[#0b1320]/10 bg-white p-6 shadow-sm hover:shadow-md transition">
-            <div className="text-sm font-semibold text-[#0A66C2]">Case Study</div>
-            <div className="mt-1 text-lg font-semibold text-[#0b1320]">University Alliance</div>
-            <p className="mt-1 text-sm text-[#0b1320]/70">Capstone lab with 120 students</p>
-            <ul className="mt-3 space-y-1 text-sm text-[#0b1320]/80">
-              <li>• Industry mentors</li>
-              <li>• RAG & CV tracks</li>
-              <li>• Job-ready portfolios</li>
-            </ul>
-          </div>
+          <CaseStudy partner="Fintech Startup (Series A)" outcome="Shipped a fraud detection MVP in 6 weeks" bullets={["85% faster time-to-market", "CI/CD on cloud", "Model monitoring & alerts"]} />
+          <CaseStudy partner="E-commerce Scale-up" outcome="Cut infra cost by 35% with caching & BI" bullets={["Power BI executive suite", "Edge caching for APIs", "Incident playbooks"]} />
+          <CaseStudy partner="University Alliance" outcome="Capstone lab with 120 students" bullets={["Industry mentors", "RAG & CV tracks", "Job-ready portfolios"]} />
         </div>
       </Section>
 
-      {/* ================= LOGOS ================= */}
+      {/* LOGOS */}
       <Section kicker="Trusted by" title="Companies our alumni join">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           {[
@@ -6119,16 +6205,7 @@ function PartnershipsSection() {
             { name: "Freshworks", domain: "freshworks.com" },
             { name: "Zomato", domain: "zomato.com" },
           ].map((c) => (
-            <div key={c.name} className="rounded-2xl border border-[#0b1320]/10 bg-white p-4 text-center shadow-sm">
-              <img
-                src={`https://logo.clearbit.com/${c.domain}?size=128`}
-                alt={`${c.name} logo`}
-                className="mx-auto h-10 object-contain"
-                loading="lazy"
-                onError={(e) => ((e.currentTarget.style.display = "none"))}
-              />
-              <div className="mt-2 text-sm font-medium text-[#0b1320]">{c.name}</div>
-            </div>
+            <CompanyLogo key={c.name} name={c.name} domain={c.domain} />
           ))}
         </div>
         <p className="mt-3 text-xs text-[#0b1320]/60">
@@ -6136,7 +6213,7 @@ function PartnershipsSection() {
         </p>
       </Section>
 
-      {/* ================= CONTACT FORM ================= */}
+      {/* CONTACT FORM (inline to Google Sheet) */}
       <Section id="contact-form" kicker="Get in touch" title="Tell us about your goals">
         <form onSubmit={handleSheetSubmit} className="grid gap-4 sm:grid-cols-2 rounded-2xl border border-[#0b1320]/10 bg-white p-6 shadow-sm" noValidate>
           {sent && (
@@ -6154,6 +6231,7 @@ function PartnershipsSection() {
           <input name="role" placeholder="Role" className="col-span-1 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30" />
           <textarea name="message" required placeholder="What would you like to build?" className="col-span-2 rounded-xl border p-3 h-28 outline-none focus:ring-2 ring-[#0A66C2]/30" />
 
+          {/* Hidden UTM fields */}
           <input type="hidden" name="utm_source" id="utm_source" />
           <input type="hidden" name="utm_medium" id="utm_medium" />
           <input type="hidden" name="utm_campaign" id="utm_campaign" />
@@ -6174,11 +6252,65 @@ function PartnershipsSection() {
         </form>
       </Section>
 
-      {/* ================= Back to top ================= */}
+      {/* FAQ */}
+      <Section
+        id="faq"
+        kicker="Answers"
+        title="Partner FAQs"
+        actions={
+          <input
+            value={faqQuery}
+            onChange={(e) => setFaqQuery(e.target.value)}
+            placeholder="Search FAQs…"
+            className="w-60 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30"
+          />
+        }
+      >
+        <div className="grid gap-4 md:grid-cols-2">
+          {[
+            { q: "How do we start?", a: "Apply below. We'll schedule a 30-minute scoping call and propose the best tier for your goals." },
+            { q: "What are the commercial models?", a: "Referral, rev-share, or fixed SOW. We support NDAs and MSAs for enterprises." },
+            { q: "Do you support universities?", a: "Yes — co-create capstones, map curriculum, and run mentorship cohorts." },
+            { q: "What support do partners get?", a: "From office hours to SLAs and solution architects, depending on tier." },
+            { q: "Can we white-label?", a: "Yes — customized tracks, portals, and certificates under your brand." },
+            { q: "What about data privacy?", a: "We follow best practices for security, access control, and data handling." },
+          ]
+            .filter((item) => (item.q + item.a).toLowerCase().includes(faqQuery.toLowerCase()))
+            .map((f) => (
+              <details key={f.q} className="rounded-2xl border border-[#0b1320]/10 bg-white p-5 shadow-sm">
+                <summary className="cursor-pointer font-semibold text-[#0b1320]">{f.q}</summary>
+                <p className="mt-2 text-sm text-[#0b1320]/70">{f.a}</p>
+              </details>
+            ))}
+        </div>
+      </Section>
+
+      {/* FINAL CTA */}
+      <section id="partner-contact" className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12 py-14">
+        <div className="rounded-2xl border border-[#0b1320]/10 bg-white p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <h3 className="text-xl font-semibold text-[#0b1320]">Ready to build together?</h3>
+            <p className="text-[#0b1320]/70 mt-1">Tell us about your goals — we'll suggest a partnership path in 48 hours.</p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <a href="mailto:contact@technocolabs.com?subject=Partnership%20Inquiry" className="inline-flex items-center justify-center rounded-xl bg-[#0A66C2] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:shadow">
+              Email Partnerships
+            </a>
+            <a href="/contact" className="inline-flex items-center justify-center rounded-xl border border-[#0b1320]/20 bg-white px-5 py-3 text-sm font-semibold shadow-sm hover:shadow">
+              Book Strategy Call
+            </a>
+            <a href="#tiers" className="inline-flex items-center justify-center rounded-xl border border-[#0b1320]/20 bg-white px-5 py-3 text-sm font-semibold shadow-sm hover:shadow">
+              Compare Tiers
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Back to top */}
       {showTop && (
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-6 left-6 h-12 w-12 flex items-center justify-center rounded-full bg-[#0A66C2] text-white shadow-lg hover:shadow-xl transition-all duration-300"
+          className="fixed bottom-6 left-6 h-12 w-12 flex items-center justify-center rounded-full bg-[#0A66C2] text-white shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse"
           aria-label="Back to top"
           title="Back to top"
         >
@@ -6188,8 +6320,6 @@ function PartnershipsSection() {
     </div>
   );
 }
-
-
 
 // --------------------------- APP -------------------------------------------
 export default function App() {
