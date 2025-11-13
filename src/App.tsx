@@ -4718,14 +4718,6 @@ function SpotlightApplyPage() {
 }
 
 
-/// --------------------------- APP -------------------------------------------
-// read optional slug after "/:tab"
-const roleSlug =
-  typeof window !== "undefined"
-    ? (window.location.pathname.split("/")[2] || "")
-    : "";
-
-
 // ---------- inline page inside App.tsx ----------
 function InternshipApplyInline() {
   // ⬅️ Replace with your Apps Script /exec URL when wiring up
@@ -5319,6 +5311,119 @@ function InternshipApplyInline() {
         )
       )}
     </div>
+  );
+}
+
+
+// ================= New Layout: "Aurora Teal" (clean, airy, neutral) =================
+// Accent: teal-700 (#0A66C2); Sub-accent: teal-500 (#0A66C2); Text: #0b1320; Cards: white with soft borders
+
+// ---- Small primitives ----
+const Badge = ({ children }: { children: React.ReactNode }) => (
+  <span className="inline-flex items-center rounded-full bg-[#0A66C2]/10 text-[#0A66C2] px-3 py-1 text-xs font-semibold">
+    {children}
+  </span>
+);
+
+const Stat = ({ label, value }: { label: string; value: string }) => (
+  <div className="rounded-2xl border border-[#0b1320]/10 bg-white px-4 py-3 shadow-sm">
+    <div className="text-lg font-semibold text-[#0b1320]">{value}</div>
+    <div className="text-xs text-[#0b1320]/60">{label}</div>
+  </div>
+);
+
+const Section = ({ id, title, kicker, children }: { id?: string; title: string; kicker?: string; children: React.ReactNode }) => (
+  <section id={id} className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12 py-14">
+    {kicker && <div className="text-xs font-semibold uppercase tracking-wider text-[#0A66C2]">{kicker}</div>}
+    <h2 className="mt-1 text-3xl sm:text-4xl font-bold text-[#0b1320]">{title}</h2>
+    <div className="mt-6">{children}</div>
+  </section>
+);
+
+// ---- Company Logo via Clearbit (with initials fallback) ----
+function CompanyLogoCard({ name, domain }: { name: string; domain: string }) {
+  const imgRef = useRef<HTMLImageElement | null>(null);
+  const fallbackRef = useRef<HTMLDivElement | null>(null);
+  const onErr = () => {
+    if (imgRef.current) imgRef.current.style.display = "none";
+    if (fallbackRef.current) fallbackRef.current.style.display = "flex";
+  };
+  const initials = name.split(" ").map((w) => w[0]).join("").slice(0, 3).toUpperCase();
+  const src = `https://logo.clearbit.com/${domain}?size=128`;
+  return (
+    <div className="rounded-2xl border border-[#0b1320]/10 bg-white p-4 text-center shadow-sm">
+      <img ref={imgRef} src={src} alt={`${name} logo`} className="mx-auto h-10 object-contain" loading="lazy" onError={onErr} />
+      <div ref={fallbackRef} className="hidden mx-auto h-10 w-10 items-center justify-center rounded bg-[#0b1320]/5 text-[#0b1320]/70 text-xs font-semibold">
+        {initials}
+      </div>
+      <div className="mt-2 text-sm font-medium text-[#0b1320]">{name}</div>
+    </div>
+  );
+}
+
+// ---- Collapsible curriculum card ----
+function Curriculum({ track, items, project }: { track: string; items: string[]; project: string }) {
+  return (
+    <details className="group rounded-2xl border border-[#0b1320]/10 bg-white p-5 shadow-sm">
+      <summary className="cursor-pointer list-none">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-xs font-semibold text-[#0A66C2]">Curriculum</div>
+            <div className="text-lg font-semibold text-[#0b1320]">{track}</div>
+          </div>
+          <span className="rounded-full bg-[#0A66C2]/10 text-[#0A66C2] px-3 py-1 text-xs font-semibold group-open:hidden">View</span>
+          <span className="rounded-full bg-[#0A66C2]/10 text-[#0A66C2] px-3 py-1 text-xs font-semibold hidden group-open:inline">Hide</span>
+        </div>
+      </summary>
+      <ul className="mt-4 list-disc pl-5 space-y-1 text-sm text-[#0b1320]/80">
+        {items.map((x, i) => (
+          <li key={i}>{x}</li>
+        ))}
+      </ul>
+      <div className="mt-3 rounded-xl bg-[#0b1320]/5 p-3 text-sm text-[#0b1320]/80">
+        <span className="font-semibold text-[#0b1320]">Capstone:</span> {project}
+      </div>
+    </details>
+  );
+}
+
+// ---- Tracks grid ----
+function TrackCard({ slug, title, bullets, tools }: { slug: string; title: string; bullets: string[]; tools: string[] }) {
+  return (
+    <div className="rounded-2xl border border-[#0b1320]/10 bg-white p-6 shadow-sm hover:shadow-md">
+      <Badge>Track</Badge>
+      <h3 className="mt-1 text-lg font-semibold text-[#0b1320]">{title}</h3>
+      <ul className="mt-2 list-disc pl-5 space-y-1 text-sm text-[#0b1320]/80">
+        {bullets.map((b) => (
+          <li key={b}>{b}</li>
+        ))}
+      </ul>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {tools.map((t) => (
+          <span key={t} className="rounded-full bg-[#0b1320]/5 px-3 py-1 text-xs text-[#0b1320]/80">
+            {t}
+          </span>
+        ))}
+      </div>
+      <div className="mt-4 flex gap-3">
+        <a href={`/internship-apply?role=${slug}`} className="inline-flex items-center rounded-xl bg-[#0A66C2] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow">
+          Apply with this track
+        </a>
+        <a href="#curriculum" className="text-sm font-medium text-[#0A66C2] hover:underline">
+          View curriculum
+        </a>
+      </div>
+    </div>
+  );
+}
+
+// ---- FAQ ----
+function FAQ({ q, a }: { q: string; a: string }) {
+  return (
+    <details className="rounded-2xl border border-[#0b1320]/10 bg-white p-5 shadow-sm">
+      <summary className="cursor-pointer text-[#0b1320] font-semibold">{q}</summary>
+      <p className="mt-2 text-sm text-[#0b1320]/70">{a}</p>
+    </details>
   );
 }
 
