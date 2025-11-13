@@ -3582,329 +3582,346 @@ function ApplicationsClosedPage() {
 }
 
 
-// ---------- APPLY FORM (embedded) with role name + details + Back button ----------
+// // ---------- APPLY FORM (embedded) with role name + details + Back button ----------
+// type ApplyFormEmbedPageProps = { roleId?: string };
+
+// function ApplyFormEmbedPage({ roleId = "" }: ApplyFormEmbedPageProps) {
+//   const navigate = useContext(NavContext);
+
+//   // 1) Short-code → Full Title
+//   const ROLE_NAME: Record<string, string> = {
+//     genai: "Generative AI Engineer Intern",
+//     py: "Python Developer Intern",
+//     dl: "Deep Learning Engineer Intern",
+//     cv: "Computer Vision Engineer Intern",
+//     ba: "Business Analyst Intern",
+//     ds: "Data Science Intern",
+//     ml: "Machine Learning Intern",
+//     web: "Web Development Intern",
+//     da: "Data Analytics Intern",
+//     bi: "Business Intelligence Intern",
+//     ai: "Artificial Intelligence Intern",
+//     se: "Software Engineering Intern",
+//     cyber: "CyberSecurity Engineer Intern",
+//   };
+
+//   // 2) Role details (from your ApplyPage content)
+//   const ROLE_CONTENT: Record<
+//     string,
+//     { jd: string; responsibilities: string[]; requirements: string[] }
+//   > = {
+//     genai: {
+//       jd: "Work on LLMs, embeddings, RAG and evaluation; prototype chat and knowledge features and integrate them into apps.",
+//       responsibilities: [
+//         "Build/evaluate LLM pipelines",
+//         "RAG with vector stores",
+//         "Prompt design & evaluation",
+//         "Integrate with APIs/backends",
+//         "Document experiments",
+//       ],
+//       requirements: [
+//         "Python proficiency",
+//         "HuggingFace/LangChain experience",
+//         "NLP/LLM basics",
+//         "Git, basics of Docker",
+//         "Clear communication",
+//       ],
+//     },
+//     py: {
+//       jd: "Develop APIs, automation scripts and internal tools using Python — with a strong focus on quality and tests.",
+//       responsibilities: [
+//         "Build REST APIs",
+//         "Write reusable modules",
+//         "Work with SQL/ORM",
+//         "Add logging/monitoring",
+//         "Participate in reviews",
+//       ],
+//       requirements: [
+//         "Python fundamentals",
+//         "FastAPI/Flask or Django",
+//         "SQL & Git",
+//         "Basics of Docker",
+//         "Good documentation",
+//       ],
+//     },
+//     dl: {
+//       jd: "Train and evaluate DL models for CV/NLP, optimize inference and create clear experiment reports.",
+//       responsibilities: [
+//         "Dataset prep and training",
+//         "Experiment with CNN/Transformers",
+//         "Optimize models for inference",
+//         "Track metrics & visualize",
+//         "Share results with team",
+//       ],
+//       requirements: [
+//         "PyTorch/TensorFlow",
+//         "DL theory basics",
+//         "GPU workflows",
+//         "Git proficiency",
+//         "Analytical mindset",
+//       ],
+//     },
+//     cv: {
+//       jd: "Implement CV pipelines (detection/segmentation/OCR) and deploy reliable inference services.",
+//       responsibilities: [
+//         "Collect/clean/augment data",
+//         "Train/evaluate CV models",
+//         "Deploy inference services",
+//         "Write preprocessing tools",
+//         "Document results",
+//       ],
+//       requirements: [
+//         "Python + OpenCV",
+//         "PyTorch/TensorFlow",
+//         "YOLO/Detectron experience",
+//         "Docker basics",
+//         "Problem-solving",
+//       ],
+//     },
+//     ba: {
+//       jd: "Turn data into decisions: gather requirements, build dashboards and communicate insights.",
+//       responsibilities: [
+//         "Define KPIs and questions",
+//         "Prepare/clean data",
+//         "Build dashboards in BI tools",
+//         "Write concise reports",
+//         "Collaborate with engineers",
+//       ],
+//       requirements: [
+//         "SQL + spreadsheets",
+//         "Power BI/Tableau/Looker",
+//         "Basic stats/A-B testing",
+//         "Strong communication",
+//         "Attention to detail",
+//       ],
+//     },
+//     ds: {
+//       jd: "Explore data, build features and predictive models, and communicate insights clearly to stakeholders.",
+//       responsibilities: [
+//         "EDA and feature engineering",
+//         "Model training and evaluation",
+//         "Visualize results and KPIs",
+//         "Write reports and docs",
+//         "Collaborate across teams",
+//       ],
+//       requirements: [
+//         "Python & pandas/sklearn",
+//         "Statistics basics",
+//         "Data viz tools",
+//         "SQL",
+//         "Git",
+//       ],
+//     },
+//     ml: {
+//       jd: "Implement ML pipelines and experiment with models to improve accuracy and robustness.",
+//       responsibilities: [
+//         "Features & training",
+//         "Model selection/tuning",
+//         "Cross-validation & metrics",
+//         "Report results",
+//         "Contribute to deployment readiness",
+//       ],
+//       requirements: [
+//         "Python, sklearn",
+//         "ML theory basics",
+//         "Experiment tracking",
+//         "Git",
+//         "Communication",
+//       ],
+//     },
+//     web: {
+//       jd: "Build responsive UI and connect to APIs in a modern JS stack.",
+//       responsibilities: [
+//         "Implement pages/components",
+//         "Fetch from REST APIs",
+//         "Fix UI bugs",
+//         "Write clean code",
+//         "Participate in reviews",
+//       ],
+//       requirements: [
+//         "HTML/CSS/JS",
+//         "React basics",
+//         "Git",
+//         "HTTP/REST",
+//         "Attention to detail",
+//       ],
+//     },
+//     da: {
+//       jd: "Create dashboards and analyses that guide decisions.",
+//       responsibilities: [
+//         "Clean/transform data",
+//         "Create visuals & dashboards",
+//         "Define KPIs",
+//         "Share insights",
+//         "Document sources",
+//       ],
+//       requirements: ["SQL", "Power BI/Tableau", "Spreadsheets", "Statistics basics", "Comms"],
+//     },
+//     bi: {
+//       jd: "Model data and build BI dashboards with good governance.",
+//       responsibilities: [
+//         "Model for BI",
+//         "Build/maintain reports",
+//         "Monitor refresh & quality",
+//         "Optimize performance",
+//         "Write docs",
+//       ],
+//       requirements: [
+//         "Power BI/Tableau/Looker",
+//         "SQL",
+//         "DAX/LookML (any)",
+//         "Versioning",
+//         "Stakeholder comms",
+//       ],
+//     },
+//     ai: {
+//       jd: "Assist across AI tasks, from research to prototypes in NLP/CV.",
+//       responsibilities: [
+//         "Review papers & baselines",
+//         "Train simple models",
+//         "Prepare data",
+//         "Write notebooks",
+//         "Demo findings",
+//       ],
+//       requirements: ["Python & ML libs", "NLP/CV basics", "Math basics", "Git", "Curiosity"],
+//     },
+//     se: {
+//       jd: "Support full-stack development with tests and clean code.",
+//       responsibilities: [
+//         "Feature work & bug fixes",
+//         "Unit/integration tests",
+//         "Reviews and CI",
+//         "Perf improvements",
+//         "Documentation",
+//       ],
+//       requirements: [
+//         "One stack (frontend/backend)",
+//         "Git & tests",
+//         "Clean code",
+//         "CI/CD basics",
+//         "Teamwork",
+//       ],
+//     },
+//     cyber: {
+//       jd: "Assist security reviews, fix issues, and promote best practices.",
+//       responsibilities: [
+//         "Run scans",
+//         "Threat modeling assistance",
+//         "Track fixes",
+//         "Document policies",
+//         "Awareness training",
+//       ],
+//       requirements: ["OWASP basics", "Scripting basics", "Linux/Networking", "Auth/Identity basics", "Detail oriented"],
+//     },
+//   };
+
+//   // 3) Short-code → Google Form URL (embed)
+//   const FORM_URL: Record<string, string> = {
+//     cv: "https://forms.gle/w2gzpJQxhGntAnBj6",
+//     ds: "https://forms.gle/xT9md6t87N4sgEWV8",
+//     ml: "https://forms.gle/6UVG5Tf76zd3XXyE6",
+//     web: "https://forms.gle/8zJMG4c67pe16MU18",
+//     da: "https://forms.gle/muHWYbDiy173X4Ms8",
+//     bi: "https://forms.gle/CNjoeciZSytGakNX8",
+//     ai: "https://forms.gle/oMSF6u716nehhdke6",
+//     py: "<put python form here if you open it>",
+//     ba: "<put BA form here if you open it>",
+//     se: "<put SE form here if you open it>",
+//     cyber: "https://forms.gle/PFV39TtRkabKGTEW7",
+//   };
+
+//   const fullRoleName = ROLE_NAME[roleId] || "Internship";
+//   const details = ROLE_CONTENT[roleId];
+//   const url = FORM_URL[roleId];
+
+//   return (
+//     <div className="bg-white text-[#0a2540]">
+//       <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-20 pb-6">
+
+//         {/* BACK BUTTON → Careers (Open Roles) */}
+//         <button
+//           onClick={() => {
+//             try { window.localStorage.setItem("careers-subtab", "openroles"); } catch {}
+//             navigate("careers"); // your NavContext updates URL to /careers
+//           }}
+//           className="mb-4 inline-flex items-center gap-2 text-sm text-[#1e90ff] hover:underline"
+//         >
+//           ← Back to Open Positions
+//         </button>
+
+//         <h1 className="text-3xl font-bold">
+//           Apply — <span className="text-[#1e90ff]">{fullRoleName}</span>
+//         </h1>
+
+//         {/* Role summary above the form */}
+//         {details ? (
+//           <div className="mt-4 rounded-2xl border border-[#0a2540]/10 bg-[#f8fafc] p-6">
+//             <div className="text-sm text-[#0a2540]/80">
+//               <div className="font-semibold text-[#0a2540]">About the role</div>
+//               <p className="mt-1">{details.jd}</p>
+//             </div>
+
+//             <div className="grid gap-6 sm:grid-cols-2 mt-4">
+//               <div>
+//                 <div className="text-sm font-semibold text-[#0a2540]">Responsibilities</div>
+//                 <ul className="mt-1 list-disc pl-5 space-y-1 text-sm text-[#0a2540]/80">
+//                   {details.responsibilities.map((x) => <li key={x}>{x}</li>)}
+//                 </ul>
+//               </div>
+//               <div>
+//                 <div className="text-sm font-semibold text-[#0a2540]">Requirements</div>
+//                 <ul className="mt-1 list-disc pl-5 space-y-1 text-sm text-[#0a2540]/80">
+//                   {details.requirements.map((x) => <li key={x}>{x}</li>)}
+//                 </ul>
+//               </div>
+//             </div>
+//           </div>
+//         ) : (
+//           <div className="mt-4 rounded-2xl border border-[#0a2540]/10 bg-[#fff6e5] p-6">
+//             <p className="text-[#7a4d00] text-sm">
+//               Role details will be published soon. You can still submit the form below.
+//             </p>
+//           </div>
+//         )}
+
+//         {/* Form (embedded) – scrolls natively inside iframe */}
+//         {!url ? (
+//           <div className="mt-6 rounded-2xl border border-[#0a2540]/10 bg-[#fff6f6] p-6">
+//             <p className="text-[#8a1f1f] text-sm">
+//               This role is currently closed or the form isn’t configured yet. Please check back later.
+//             </p>
+//           </div>
+//         ) : (
+//           <div className="mt-6 rounded-2xl overflow-hidden border border-[#0a2540]/10">
+//             <iframe
+//               title={`${fullRoleName} — Application`}
+//               src={url}
+//               style={{ width: "100%", height: "1800px", border: 0 }}
+//               scrolling="yes"
+//               loading="lazy"
+//             />
+//           </div>
+//         )}
+//       </section>
+//     </div>
+//   );
+// }
+
+// ---------- APPLY FORM (adapter to inline page) ----------
 type ApplyFormEmbedPageProps = { roleId?: string };
 
 function ApplyFormEmbedPage({ roleId = "" }: ApplyFormEmbedPageProps) {
-  const navigate = useContext(NavContext);
+  // Convert /apply-form/:roleId → /internship-apply?role=:roleId (no other pages touched)
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    url.pathname = "/internship-apply";
+    url.search = roleId ? `?role=${encodeURIComponent(roleId)}` : "";
+    window.history.replaceState(null, "", url.toString());
+  }, [roleId]);
 
-  // 1) Short-code → Full Title
-  const ROLE_NAME: Record<string, string> = {
-    genai: "Generative AI Engineer Intern",
-    py: "Python Developer Intern",
-    dl: "Deep Learning Engineer Intern",
-    cv: "Computer Vision Engineer Intern",
-    ba: "Business Analyst Intern",
-    ds: "Data Science Intern",
-    ml: "Machine Learning Intern",
-    web: "Web Development Intern",
-    da: "Data Analytics Intern",
-    bi: "Business Intelligence Intern",
-    ai: "Artificial Intelligence Intern",
-    se: "Software Engineering Intern",
-    cyber: "CyberSecurity Engineer Intern",
-  };
-
-  // 2) Role details (from your ApplyPage content)
-  const ROLE_CONTENT: Record<
-    string,
-    { jd: string; responsibilities: string[]; requirements: string[] }
-  > = {
-    genai: {
-      jd: "Work on LLMs, embeddings, RAG and evaluation; prototype chat and knowledge features and integrate them into apps.",
-      responsibilities: [
-        "Build/evaluate LLM pipelines",
-        "RAG with vector stores",
-        "Prompt design & evaluation",
-        "Integrate with APIs/backends",
-        "Document experiments",
-      ],
-      requirements: [
-        "Python proficiency",
-        "HuggingFace/LangChain experience",
-        "NLP/LLM basics",
-        "Git, basics of Docker",
-        "Clear communication",
-      ],
-    },
-    py: {
-      jd: "Develop APIs, automation scripts and internal tools using Python — with a strong focus on quality and tests.",
-      responsibilities: [
-        "Build REST APIs",
-        "Write reusable modules",
-        "Work with SQL/ORM",
-        "Add logging/monitoring",
-        "Participate in reviews",
-      ],
-      requirements: [
-        "Python fundamentals",
-        "FastAPI/Flask or Django",
-        "SQL & Git",
-        "Basics of Docker",
-        "Good documentation",
-      ],
-    },
-    dl: {
-      jd: "Train and evaluate DL models for CV/NLP, optimize inference and create clear experiment reports.",
-      responsibilities: [
-        "Dataset prep and training",
-        "Experiment with CNN/Transformers",
-        "Optimize models for inference",
-        "Track metrics & visualize",
-        "Share results with team",
-      ],
-      requirements: [
-        "PyTorch/TensorFlow",
-        "DL theory basics",
-        "GPU workflows",
-        "Git proficiency",
-        "Analytical mindset",
-      ],
-    },
-    cv: {
-      jd: "Implement CV pipelines (detection/segmentation/OCR) and deploy reliable inference services.",
-      responsibilities: [
-        "Collect/clean/augment data",
-        "Train/evaluate CV models",
-        "Deploy inference services",
-        "Write preprocessing tools",
-        "Document results",
-      ],
-      requirements: [
-        "Python + OpenCV",
-        "PyTorch/TensorFlow",
-        "YOLO/Detectron experience",
-        "Docker basics",
-        "Problem-solving",
-      ],
-    },
-    ba: {
-      jd: "Turn data into decisions: gather requirements, build dashboards and communicate insights.",
-      responsibilities: [
-        "Define KPIs and questions",
-        "Prepare/clean data",
-        "Build dashboards in BI tools",
-        "Write concise reports",
-        "Collaborate with engineers",
-      ],
-      requirements: [
-        "SQL + spreadsheets",
-        "Power BI/Tableau/Looker",
-        "Basic stats/A-B testing",
-        "Strong communication",
-        "Attention to detail",
-      ],
-    },
-    ds: {
-      jd: "Explore data, build features and predictive models, and communicate insights clearly to stakeholders.",
-      responsibilities: [
-        "EDA and feature engineering",
-        "Model training and evaluation",
-        "Visualize results and KPIs",
-        "Write reports and docs",
-        "Collaborate across teams",
-      ],
-      requirements: [
-        "Python & pandas/sklearn",
-        "Statistics basics",
-        "Data viz tools",
-        "SQL",
-        "Git",
-      ],
-    },
-    ml: {
-      jd: "Implement ML pipelines and experiment with models to improve accuracy and robustness.",
-      responsibilities: [
-        "Features & training",
-        "Model selection/tuning",
-        "Cross-validation & metrics",
-        "Report results",
-        "Contribute to deployment readiness",
-      ],
-      requirements: [
-        "Python, sklearn",
-        "ML theory basics",
-        "Experiment tracking",
-        "Git",
-        "Communication",
-      ],
-    },
-    web: {
-      jd: "Build responsive UI and connect to APIs in a modern JS stack.",
-      responsibilities: [
-        "Implement pages/components",
-        "Fetch from REST APIs",
-        "Fix UI bugs",
-        "Write clean code",
-        "Participate in reviews",
-      ],
-      requirements: [
-        "HTML/CSS/JS",
-        "React basics",
-        "Git",
-        "HTTP/REST",
-        "Attention to detail",
-      ],
-    },
-    da: {
-      jd: "Create dashboards and analyses that guide decisions.",
-      responsibilities: [
-        "Clean/transform data",
-        "Create visuals & dashboards",
-        "Define KPIs",
-        "Share insights",
-        "Document sources",
-      ],
-      requirements: ["SQL", "Power BI/Tableau", "Spreadsheets", "Statistics basics", "Comms"],
-    },
-    bi: {
-      jd: "Model data and build BI dashboards with good governance.",
-      responsibilities: [
-        "Model for BI",
-        "Build/maintain reports",
-        "Monitor refresh & quality",
-        "Optimize performance",
-        "Write docs",
-      ],
-      requirements: [
-        "Power BI/Tableau/Looker",
-        "SQL",
-        "DAX/LookML (any)",
-        "Versioning",
-        "Stakeholder comms",
-      ],
-    },
-    ai: {
-      jd: "Assist across AI tasks, from research to prototypes in NLP/CV.",
-      responsibilities: [
-        "Review papers & baselines",
-        "Train simple models",
-        "Prepare data",
-        "Write notebooks",
-        "Demo findings",
-      ],
-      requirements: ["Python & ML libs", "NLP/CV basics", "Math basics", "Git", "Curiosity"],
-    },
-    se: {
-      jd: "Support full-stack development with tests and clean code.",
-      responsibilities: [
-        "Feature work & bug fixes",
-        "Unit/integration tests",
-        "Reviews and CI",
-        "Perf improvements",
-        "Documentation",
-      ],
-      requirements: [
-        "One stack (frontend/backend)",
-        "Git & tests",
-        "Clean code",
-        "CI/CD basics",
-        "Teamwork",
-      ],
-    },
-    cyber: {
-      jd: "Assist security reviews, fix issues, and promote best practices.",
-      responsibilities: [
-        "Run scans",
-        "Threat modeling assistance",
-        "Track fixes",
-        "Document policies",
-        "Awareness training",
-      ],
-      requirements: ["OWASP basics", "Scripting basics", "Linux/Networking", "Auth/Identity basics", "Detail oriented"],
-    },
-  };
-
-  // 3) Short-code → Google Form URL (embed)
-  const FORM_URL: Record<string, string> = {
-    cv: "https://forms.gle/w2gzpJQxhGntAnBj6",
-    ds: "https://forms.gle/xT9md6t87N4sgEWV8",
-    ml: "https://forms.gle/6UVG5Tf76zd3XXyE6",
-    web: "https://forms.gle/8zJMG4c67pe16MU18",
-    da: "https://forms.gle/muHWYbDiy173X4Ms8",
-    bi: "https://forms.gle/CNjoeciZSytGakNX8",
-    ai: "https://forms.gle/oMSF6u716nehhdke6",
-    py: "<put python form here if you open it>",
-    ba: "<put BA form here if you open it>",
-    se: "<put SE form here if you open it>",
-    cyber: "https://forms.gle/PFV39TtRkabKGTEW7",
-  };
-
-  const fullRoleName = ROLE_NAME[roleId] || "Internship";
-  const details = ROLE_CONTENT[roleId];
-  const url = FORM_URL[roleId];
-
-  return (
-    <div className="bg-white text-[#0a2540]">
-      <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-20 pb-6">
-
-        {/* BACK BUTTON → Careers (Open Roles) */}
-        <button
-          onClick={() => {
-            try { window.localStorage.setItem("careers-subtab", "openroles"); } catch {}
-            navigate("careers"); // your NavContext updates URL to /careers
-          }}
-          className="mb-4 inline-flex items-center gap-2 text-sm text-[#1e90ff] hover:underline"
-        >
-          ← Back to Open Positions
-        </button>
-
-        <h1 className="text-3xl font-bold">
-          Apply — <span className="text-[#1e90ff]">{fullRoleName}</span>
-        </h1>
-
-        {/* Role summary above the form */}
-        {details ? (
-          <div className="mt-4 rounded-2xl border border-[#0a2540]/10 bg-[#f8fafc] p-6">
-            <div className="text-sm text-[#0a2540]/80">
-              <div className="font-semibold text-[#0a2540]">About the role</div>
-              <p className="mt-1">{details.jd}</p>
-            </div>
-
-            <div className="grid gap-6 sm:grid-cols-2 mt-4">
-              <div>
-                <div className="text-sm font-semibold text-[#0a2540]">Responsibilities</div>
-                <ul className="mt-1 list-disc pl-5 space-y-1 text-sm text-[#0a2540]/80">
-                  {details.responsibilities.map((x) => <li key={x}>{x}</li>)}
-                </ul>
-              </div>
-              <div>
-                <div className="text-sm font-semibold text-[#0a2540]">Requirements</div>
-                <ul className="mt-1 list-disc pl-5 space-y-1 text-sm text-[#0a2540]/80">
-                  {details.requirements.map((x) => <li key={x}>{x}</li>)}
-                </ul>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="mt-4 rounded-2xl border border-[#0a2540]/10 bg-[#fff6e5] p-6">
-            <p className="text-[#7a4d00] text-sm">
-              Role details will be published soon. You can still submit the form below.
-            </p>
-          </div>
-        )}
-
-        {/* Form (embedded) – scrolls natively inside iframe */}
-        {!url ? (
-          <div className="mt-6 rounded-2xl border border-[#0a2540]/10 bg-[#fff6f6] p-6">
-            <p className="text-[#8a1f1f] text-sm">
-              This role is currently closed or the form isn’t configured yet. Please check back later.
-            </p>
-          </div>
-        ) : (
-          <div className="mt-6 rounded-2xl overflow-hidden border border-[#0a2540]/10">
-            <iframe
-              title={`${fullRoleName} — Application`}
-              src={url}
-              style={{ width: "100%", height: "1800px", border: 0 }}
-              scrolling="yes"
-              loading="lazy"
-            />
-          </div>
-        )}
-      </section>
-    </div>
-  );
+  // Render the new inline application UI (it already reads ?role= from the URL)
+  return <InternshipApplyInline />;
 }
 
 // // -------------------------------- INTERN SPOTLIGHT (inline) ------------------
