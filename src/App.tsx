@@ -1,4 +1,5 @@
 import { useMemo, useState, useContext, useEffect } from "react";
+import * as React from "react";
 import AIServicePremiumGrid from "./AIServicePremiumGrid";
 import TechCluster from "./TechCluster";
 import ChatbotWidget from "./ChatbotWidget";
@@ -6,11 +7,13 @@ import { Link } from "react-router-dom";
 import { useParams, useNavigate } from "react-router-dom";
 import { CheckCircle2, Info } from "lucide-react";
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from "react-simple-maps";
-import { geoCentroid } from "d3-geo"; // (not used here, but fine if you keep it)
+import { geoCentroid } from "d3-geo"; // (not used here but fine if you keep it)
 // If TS complains about missing types, add src/react-simple-maps.d.ts with `declare module "react-simple-maps";`
-import * as React from "react";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import CareersPageMNC from "./CareersPageMNC";
-import JobDescriptionPage from "./JobDescriptionPage";
+// import JobDescriptionPage from "./JobDescriptionPage";
+import JobDescriptionPage from "./JobDescriptionPage"; // correct your path
+
 
 
 import {
@@ -58,7 +61,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 // --------------------------- ROUTING & CONTEXT ------------------------------
-type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies'| 'bigdata' | 'data-architecture' | 'data-warehouse'| 'bi-visualization' | 'predictive-analytics-bd' | 'cloud-services'| 'about' | 'success-stories' | 'blog' | 'write-for-us'|'verify'|'applications-closed'|'apply-form'|'spotlight' |'spotlight-apply'|'internship-apply'|'grow'|'partnerships'|'job-description';
+type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies'| 'bigdata' | 'data-architecture' | 'data-warehouse'| 'bi-visualization' | 'predictive-analytics-bd' | 'cloud-services'| 'about' | 'success-stories' | 'blog' | 'write-for-us'|'verify'|'applications-closed'|'apply-form'|'spotlight' |'spotlight-apply'|'internship-apply' | 'grow'|'partnerships'|'job-description';
 const NavContext = React.createContext<(t: Tab) => void>(() => {});
 const ServiceDetailContext = React.createContext<(slug: string | null) => void>(() => {});
 const ActiveServiceContext = React.createContext<string | null>(null);
@@ -410,7 +413,7 @@ function HomePage() {
   const stats = [
     { label: "Developers Trained", value: "10,000+" },
     { label: "Engineers Working", value: "250+" },
-    { label: "Projects Completed", value: "500+" },
+    { label: "Projects Completed", value: "100+" },
     { label: "Partner Companies", value: "50+" },
   ];
   const featured = [
@@ -438,6 +441,7 @@ function HomePage() {
               viewport={{ once: true, amount: 0.3 }}
               className="max-w-3xl"
             >
+              
               <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/80">
                 Central India’s AI Solutions & Strategic Consulting Company
               </span>
@@ -446,11 +450,12 @@ function HomePage() {
                 Proudly ranked #1 in Indore, India & awarded HackerNoon’s Startup of the Year 2024
               </p>
               <h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
-                Empowering the Next Generation of Innovators
+                Build Production Grade AI Systems Faster and With Confidence.
               </h1>
               <p className="mt-5 text-lg text-white/80">
-                We are Central India's leading IT Development and Consulting Company - building AI, Data Science, and Software solutions that transform industries.
+                Technocolabs Softwares partners with enterprises and startups to design, deliver and run AI & data products that move the needle from prototype to SLA backed production.
               </p>
+
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <button
                   onClick={() => navigate('services')}
@@ -466,6 +471,8 @@ function HomePage() {
                 </button>
               </div>
             </motion.div>
+
+            
 
             {/* RIGHT — TechCluster responsive (mobile compact, desktop full) */}
             <motion.div
@@ -1768,7 +1775,6 @@ function ServiceDetailPage() {
     </div>
   );
 }
-// ---------- ADD THESE IMPORTS AT THE TOP OF App.tsx ----------
 
 // ---------- HERO BANNER WITH TABS (Mobile-friendly, fixed) ----------
 function CareersHeroBanner({ sub, setSub, navigate }) {
@@ -1791,7 +1797,7 @@ function CareersHeroBanner({ sub, setSub, navigate }) {
           {/* LEFT: Copy + CTA + Tabs */}
           <div className="text-center lg:text-left">
             <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white">
-              Careers - Work With Us
+              Careers — Work With Us
             </h2>
 
             <p className="mt-4 sm:mt-5 max-w-2xl mx-auto lg:mx-0 text-base sm:text-lg text-white/90">
@@ -1957,6 +1963,7 @@ function CareersPage() {
     <div className="bg-[#0a2540] text-white">
       {/* Hero + Sub-tabs */}
       <CareersHeroBanner sub={sub} setSub={setSub} navigate={navigate} />
+
       {/* BODY */}
       <section className="bg-white text-[#0a2540]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
@@ -2722,36 +2729,29 @@ function WriteForUsPage(){
   );
 }
 
-// --------------------------- ABOUT PAGE (mobile-first, production-safe) ---------------------------------------
+// --------------------------- ABOUT PAGE ---------------------------------------
 function AboutPage() {
-  // --- SEO (guarded) ---
+  const navigate = useContext(NavContext);
+
   React.useEffect(() => {
-    try {
-      if (typeof document !== "undefined") {
-        document.title = "About Us | Technocolabs Softwares Inc.";
-        const meta =
-          (document.querySelector('meta[name="description"]') as HTMLMetaElement) ||
-          (() => {
-            const x = document.createElement("meta");
-            x.setAttribute("name", "description");
-            document.head.appendChild(x);
-            return x;
-          })();
-        meta.setAttribute(
-          "content",
-          "About Technocolabs Softwares Inc: mission, values, who we are, and how we deliver reliable outcomes in AI, data, and cloud."
-        );
-      }
-    } catch {}
+    if (typeof document !== "undefined") {
+      document.title = "About Us | Technocolabs Softwares Inc.";
+      const m =
+        (document.querySelector('meta[name="description"]') as HTMLMetaElement) ||
+        (() => {
+          const x = document.createElement("meta");
+          x.setAttribute("name", "description");
+          document.head.appendChild(x);
+          return x;
+        })();
+      m.setAttribute(
+        "content",
+        "About Technocolabs Softwares Inc: mission, values, who we are, and how we deliver reliable outcomes in AI, data, and cloud."
+      );
+    }
   }, []);
 
-  // --- Inline icons (no deps) ---
-  const IHands = (p:any)=>(<svg viewBox="0 0 24 24" fill="none" className={p.className}><path d="M7 12c-1.657 0-3-1.343-3-3V6a2 2 0 1 1 4 0v3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/><path d="M17 12c1.657 0 3-1.343 3-3V6a2 2 0 1 0-4 0v3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/><path d="M8 12l4 4 4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>);
-  const IGlobe = (p:any)=>(<svg viewBox="0 0 24 24" fill="none" className={p.className}><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6"/><ellipse cx="12" cy="12" rx="4" ry="9" stroke="currentColor" strokeWidth="1.6"/><path d="M3 12h18" stroke="currentColor" strokeWidth="1.6"/></svg>);
-  const IDatabaseCheck = (p:any)=>(<svg viewBox="0 0 24 24" fill="none" className={p.className}><ellipse cx="10" cy="5" rx="6" ry="3" stroke="currentColor" strokeWidth="1.6"/><path d="M4 5v6c0 1.657 2.686 3 6 3s6-1.343 6-3V5" stroke="currentColor" strokeWidth="1.6"/><path d="M4 11v6c0 1.657 2.686 3 6 3" stroke="currentColor" strokeWidth="1.6"/><path d="M14.5 17.5l1.8 1.8 3.7-3.7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>);
-  const IUsers = (p:any)=>(<svg viewBox="0 0 24 24" fill="none" className={p.className}><circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.6"/><path d="M2.5 19a5.5 5.5 0 0 1 11 0" stroke="currentColor" strokeWidth="1.6"/><circle cx="17" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.6"/><path d="M13.5 17.2c.8-.9 2-1.7 3.5-1.7 2.1 0 3.9 1.3 4.5 3.1" stroke="currentColor" strokeWidth="1.6"/></svg>);
-  const IStars = (p:any)=>(<svg viewBox="0 0 24 24" fill="none" className={p.className}><path d="M12 3l2.5 5.2 5.7.8-4.1 4 1 5.7L12 16.8 6.9 18.7l1-5.7-4.1-4 5.7-.8L12 3z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/></svg>);
-
+  // tiny stars icon (for the Clutch line)
   const Stars = ({ count = 5 }: { count?: number }) => (
     <div className="flex items-center gap-1" aria-label={`Rated ${count} stars`}>
       {Array.from({ length: count }).map((_, i) => (
@@ -2762,168 +2762,268 @@ function AboutPage() {
     </div>
   );
 
+  // SVG icons for the “Why Clients Choose” list (all inline, no external deps)
+  const IHands = () => (
+    <svg viewBox="0 0 24 24" className="h-12 w-12 text-[#1e90ff]" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M9.5 11.5 7 9.2a3 3 0 0 1-.9-2.2V5.5A2.5 2.5 0 0 1 8.6 3l2.4 1.2c.6.3 1 .9 1 1.6v1.7c0 .6-.3 1.2-.7 1.6l-1.8 1.4" />
+      <path d="M14.5 11.5 17 9.2c.6-.6.9-1.4.9-2.2V5.5A2.5 2.5 0 0 0 15.4 3L13 4.2c-.6.3-1 .9-1 1.6v1.7c0 .6.3 1.2.7 1.6l1.8 1.4" />
+      <path d="M7 15.2c2.2 1.6 4.6 1.6 7 0" />
+      <path d="M4.5 18c3.3 2.2 11.7 2.2 15 0" />
+    </svg>
+  );
+  const IGlobe = () => (
+    <svg viewBox="0 0 24 24" className="h-12 w-12 text-[#1e90ff]" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18" />
+    </svg>
+  );
+  const IDatabaseCheck = () => (
+    <svg viewBox="0 0 24 24" className="h-12 w-12 text-[#1e90ff]" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <ellipse cx="10" cy="6" rx="6" ry="3" />
+      <path d="M4 6v6c0 1.7 2.7 3 6 3s6-1.3 6-3V6" />
+      <path d="M4 12v6c0 1.7 2.7 3 6 3" />
+      <path d="m17 16 2 2 4-4" />
+    </svg>
+  );
+  const IUsers = () => (
+    <svg viewBox="0 0 24 24" className="h-12 w-12 text-[#1e90ff]" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <circle cx="9" cy="8" r="3" />
+      <path d="M2 20a7 7 0 0 1 14 0" />
+      <circle cx="17" cy="9" r="2.5" />
+      <path d="M21.5 20a5.5 5.5 0 0 0-7-5" />
+    </svg>
+  );
+  const IStars = () => (
+    <svg viewBox="0 0 24 24" className="h-12 w-12 text-[#1e90ff]" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8L12 16.7 6.7 19l1-5.8-4.2-4.1 5.9-.9L12 3z" />
+      <path d="M5 19c1.5 1 3.9 2 7 2s5.5-1 7-2" />
+    </svg>
+  );
+
+  // Reusable row for the “Why Clients Choose” list
+  function WhyRow({
+    icon,
+    title,
+    text,
+  }: {
+    icon: React.ReactNode;
+    title: string;
+    text: string;
+  }) {
+    return (
+      <div className="flex items-start gap-6">
+        <div className="shrink-0">{icon}</div>
+        <div>
+          <div className="font-semibold text-[#0b1320]">{title}</div>
+          <p className="mt-1 text-sm text-[#0a2540]/80 leading-relaxed">{text}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white text-[#0a2540]">
-      {/* ========== HERO (tighter on mobile) ========== */}
+      {/* HERO */}
       <section className="bg-[#0a2540] text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-8 sm:pb-10">
-          <h1 className="text-2xl sm:text-4xl font-bold tracking-tight">About Technocolabs</h1>
-          <p className="mt-2 text-white/80 max-w-3xl text-sm sm:text-base">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-10">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">About Technocolabs</h1>
+          <p className="mt-2 text-white/80 max-w-3xl">
             We are an engineering-first company delivering AI, analytics, automation, and cloud solutions
             with measurable business outcomes — not just dashboards or prototypes.
           </p>
         </div>
       </section>
 
-      {/* ========== WHO WE ARE — metrics (mobile stacks) ========== */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 grid gap-6 sm:gap-8">
-        <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-4 sm:p-6 shadow-sm">
-          <h2 className="text-lg sm:text-xl font-semibold">Who we are</h2>
-          <p className="mt-2 text-xs sm:text-sm text-[#0a2540]/80">
-            Founded in Central India, Indore, Technocolabs Softwares Inc. partners with organizations to design,
+      {/* WHO WE ARE — metrics */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 grid gap-8">
+        <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold">Who we are</h2>
+          <p className="mt-2 text-sm text-[#0a2540]/80">
+            Founded in Central India, Technocolabs Softwares Inc. partners with organizations to design,
             build, and operate production-grade AI and data systems. We align architecture, engineering,
             and business goals into one measurable roadmap.
           </p>
 
-          <div className="mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
             {[
-              ["10,000+", "Developers Trained"],
-              ["500+", "Projects Delivered"],
+              ["10,000+", "Interns Trained"],
+              ["100+", "Projects Delivered"],
               ["50+", "Partner Companies"],
             ].map(([n, l]) => (
-              <div key={l} className="rounded-xl border border-[#0a2540]/10 p-3 sm:p-4 text-center">
-                <div className="text-xl sm:text-2xl font-semibold">{n}</div>
-                <div className="text-[11px] sm:text-xs mt-1 text-[#0a2540]/70">{l}</div>
+              <div key={l} className="rounded-xl border border-[#0a2540]/10 p-4 text-center">
+                <div className="text-2xl font-semibold">{n}</div>
+                <div className="text-xs mt-1 text-[#0a2540]/70">{l}</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* ========== ESTABLISHED 2019 (image scales, text first on mobile) ========== */}
-        <div className="w-full rounded-2xl border border-[#0a2540]/10 bg-white p-4 sm:p-6 shadow-sm">
-          <div className="grid gap-6 sm:gap-8 sm:grid-cols-[1fr,240px] items-center">
-            {/* Text */}
-            <div>
-              <h3 className="text-xl sm:text-3xl font-bold text-[#0b1320]">Established in 2019</h3>
-              <p className="mt-3 sm:mt-4 text-[#0b1320]/80 text-sm sm:text-base leading-relaxed">
-                Technocolabs was founded in 2019 by industry veterans who brought years of experience
-                in AI & big data to create a company focused on real-world, production-ready solutions.
-              </p>
-              <div className="mt-4 sm:mt-6 flex flex-wrap items-center gap-2 sm:gap-4">
-                <span className="text-[10px] sm:text-xs uppercase tracking-wide text-[#0b1320]/60">Reviewed on</span>
-                <div className="flex items-center gap-3">
-                  <span className="text-xl sm:text-2xl font-black tracking-tight">Google</span>
-                  <Stars count={5} />
-                  <span className="text-xs sm:text-sm text-[#0b1320]/70">100+ reviews</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Portrait (keeps aspect on phones) */}
-            <div className="justify-self-center sm:justify-self-end text-center">
-              <div className="mx-auto h-36 w-36 sm:h-40 sm:w-40 rounded-full overflow-hidden ring-4 ring-[#f0f3f7]">
-                <img
-                  src="/yasin-profile.png"
-                  alt="Founder"
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div className="mt-3">
-                <div className="font-semibold text-[#0b1320] text-sm sm:text-base">Yasin Shah</div>
-                <div className="text-xs sm:text-sm text-[#0b1320]/70">Founder & CEO</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ========== WHY CLIENTS CHOOSE (centered, comfortable line-length) ========== */}
-        <section className="w-full bg-white py-10 sm:py-16">
-          <div className="mx-auto max-w-5xl px-4 sm:px-6">
-            <h3 className="text-center text-2xl sm:text-4xl font-bold text-[#0b1320]">
-              Why Clients Choose Technocolabs
-            </h3>
-
-            <div className="mt-10 sm:mt-14 space-y-8 sm:space-y-14">
-              {[
-                [IHands, "Since 2014", "One of the most reliable AI, Data, and ML partners with a decade of experience delivering real business value."],
-                [IGlobe, "Global Experience", "A strong track record across multiple industries and regions with successful Big Data and AI programs."],
-                [IDatabaseCheck, "Value for Results", "Highly qualified teams focus on accuracy, reliability, and quick turnaround — measured against your KPIs."],
-                [IUsers, "Convenient Terms of Cooperation", "Engagement models tailored to your goals — Fixed Price and T&M options with transparent reporting."],
-                [IStars, "High-Quality Results", "Outcome-driven delivery — solutions aligned to your unique requirements and business-specific challenges."],
-              ].map(([Icon, title, desc], i) => (
-                <div key={i} className="flex items-start gap-4 sm:gap-6 max-w-4xl mx-auto">
-                  {/* bigger touch target on phones */}
-                  <div className="shrink-0 grid place-items-center h-10 w-10">
-                    {React.createElement(Icon as any, { className: "text-[#1e90ff] w-8 h-8 sm:w-10 sm:h-10" })}
-                  </div>
-                  <div>
-                    <div className="font-semibold text-base sm:text-lg text-[#0b1320]">{title as string}</div>
-                    <p className="mt-1 text-[#0a2540]/80 text-sm sm:text-base leading-relaxed">{desc as string}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ========== Collage + roles (no fixed heights; uses aspect ratios) ========== */}
-        <div className="grid gap-8 sm:gap-10 lg:grid-cols-2 items-center">
+        {/* WHO WE ARE — collage + roles */}
+        <div className="grid gap-10 lg:grid-cols-2 items-center">
           {/* Collage */}
-          <div className="grid grid-cols-2 gap-4 sm:gap-6">
-            {/* top-left */}
-            <div className="rounded-2xl shadow-xl ring-1 ring-black/5 overflow-hidden">
+          <div className="relative w-full">
+            <div className="grid grid-cols-2 gap-6">
               <img
                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&auto=format&fit=crop"
                 alt="Team member"
-                className="w-full h-full object-cover aspect-[4/3]"
+                className="rounded-2xl shadow-xl ring-1 ring-black/5 object-cover h-48 w-full"
               />
-            </div>
-            {/* top-right */}
-            <div className="rounded-2xl shadow-xl ring-1 ring-black/5 overflow-hidden">
               <img
                 src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=1600&auto=format&fit=crop"
                 alt="Engineering discussion"
-                className="w-full h-full object-cover aspect-[4/3]"
+                className="rounded-2xl shadow-xl ring-1 ring-black/5 object-cover h-48 w-full"
               />
-            </div>
-            {/* bottom-left (taller) */}
-            <div className="rounded-2xl shadow-xl ring-1 ring-black/5 overflow-hidden col-span-2 sm:col-span-1">
               <img
                 src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=900&auto=format&fit=crop"
                 alt="Developer at work"
-                className="w-full h-full object-cover aspect-[3/2]"
+                className="rounded-2xl shadow-xl ring-1 ring-black/5 object-cover h-72 w-full col-span-1"
               />
+              <div className="h-24 w-24 rounded-2xl bg-[#1e90ff]/20 ring-1 ring-[#1e90ff]/30 place-self-center" />
             </div>
-            {/* decorative tile (auto scales) */}
-            <div className="hidden sm:block h-24 w-24 rounded-2xl bg-[#1e90ff]/20 ring-1 ring-[#1e90ff]/30 place-self-center" />
           </div>
 
-          {/* Roles (grid stacks on mobile) */}
+          {/* Roles text */}
           <div>
-            <h3 className="text-xl sm:text-3xl font-bold">We are The Team of</h3>
-            <div className="mt-5 sm:mt-6 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5 sm:gap-y-6">
-              {[
-                ["Data Scientists", "Build ML pipelines and personalized data products."],
-                ["Architects", "Large-scale systems design and implementation experience."],
-                ["Data Analysts", "Turn raw data into valuable, decision-ready insights."],
-                ["Engineers", "Proficient in data platforms, MLOps and cloud-native delivery."],
-                ["Consultants", "Help you make the right product and platform decisions."],
-                ["Designers", "Years of UI/UX experience for usable, elegant interfaces."],
-              ].map(([t, d]) => (
-                <div key={t as string}>
-                  <div className="font-semibold text-[#1e90ff] text-sm sm:text-base">{t}</div>
-                  <p className="text-xs sm:text-sm text-[#0a2540]/80 mt-1">{d}</p>
-                </div>
-              ))}
+            <h3 className="text-2xl sm:text-3xl font-bold">Who We Are</h3>
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-6">
+              <div>
+                <div className="font-semibold text-[#1e90ff]">Data Scientists</div>
+                <p className="text-sm text-[#0a2540]/80 mt-1">Build ML pipelines and personalized data products.</p>
+              </div>
+              <div>
+                <div className="font-semibold text-[#1e90ff]">Architects</div>
+                <p className="text-sm text-[#0a2540]/80 mt-1">Large-scale systems design and implementation experience.</p>
+              </div>
+              <div>
+                <div className="font-semibold text-[#1e90ff]">Data Analysts</div>
+                <p className="text-sm text-[#0a2540]/80 mt-1">Turn raw data into valuable, decision-ready insights.</p>
+              </div>
+              <div>
+                <div className="font-semibold text-[#1e90ff]">Engineers</div>
+                <p className="text-sm text-[#0a2540]/80 mt-1">Proficient in data platforms, MLOps and cloud-native delivery.</p>
+              </div>
+              <div>
+                <div className="font-semibold text-[#1e90ff]">Consultants</div>
+                <p className="text-sm text-[#0a2540]/80 mt-1">Help you make the right product and platform decisions.</p>
+              </div>
+              <div>
+                <div className="font-semibold text-[#1e90ff]">Designers</div>
+                <p className="text-sm text-[#0a2540]/80 mt-1">Years of UI/UX experience for usable, elegant interfaces.</p>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* ========== VALUES + HOW WE DELIVER (cards stack) ========== */}
-        <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
-          <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-4 sm:p-6 shadow-sm">
-            <h3 className="font-semibold text-base sm:text-lg">Our Values</h3>
-            <ul className="mt-2 list-disc pl-5 text-xs sm:text-sm space-y-1 text-[#0a2540]/80">
+        {/* ESTABLISHED 2014 */}
+        <div className="w-full rounded-2xl border border-[#0a2540]/10 bg-white p-6 sm:p-8 shadow-sm">
+          <div className="grid gap-8 sm:grid-cols-[1fr,260px] items-center">
+            <div>
+              <h3 className="text-2xl sm:text-3xl font-bold text-[#0b1320]">Established in 2014</h3>
+              <p className="mt-4 text-[#0b1320]/80 leading-relaxed">
+                Technocolabs was founded in 2014 by industry veterans who brought years of experience
+                in AI & big data to create a company focused on real-world, production-ready solutions.
+              </p>
+              <div className="mt-6 flex items-center gap-4">
+                <div className="text-xs uppercase tracking-wide text-[#0b1320]/60">Reviewed on</div>
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl font-black tracking-tight">Clutch</span>
+                  <Stars count={5} />
+                  <span className="text-sm text-[#0b1320]/70">18 reviews</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="justify-self-center sm:justify-self-end text-center">
+              <img
+                src="/yasin-profile.png"
+                alt="Founder"
+                className="h-40 w-40 rounded-full object-cover ring-4 ring-[#f0f3f7]"
+              />
+              <div className="mt-3">
+                <div className="font-semibold text-[#0b1320]">Yasin Shah</div>
+                <div className="text-sm text-[#0b1320]/70">Founder & CEO</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+{/* WHY CLIENTS CHOOSE TECHNOCOLABS */}
+<section className="w-full bg-white py-16">
+  <div className="mx-auto max-w-5xl px-6">
+
+    {/* Heading */}
+    <h3 className="text-center text-3xl sm:text-4xl font-bold text-[#0b1320]">
+      Why Clients Choose Technocolabs
+    </h3>
+
+    {/* List */}
+    <div className="mt-14 space-y-14">
+
+      {/* ROW 1 */}
+      <div className="flex items-start gap-6 max-w-4xl mx-auto">
+        <IHands className="text-[#1e90ff] w-10 h-10" />
+        <div>
+          <div className="font-semibold text-lg text-[#0b1320]">Since 2014</div>
+          <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
+            One of the most reliable AI, Data, and ML partners with a decade of experience delivering real business value.
+          </p>
+        </div>
+      </div>
+
+      {/* ROW 2 */}
+      <div className="flex items-start gap-6 max-w-4xl mx-auto">
+        <IGlobe className="text-[#1e90ff] w-10 h-10" />
+        <div>
+          <div className="font-semibold text-lg text-[#0b1320]">Global Experience</div>
+          <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
+            A strong track record across multiple industries and regions with successful Big Data and AI programs.
+          </p>
+        </div>
+      </div>
+
+      {/* ROW 3 */}
+      <div className="flex items-start gap-6 max-w-4xl mx-auto">
+        <IDatabaseCheck className="text-[#1e90ff] w-10 h-10" />
+        <div>
+          <div className="font-semibold text-lg text-[#0b1320]">Value for Results</div>
+          <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
+            Highly qualified teams focus on accuracy, reliability, and quick turnaround — measured against your KPIs.
+          </p>
+        </div>
+      </div>
+
+      {/* ROW 4 */}
+      <div className="flex items-start gap-6 max-w-4xl mx-auto">
+        <IUsers className="text-[#1e90ff] w-10 h-10" />
+        <div>
+          <div className="font-semibold text-lg text-[#0b1320]">Convenient Terms of Cooperation</div>
+          <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
+            Engagement models tailored to your goals — Fixed Price and T&M options with transparent reporting.
+          </p>
+        </div>
+      </div>
+
+      {/* ROW 5 */}
+      <div className="flex items-start gap-6 max-w-4xl mx-auto">
+        <IStars className="text-[#1e90ff] w-10 h-10" />
+        <div>
+          <div className="font-semibold text-lg text-[#0b1320]">High-Quality Results</div>
+          <p className="mt-1 text-[#0a2540]/80 leading-relaxed">
+            Outcome-driven delivery — solutions aligned to your unique requirements and business-specific challenges.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+        {/* VALUES + HOW WE DELIVER */}
+        <div className="grid gap-6 lg:grid-cols-2 mt-12">
+          <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+            <h3 className="font-semibold">Our Values</h3>
+            <ul className="mt-2 list-disc pl-5 text-sm space-y-1 text-[#0a2540]/80">
               <li>Outcomes over outputs</li>
               <li>Security and governance by default</li>
               <li>Transparency and accountability</li>
@@ -2931,9 +3031,9 @@ function AboutPage() {
             </ul>
           </div>
 
-          <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-4 sm:p-6 shadow-sm">
-            <h3 className="font-semibold text-base sm:text-lg">How We Deliver</h3>
-            <ol className="mt-2 list-decimal pl-5 text-xs sm:text-sm space-y-1 text-[#0a2540]/80">
+          <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-6 shadow-sm">
+            <h3 className="font-semibold">How We Deliver</h3>
+            <ol className="mt-2 list-decimal pl-5 text-sm space-y-1 text-[#0a2540]/80">
               <li>Discovery & measurable KPI alignment</li>
               <li>Architecture & data foundations</li>
               <li>Iterative development with quality gates</li>
@@ -2942,15 +3042,25 @@ function AboutPage() {
           </div>
         </div>
 
-        {/* ========== CTA (buttons stack on mobile) ========== */}
-        <div className="rounded-2xl bg-[#0a2540] text-white p-5 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+        {/* CTA */}
+        <div className="rounded-2xl bg-[#0a2540] text-white p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <div className="text-base sm:text-lg font-semibold">Want to work with us?</div>
-            <div className="text-white/80 text-sm sm:text-base">Book a consultation or reach us at contact@technocolabs.com</div>
+            <div className="text-lg font-semibold">Want to work with us?</div>
+            <div className="text-white/80">Book a consultation or reach us at contact@technocolabs.com</div>
           </div>
-          <div className="flex w-full sm:w-auto flex-col sm:flex-row gap-3">
-            <a href="/contact" className="text-center rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold">Book Consultation</a>
-            <a href="/careers" className="text-center inline-flex items-center justify-center rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold hover:bg-white/10">Join Us</a>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate("contact")}
+              className="rounded-xl bg-[#1e90ff] px-5 py-3 text-sm font-semibold"
+            >
+              Book Consultation
+            </button>
+            <button
+              onClick={() => navigate("careers")}
+              className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold hover:bg-white/10"
+            >
+              Join Us
+            </button>
           </div>
         </div>
       </section>
@@ -3445,7 +3555,7 @@ function Footer() {
 
           />
           <div className="text-white/80 text-xs sm:text-sm">
-            HackerNoon's Startup of the Year 2024 — <span className="text-white font-semibold">Ranked #1 Indore, India.</span>
+            HackerNoon's Startup of the Year 2024.
           </div>
         </div>
 
@@ -3520,6 +3630,7 @@ function Footer() {
   );
 }
 
+
 // --------------------------- Floating CTA (site‑wide) ----------------------
 function FloatingCTA() {
   const navigate = useContext(NavContext);
@@ -3582,330 +3693,23 @@ function ApplicationsClosedPage() {
 }
 
 
-// ---------- APPLY FORM (embedded) with role name + details + Back button ----------
+// ---------- APPLY FORM (adapter to inline page) ----------
 type ApplyFormEmbedPageProps = { roleId?: string };
 
 function ApplyFormEmbedPage({ roleId = "" }: ApplyFormEmbedPageProps) {
-  const navigate = useContext(NavContext);
+  // Convert /apply-form/:roleId → /internship-apply?role=:roleId (no other pages touched)
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    url.pathname = "/internship-apply";
+    url.search = roleId ? `?role=${encodeURIComponent(roleId)}` : "";
+    window.history.replaceState(null, "", url.toString());
+  }, [roleId]);
 
-  // 1) Short-code → Full Title
-  const ROLE_NAME: Record<string, string> = {
-    genai: "Generative AI Engineer Intern",
-    py: "Python Developer Intern",
-    dl: "Deep Learning Engineer Intern",
-    cv: "Computer Vision Engineer Intern",
-    ba: "Business Analyst Intern",
-    ds: "Data Science Intern",
-    ml: "Machine Learning Intern",
-    web: "Web Development Intern",
-    da: "Data Analytics Intern",
-    bi: "Business Intelligence Intern",
-    ai: "Artificial Intelligence Intern",
-    se: "Software Engineering Intern",
-    cyber: "CyberSecurity Engineer Intern",
-  };
-
-  // 2) Role details (from your ApplyPage content)
-  const ROLE_CONTENT: Record<
-    string,
-    { jd: string; responsibilities: string[]; requirements: string[] }
-  > = {
-    genai: {
-      jd: "Work on LLMs, embeddings, RAG and evaluation; prototype chat and knowledge features and integrate them into apps.",
-      responsibilities: [
-        "Build/evaluate LLM pipelines",
-        "RAG with vector stores",
-        "Prompt design & evaluation",
-        "Integrate with APIs/backends",
-        "Document experiments",
-      ],
-      requirements: [
-        "Python proficiency",
-        "HuggingFace/LangChain experience",
-        "NLP/LLM basics",
-        "Git, basics of Docker",
-        "Clear communication",
-      ],
-    },
-    py: {
-      jd: "Develop APIs, automation scripts and internal tools using Python — with a strong focus on quality and tests.",
-      responsibilities: [
-        "Build REST APIs",
-        "Write reusable modules",
-        "Work with SQL/ORM",
-        "Add logging/monitoring",
-        "Participate in reviews",
-      ],
-      requirements: [
-        "Python fundamentals",
-        "FastAPI/Flask or Django",
-        "SQL & Git",
-        "Basics of Docker",
-        "Good documentation",
-      ],
-    },
-    dl: {
-      jd: "Train and evaluate DL models for CV/NLP, optimize inference and create clear experiment reports.",
-      responsibilities: [
-        "Dataset prep and training",
-        "Experiment with CNN/Transformers",
-        "Optimize models for inference",
-        "Track metrics & visualize",
-        "Share results with team",
-      ],
-      requirements: [
-        "PyTorch/TensorFlow",
-        "DL theory basics",
-        "GPU workflows",
-        "Git proficiency",
-        "Analytical mindset",
-      ],
-    },
-    cv: {
-      jd: "Implement CV pipelines (detection/segmentation/OCR) and deploy reliable inference services.",
-      responsibilities: [
-        "Collect/clean/augment data",
-        "Train/evaluate CV models",
-        "Deploy inference services",
-        "Write preprocessing tools",
-        "Document results",
-      ],
-      requirements: [
-        "Python + OpenCV",
-        "PyTorch/TensorFlow",
-        "YOLO/Detectron experience",
-        "Docker basics",
-        "Problem-solving",
-      ],
-    },
-    ba: {
-      jd: "Turn data into decisions: gather requirements, build dashboards and communicate insights.",
-      responsibilities: [
-        "Define KPIs and questions",
-        "Prepare/clean data",
-        "Build dashboards in BI tools",
-        "Write concise reports",
-        "Collaborate with engineers",
-      ],
-      requirements: [
-        "SQL + spreadsheets",
-        "Power BI/Tableau/Looker",
-        "Basic stats/A-B testing",
-        "Strong communication",
-        "Attention to detail",
-      ],
-    },
-    ds: {
-      jd: "Explore data, build features and predictive models, and communicate insights clearly to stakeholders.",
-      responsibilities: [
-        "EDA and feature engineering",
-        "Model training and evaluation",
-        "Visualize results and KPIs",
-        "Write reports and docs",
-        "Collaborate across teams",
-      ],
-      requirements: [
-        "Python & pandas/sklearn",
-        "Statistics basics",
-        "Data viz tools",
-        "SQL",
-        "Git",
-      ],
-    },
-    ml: {
-      jd: "Implement ML pipelines and experiment with models to improve accuracy and robustness.",
-      responsibilities: [
-        "Features & training",
-        "Model selection/tuning",
-        "Cross-validation & metrics",
-        "Report results",
-        "Contribute to deployment readiness",
-      ],
-      requirements: [
-        "Python, sklearn",
-        "ML theory basics",
-        "Experiment tracking",
-        "Git",
-        "Communication",
-      ],
-    },
-    web: {
-      jd: "Build responsive UI and connect to APIs in a modern JS stack.",
-      responsibilities: [
-        "Implement pages/components",
-        "Fetch from REST APIs",
-        "Fix UI bugs",
-        "Write clean code",
-        "Participate in reviews",
-      ],
-      requirements: [
-        "HTML/CSS/JS",
-        "React basics",
-        "Git",
-        "HTTP/REST",
-        "Attention to detail",
-      ],
-    },
-    da: {
-      jd: "Create dashboards and analyses that guide decisions.",
-      responsibilities: [
-        "Clean/transform data",
-        "Create visuals & dashboards",
-        "Define KPIs",
-        "Share insights",
-        "Document sources",
-      ],
-      requirements: ["SQL", "Power BI/Tableau", "Spreadsheets", "Statistics basics", "Comms"],
-    },
-    bi: {
-      jd: "Model data and build BI dashboards with good governance.",
-      responsibilities: [
-        "Model for BI",
-        "Build/maintain reports",
-        "Monitor refresh & quality",
-        "Optimize performance",
-        "Write docs",
-      ],
-      requirements: [
-        "Power BI/Tableau/Looker",
-        "SQL",
-        "DAX/LookML (any)",
-        "Versioning",
-        "Stakeholder comms",
-      ],
-    },
-    ai: {
-      jd: "Assist across AI tasks, from research to prototypes in NLP/CV.",
-      responsibilities: [
-        "Review papers & baselines",
-        "Train simple models",
-        "Prepare data",
-        "Write notebooks",
-        "Demo findings",
-      ],
-      requirements: ["Python & ML libs", "NLP/CV basics", "Math basics", "Git", "Curiosity"],
-    },
-    se: {
-      jd: "Support full-stack development with tests and clean code.",
-      responsibilities: [
-        "Feature work & bug fixes",
-        "Unit/integration tests",
-        "Reviews and CI",
-        "Perf improvements",
-        "Documentation",
-      ],
-      requirements: [
-        "One stack (frontend/backend)",
-        "Git & tests",
-        "Clean code",
-        "CI/CD basics",
-        "Teamwork",
-      ],
-    },
-    cyber: {
-      jd: "Assist security reviews, fix issues, and promote best practices.",
-      responsibilities: [
-        "Run scans",
-        "Threat modeling assistance",
-        "Track fixes",
-        "Document policies",
-        "Awareness training",
-      ],
-      requirements: ["OWASP basics", "Scripting basics", "Linux/Networking", "Auth/Identity basics", "Detail oriented"],
-    },
-  };
-
-  // 3) Short-code → Google Form URL (embed)
-  const FORM_URL: Record<string, string> = {
-    cv: "https://forms.gle/w2gzpJQxhGntAnBj6",
-    ds: "https://forms.gle/xT9md6t87N4sgEWV8",
-    ml: "https://forms.gle/6UVG5Tf76zd3XXyE6",
-    web: "https://forms.gle/8zJMG4c67pe16MU18",
-    da: "https://forms.gle/muHWYbDiy173X4Ms8",
-    bi: "https://forms.gle/CNjoeciZSytGakNX8",
-    ai: "https://forms.gle/oMSF6u716nehhdke6",
-    py: "<put python form here if you open it>",
-    ba: "<put BA form here if you open it>",
-    se: "<put SE form here if you open it>",
-    cyber: "https://forms.gle/PFV39TtRkabKGTEW7",
-  };
-
-  const fullRoleName = ROLE_NAME[roleId] || "Internship";
-  const details = ROLE_CONTENT[roleId];
-  const url = FORM_URL[roleId];
-
-  return (
-    <div className="bg-white text-[#0a2540]">
-      <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-20 pb-6">
-
-        {/* BACK BUTTON → Careers (Open Roles) */}
-        <button
-          onClick={() => {
-            try { window.localStorage.setItem("careers-subtab", "openroles"); } catch {}
-            navigate("careers"); // your NavContext updates URL to /careers
-          }}
-          className="mb-4 inline-flex items-center gap-2 text-sm text-[#1e90ff] hover:underline"
-        >
-          ← Back to Open Positions
-        </button>
-
-        <h1 className="text-3xl font-bold">
-          Apply — <span className="text-[#1e90ff]">{fullRoleName}</span>
-        </h1>
-
-        {/* Role summary above the form */}
-        {details ? (
-          <div className="mt-4 rounded-2xl border border-[#0a2540]/10 bg-[#f8fafc] p-6">
-            <div className="text-sm text-[#0a2540]/80">
-              <div className="font-semibold text-[#0a2540]">About the role</div>
-              <p className="mt-1">{details.jd}</p>
-            </div>
-
-            <div className="grid gap-6 sm:grid-cols-2 mt-4">
-              <div>
-                <div className="text-sm font-semibold text-[#0a2540]">Responsibilities</div>
-                <ul className="mt-1 list-disc pl-5 space-y-1 text-sm text-[#0a2540]/80">
-                  {details.responsibilities.map((x) => <li key={x}>{x}</li>)}
-                </ul>
-              </div>
-              <div>
-                <div className="text-sm font-semibold text-[#0a2540]">Requirements</div>
-                <ul className="mt-1 list-disc pl-5 space-y-1 text-sm text-[#0a2540]/80">
-                  {details.requirements.map((x) => <li key={x}>{x}</li>)}
-                </ul>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="mt-4 rounded-2xl border border-[#0a2540]/10 bg-[#fff6e5] p-6">
-            <p className="text-[#7a4d00] text-sm">
-              Role details will be published soon. You can still submit the form below.
-            </p>
-          </div>
-        )}
-
-        {/* Form (embedded) – scrolls natively inside iframe */}
-        {!url ? (
-          <div className="mt-6 rounded-2xl border border-[#0a2540]/10 bg-[#fff6f6] p-6">
-            <p className="text-[#8a1f1f] text-sm">
-              This role is currently closed or the form isn’t configured yet. Please check back later.
-            </p>
-          </div>
-        ) : (
-          <div className="mt-6 rounded-2xl overflow-hidden border border-[#0a2540]/10">
-            <iframe
-              title={`${fullRoleName} — Application`}
-              src={url}
-              style={{ width: "100%", height: "1800px", border: 0 }}
-              scrolling="yes"
-              loading="lazy"
-            />
-          </div>
-        )}
-      </section>
-    </div>
-  );
+  // Render the new inline application UI (it already reads ?role= from the URL)
+  return <InternshipApplyInline />;
 }
+
 
 // // -------------------------------- INTERN SPOTLIGHT (inline) ------------------
 // const INTERN_SPOTLIGHT_ENDPOINT =
@@ -4700,15 +4504,6 @@ function SpotlightApplyPage() {
   );
 }
 
-
-/// --------------------------- APP -------------------------------------------
-// read optional slug after "/:tab"
-const roleSlug =
-  typeof window !== "undefined"
-    ? (window.location.pathname.split("/")[2] || "")
-    : "";
-
-
 // ---------- inline page inside App.tsx ----------
 function InternshipApplyInline() {
   // ⬅️ Replace with your Apps Script /exec URL when wiring up
@@ -5305,6 +5100,119 @@ function InternshipApplyInline() {
   );
 }
 
+
+// ================= New Layout: "Aurora Teal" (clean, airy, neutral) =================
+// Accent: teal-700 (#0A66C2); Sub-accent: teal-500 (#0A66C2); Text: #0b1320; Cards: white with soft borders
+
+// ---- Small primitives ----
+const Badge = ({ children }: { children: React.ReactNode }) => (
+  <span className="inline-flex items-center rounded-full bg-[#0A66C2]/10 text-[#0A66C2] px-3 py-1 text-xs font-semibold">
+    {children}
+  </span>
+);
+
+const Stat = ({ label, value }: { label: string; value: string }) => (
+  <div className="rounded-2xl border border-[#0b1320]/10 bg-white px-4 py-3 shadow-sm">
+    <div className="text-lg font-semibold text-[#0b1320]">{value}</div>
+    <div className="text-xs text-[#0b1320]/60">{label}</div>
+  </div>
+);
+
+const Section = ({ id, title, kicker, children }: { id?: string; title: string; kicker?: string; children: React.ReactNode }) => (
+  <section id={id} className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12 py-14">
+    {kicker && <div className="text-xs font-semibold uppercase tracking-wider text-[#0A66C2]">{kicker}</div>}
+    <h2 className="mt-1 text-3xl sm:text-4xl font-bold text-[#0b1320]">{title}</h2>
+    <div className="mt-6">{children}</div>
+  </section>
+);
+
+// ---- Company Logo via Clearbit (with initials fallback) ----
+function CompanyLogoCard({ name, domain }: { name: string; domain: string }) {
+  const imgRef = useRef<HTMLImageElement | null>(null);
+  const fallbackRef = useRef<HTMLDivElement | null>(null);
+  const onErr = () => {
+    if (imgRef.current) imgRef.current.style.display = "none";
+    if (fallbackRef.current) fallbackRef.current.style.display = "flex";
+  };
+  const initials = name.split(" ").map((w) => w[0]).join("").slice(0, 3).toUpperCase();
+  const src = `https://logo.clearbit.com/${domain}?size=128`;
+  return (
+    <div className="rounded-2xl border border-[#0b1320]/10 bg-white p-4 text-center shadow-sm">
+      <img ref={imgRef} src={src} alt={`${name} logo`} className="mx-auto h-10 object-contain" loading="lazy" onError={onErr} />
+      <div ref={fallbackRef} className="hidden mx-auto h-10 w-10 items-center justify-center rounded bg-[#0b1320]/5 text-[#0b1320]/70 text-xs font-semibold">
+        {initials}
+      </div>
+      <div className="mt-2 text-sm font-medium text-[#0b1320]">{name}</div>
+    </div>
+  );
+}
+
+// ---- Collapsible curriculum card ----
+function Curriculum({ track, items, project }: { track: string; items: string[]; project: string }) {
+  return (
+    <details className="group rounded-2xl border border-[#0b1320]/10 bg-white p-5 shadow-sm">
+      <summary className="cursor-pointer list-none">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-xs font-semibold text-[#0A66C2]">Curriculum</div>
+            <div className="text-lg font-semibold text-[#0b1320]">{track}</div>
+          </div>
+          <span className="rounded-full bg-[#0A66C2]/10 text-[#0A66C2] px-3 py-1 text-xs font-semibold group-open:hidden">View</span>
+          <span className="rounded-full bg-[#0A66C2]/10 text-[#0A66C2] px-3 py-1 text-xs font-semibold hidden group-open:inline">Hide</span>
+        </div>
+      </summary>
+      <ul className="mt-4 list-disc pl-5 space-y-1 text-sm text-[#0b1320]/80">
+        {items.map((x, i) => (
+          <li key={i}>{x}</li>
+        ))}
+      </ul>
+      <div className="mt-3 rounded-xl bg-[#0b1320]/5 p-3 text-sm text-[#0b1320]/80">
+        <span className="font-semibold text-[#0b1320]">Capstone:</span> {project}
+      </div>
+    </details>
+  );
+}
+
+// ---- Tracks grid ----
+function TrackCard({ slug, title, bullets, tools }: { slug: string; title: string; bullets: string[]; tools: string[] }) {
+  return (
+    <div className="rounded-2xl border border-[#0b1320]/10 bg-white p-6 shadow-sm hover:shadow-md">
+      <Badge>Track</Badge>
+      <h3 className="mt-1 text-lg font-semibold text-[#0b1320]">{title}</h3>
+      <ul className="mt-2 list-disc pl-5 space-y-1 text-sm text-[#0b1320]/80">
+        {bullets.map((b) => (
+          <li key={b}>{b}</li>
+        ))}
+      </ul>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {tools.map((t) => (
+          <span key={t} className="rounded-full bg-[#0b1320]/5 px-3 py-1 text-xs text-[#0b1320]/80">
+            {t}
+          </span>
+        ))}
+      </div>
+      <div className="mt-4 flex gap-3">
+        <a href={`/internship-apply?role=${slug}`} className="inline-flex items-center rounded-xl bg-[#0A66C2] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow">
+          Apply with this track
+        </a>
+        <a href="#curriculum" className="text-sm font-medium text-[#0A66C2] hover:underline">
+          View curriculum
+        </a>
+      </div>
+    </div>
+  );
+}
+
+// ---- FAQ ----
+function FAQ({ q, a }: { q: string; a: string }) {
+  return (
+    <details className="rounded-2xl border border-[#0b1320]/10 bg-white p-5 shadow-sm">
+      <summary className="cursor-pointer text-[#0b1320] font-semibold">{q}</summary>
+      <p className="mt-2 text-sm text-[#0b1320]/70">{a}</p>
+    </details>
+  );
+}
+
 // ===================== Grow With Technocolabs (Developer/Coding) =====================
 function GrowWithTechnocolabsPage() {
   // --- tiny helpers local to this component ---
@@ -5505,7 +5413,7 @@ function RoleRotator({
           <div>
             <h1 className="text-4xl sm:text-6xl font-bold max-w-3xl leading-tight">
               <span className="text-[#0A66C2] animate-pulse-slow">Grow with Technocolabs</span> <br />
-              Build Real, Production Ready Softwares
+              Build Real Production Ready Softwares
             </h1>
             <p className="mt-4 text-lg text-[#0a2540]/70 max-w-2xl">
               Ship projects like a real dev team: sprints, PR reviews, CI/CD, and a mentor guiding every step.
@@ -5535,7 +5443,7 @@ function RoleRotator({
 
             {/* Stats */}
             <div className="mt-7 flex flex-wrap gap-4 text-sm">
-              <Stat label="Learners" value="10,000+" />
+              <Stat label="Learners" value="6,000+" />
               <Stat label="Countries" value="25+" />
               <Stat label="Avg. Projects" value="2–3" />
               <Stat label="Hiring Partners" value="40+" />
@@ -6359,40 +6267,6 @@ function PartnershipsSection() {
   </form>
 </Section>
 
-
-      {/* FAQ */}
-      <Section
-        id="faq"
-        kicker="Answers"
-        title="Partner FAQs"
-        actions={
-          <input
-            value={faqQuery}
-            onChange={(e) => setFaqQuery(e.target.value)}
-            placeholder="Search FAQs…"
-            className="w-full sm:w-60 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30"
-          />
-        }
-      >
-        <div className="grid gap-4 md:grid-cols-2">
-          {[
-            { q: "How do we start?", a: "Apply below. We'll schedule a 30-minute scoping call and propose the best tier for your goals." },
-            { q: "What are the commercial models?", a: "Referral, rev-share, or fixed SOW. We support NDAs and MSAs for enterprises." },
-            { q: "Do you support universities?", a: "Yes — co-create capstones, map curriculum, and run mentorship cohorts." },
-            { q: "What support do partners get?", a: "From office hours to SLAs and solution architects, depending on tier." },
-            { q: "Can we white-label?", a: "Yes — customized tracks, portals, and certificates under your brand." },
-            { q: "What about data privacy?", a: "We follow best practices for security, access control, and data handling." },
-          ]
-            .filter((item) => (item.q + item.a).toLowerCase().includes(faqQuery.toLowerCase()))
-            .map((f) => (
-              <details key={f.q} className="rounded-2xl border border-[#0b1320]/10 bg-white p-5 shadow-sm">
-                <summary className="cursor-pointer font-semibold text-[#0b1320]">{f.q}</summary>
-                <p className="mt-2 text-sm text-[#0b1320]/70">{f.a}</p>
-              </details>
-            ))}
-        </div>
-      </Section>
-
       {/* FINAL CTA */}
       <section id="partner-contact" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-12 py-12 sm:py-14">
         <div className="rounded-2xl border border-[#0b1320]/10 bg-white p-5 sm:p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -6430,6 +6304,13 @@ function PartnershipsSection() {
 }
 
 
+/// --------------------------- APP -------------------------------------------
+// read optional slug after "/:tab"
+const roleSlug =
+  typeof window !== "undefined"
+    ? (window.location.pathname.split("/")[2] || "")
+    : "";
+    
 // --------------------------- APP -------------------------------------------
 export default function App() {
   // 🔗 Read params from the URL
@@ -6440,15 +6321,17 @@ export default function App() {
     'home','services','service','careers','contact','apply','svc','privacy','terms','cookies',
     'bigdata','data-architecture','data-warehouse','bi-visualization','predictive-analytics-bd',
     'cloud-services','about','success-stories','blog','write-for-us','verify',
-    'applications-closed','apply-form','spotlight','spotlight-apply', 'internship-apply','grow', 'partnerships', 'job-description'// ✅ spotlight included
+    'applications-closed','apply-form','spotlight','spotlight-apply','internship-apply','grow','partnerships','job-description'
   ]);
 
   // ✅ If roleId exists (route is /apply-form/:roleId), force 'apply-form'
-  const routeTab: Tab = roleId
-    ? 'apply-form'
-    : (tabParam && VALID_TABS.has(tabParam as Tab))
-      ? (tabParam as Tab)
-      : 'home';
+// replace the existing routeTab line in App
+const routeTab: Tab =
+  tabParam && VALID_TABS.has(tabParam as Tab)
+    ? (tabParam as Tab)
+    : roleId
+    ? "apply-form"
+    : "home";
 
   // 🧠 State stays the same, but initializes from the URL
   const [tab, setTab] = useState<Tab>(routeTab);
@@ -6501,7 +6384,7 @@ export default function App() {
   if (tab === 'home') content = <HomePage />;
   if (tab === 'services') content = <ServicesPage />;
   if (tab === 'service') content = <ServiceDetailPage />;
-  // if (tab === 'careers') content = <CareersPage />;
+  //if (tab === 'careers') content = <CareersPage />;
   if (tab === 'contact') content = <ContactPage />;
   // if (tab === 'apply') content = <ApplyPage />;
   if (tab === 'svc') content = <StandaloneServicePage />;
@@ -6525,11 +6408,18 @@ export default function App() {
   if (tab === 'grow') content = <GrowWithTechnocolabsPage />;
   if (tab === 'partnerships') content = <PartnershipsSection />;
   if (tab === 'careers') content = <CareersPageMNC />;
+  // if (tab === 'job-description') content = <JobDescriptionPage />;
   if (tab === 'job-description') content = <JobDescriptionPage />;
+
+
+
+
 
 
   // ✅ FIX: pass roleId (not roleSlug)
   if (tab === 'apply-form') content = <ApplyFormEmbedPage roleId={roleId} />;
+  // ✅ FIX: pass roleId (not roleSlug)
+
 
   // ✅ Spotlight standalone page
   if (tab === 'spotlight') content = <InternSpotlightPage />;
@@ -6542,7 +6432,6 @@ const pathname = typeof window !== "undefined" ? window.location.pathname : "/";
 if (!tabParam && pathname === "/internship-apply") {
   content = <InternshipApplyInline />;
 }
-
 
   return (
     <CurrentTabContext.Provider value={tab}>
