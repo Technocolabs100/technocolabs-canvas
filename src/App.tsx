@@ -6561,15 +6561,17 @@ export default function App() {
     'home','services','service','careers','contact','apply','svc','privacy','terms','cookies',
     'bigdata','data-architecture','data-warehouse','bi-visualization','predictive-analytics-bd',
     'cloud-services','about','success-stories','blog','write-for-us','verify',
-    'applications-closed','apply-form','spotlight','spotlight-apply', 'internship-apply','grow', 'partnerships', 'job-description'// ✅ spotlight included
+    'applications-closed','apply-form','spotlight','spotlight-apply','internship-apply','grow','partnerships','job-description'
   ]);
 
   // ✅ If roleId exists (route is /apply-form/:roleId), force 'apply-form'
-  const routeTab: Tab = roleId
-    ? 'apply-form'
-    : (tabParam && VALID_TABS.has(tabParam as Tab))
-      ? (tabParam as Tab)
-      : 'home';
+// replace the existing routeTab line in App
+const routeTab: Tab =
+  tabParam && VALID_TABS.has(tabParam as Tab)
+    ? (tabParam as Tab)
+    : roleId
+    ? "apply-form"
+    : "home";
 
   // 🧠 State stays the same, but initializes from the URL
   const [tab, setTab] = useState<Tab>(routeTab);
@@ -6622,7 +6624,7 @@ export default function App() {
   if (tab === 'home') content = <HomePage />;
   if (tab === 'services') content = <ServicesPage />;
   if (tab === 'service') content = <ServiceDetailPage />;
-  // if (tab === 'careers') content = <CareersPage />;
+  //if (tab === 'careers') content = <CareersPage />;
   if (tab === 'contact') content = <ContactPage />;
   // if (tab === 'apply') content = <ApplyPage />;
   if (tab === 'svc') content = <StandaloneServicePage />;
@@ -6646,11 +6648,18 @@ export default function App() {
   if (tab === 'grow') content = <GrowWithTechnocolabsPage />;
   if (tab === 'partnerships') content = <PartnershipsSection />;
   if (tab === 'careers') content = <CareersPageMNC />;
+  // if (tab === 'job-description') content = <JobDescriptionPage />;
   if (tab === 'job-description') content = <JobDescriptionPage />;
+
+
+
+
 
 
   // ✅ FIX: pass roleId (not roleSlug)
   if (tab === 'apply-form') content = <ApplyFormEmbedPage roleId={roleId} />;
+  // ✅ FIX: pass roleId (not roleSlug)
+
 
   // ✅ Spotlight standalone page
   if (tab === 'spotlight') content = <InternSpotlightPage />;
@@ -6663,7 +6672,6 @@ const pathname = typeof window !== "undefined" ? window.location.pathname : "/";
 if (!tabParam && pathname === "/internship-apply") {
   content = <InternshipApplyInline />;
 }
-
 
   return (
     <CurrentTabContext.Provider value={tab}>
@@ -6691,5 +6699,4 @@ if (!tabParam && pathname === "/internship-apply") {
     </CurrentTabContext.Provider>
   );
 }
-// --------------------------- ROUTER MOUNT ---------------------------
 
