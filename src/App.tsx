@@ -6,9 +6,11 @@ import { Link } from "react-router-dom";
 import { useParams, useNavigate } from "react-router-dom";
 import { CheckCircle2, Info } from "lucide-react";
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from "react-simple-maps";
-import { geoCentroid } from "d3-geo"; // (not used here but fine if you keep it)
+import { geoCentroid } from "d3-geo"; // (not used here, but fine if you keep it)
 // If TS complains about missing types, add src/react-simple-maps.d.ts with `declare module "react-simple-maps";`
 import * as React from "react";
+import CareersPageMNC from "./CareersPageMNC";
+import JobDescriptionPage from "./JobDescriptionPage";
 
 
 import {
@@ -56,7 +58,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 // --------------------------- ROUTING & CONTEXT ------------------------------
-type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies'| 'bigdata' | 'data-architecture' | 'data-warehouse'| 'bi-visualization' | 'predictive-analytics-bd' | 'cloud-services'| 'about' | 'success-stories' | 'blog' | 'write-for-us'|'verify'|'applications-closed'|'apply-form'|'spotlight' |'spotlight-apply'|'internship-apply'|'grow'|'partnerships';
+type Tab = 'home' | 'services' | 'service' | 'svc' | 'careers' | 'contact' | 'apply' | 'privacy' | 'terms' | 'cookies'| 'bigdata' | 'data-architecture' | 'data-warehouse'| 'bi-visualization' | 'predictive-analytics-bd' | 'cloud-services'| 'about' | 'success-stories' | 'blog' | 'write-for-us'|'verify'|'applications-closed'|'apply-form'|'spotlight' |'spotlight-apply'|'internship-apply'|'grow'|'partnerships'|'job-description';
 const NavContext = React.createContext<(t: Tab) => void>(() => {});
 const ServiceDetailContext = React.createContext<(slug: string | null) => void>(() => {});
 const ActiveServiceContext = React.createContext<string | null>(null);
@@ -6438,7 +6440,7 @@ export default function App() {
     'home','services','service','careers','contact','apply','svc','privacy','terms','cookies',
     'bigdata','data-architecture','data-warehouse','bi-visualization','predictive-analytics-bd',
     'cloud-services','about','success-stories','blog','write-for-us','verify',
-    'applications-closed','apply-form','spotlight','spotlight-apply', 'internship-apply','grow', 'partnerships' // ✅ spotlight included
+    'applications-closed','apply-form','spotlight','spotlight-apply', 'internship-apply','grow', 'partnerships', 'job-description'// ✅ spotlight included
   ]);
 
   // ✅ If roleId exists (route is /apply-form/:roleId), force 'apply-form'
@@ -6499,7 +6501,7 @@ export default function App() {
   if (tab === 'home') content = <HomePage />;
   if (tab === 'services') content = <ServicesPage />;
   if (tab === 'service') content = <ServiceDetailPage />;
-  if (tab === 'careers') content = <CareersPage />;
+  // if (tab === 'careers') content = <CareersPage />;
   if (tab === 'contact') content = <ContactPage />;
   // if (tab === 'apply') content = <ApplyPage />;
   if (tab === 'svc') content = <StandaloneServicePage />;
@@ -6522,6 +6524,8 @@ export default function App() {
   if (tab === 'internship-apply') content = <InternshipApplyInline />;
   if (tab === 'grow') content = <GrowWithTechnocolabsPage />;
   if (tab === 'partnerships') content = <PartnershipsSection />;
+  if (tab === 'careers') content = <CareersPageMNC />;
+  if (tab === 'job-description') content = <JobDescriptionPage />;
 
 
   // ✅ FIX: pass roleId (not roleSlug)
