@@ -6429,7 +6429,6 @@ function PartnershipsSection() {
   );
 }
 
-
 // --------------------------- APP -------------------------------------------
 export default function App() {
   // 🔗 Read params from the URL
@@ -6570,6 +6569,5 @@ if (!tabParam && pathname === "/internship-apply") {
     </CurrentTabContext.Provider>
   );
 }
-
 // --------------------------- ROUTER MOUNT ---------------------------
 
