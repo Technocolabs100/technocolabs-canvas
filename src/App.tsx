@@ -4720,7 +4720,7 @@ function SpotlightApplyPage() {
 
 function InternshipApplyInline(): JSX.Element {
   const APPS_SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbwJx82nJlgm2Y5DMTlSewOm5DYi3lHf-OcicaW7LmKBKRGWIZJSrgxZyyieIk9j71zB/exec";
+    "https://script.google.com/macros/s/AKfycbwA4m3F8NIbPrRUckTtvOjZx5EUsSYpX9EeE0P2iNirfSLv5zHVC6undw8CFhC07W0k8g/exec";
 
   const SLUG_TO_ROLE: Record<string, string> = {
     ds: "Data Scientist",
@@ -5250,11 +5250,11 @@ function InternshipApplyInline(): JSX.Element {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium">Email*</label>
+                        <label className="block text-sm font-medium">Email ID*</label>
                         <input type="email" name="email" required className={`mt-1 w-full rounded-xl px-3 py-2 ${FORM_BORDER_CLASS} focus:outline-none`} />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium">Phone</label>
+                        <label className="block text-sm font-medium">Contact Number (Country Code)</label>
                         <input name="phone" className={`mt-1 w-full rounded-xl px-3 py-2 ${FORM_BORDER_CLASS} focus:outline-none`} />
                       </div>
                     </div>
@@ -5265,7 +5265,7 @@ function InternshipApplyInline(): JSX.Element {
                         <input name="location" className={`mt-1 w-full rounded-xl px-3 py-2 ${FORM_BORDER_CLASS} focus:outline-none`} />
                       </div>
                       <div>
-                        <label className="block text sm font-medium">Education</label>
+                        <label className="block text sm font-medium">Education Degree and Graduation Year</label>
                         <input name="education" placeholder="e.g., B.Tech CSE, 2026" className={`mt-1 w-full rounded-xl px-3 py-2 ${FORM_BORDER_CLASS} focus:outline-none`} />
                       </div>
                     </div>
@@ -5277,11 +5277,11 @@ function InternshipApplyInline(): JSX.Element {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium">GitHub Portfolio</label>
+                        <label className="block text-sm font-medium">GitHub Portfolio URL</label>
                         <input name="github" type="url" className={`mt-1 w-full rounded-xl px-3 py-2 ${FORM_BORDER_CLASS} focus:outline-none`} />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium">LinkedIn</label>
+                        <label className="block text-sm font-medium">LinkedIn Profile URL</label>
                         <input name="linkedin" type="url" className={`mt-1 w-full rounded-xl px-3 py-2 ${FORM_BORDER_CLASS} focus:outline-none`} />
                       </div>
                     </div>
@@ -5334,7 +5334,7 @@ function InternshipApplyInline(): JSX.Element {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium">Registration Charge*</label>
+                      <label className="block text-sm font-medium">Internship Registration Fees*</label>
                       <p className={`mt-1 text-xs ${subtle}`}>
                         As part of our commitment to ensuring a dedicated and deserving cohort, we require a nominal Registration Charge of <strong>₹855 + GST</strong> (or <strong>$15 USD</strong>).
                       </p>
