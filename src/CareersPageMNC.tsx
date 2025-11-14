@@ -81,6 +81,14 @@ export default function CareersPageMNC(): JSX.Element {
             >
               View Full-Time Roles
             </button>
+
+             <button
+              type="button"
+              onClick={() => navigate("/spotlight")}
+              className="px-6 py-3 rounded-xl bg-[#1e90ff] text-white font-semibold shadow hover:shadow-lg"
+            >
+              Employee Spotlight
+            </button>
           </div>
         </div>
       </section>
@@ -183,3 +191,4 @@ export default function CareersPageMNC(): JSX.Element {
     </div>
   );
 }
+
