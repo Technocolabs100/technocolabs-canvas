@@ -4720,7 +4720,7 @@ function SpotlightApplyPage() {
 
 function InternshipApplyInline(): JSX.Element {
   const APPS_SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbwA4m3F8NIbPrRUckTtvOjZx5EUsSYpX9EeE0P2iNirfSLv5zHVC6undw8CFhC07W0k8g/exec";
+    "https://script.google.com/macros/s/AKfycbxjEwEi9LRB-T4BpwEP_pS5miGJ2hq3ucDJhRhEHT9xV_Qx5Ym6LA45IAarEI7hOER4ww/exec";
 
   const SLUG_TO_ROLE: Record<string, string> = {
     ds: "Data Scientist",
@@ -5219,6 +5219,9 @@ function InternshipApplyInline(): JSX.Element {
                 )}
 
                 <form ref={formRef} onSubmit={handleSubmit}>
+                  {/* HIDDEN TAG: tells Apps Script this is the internship form */}
+                  <input type="hidden" name="formType" value="internship" />
+
                   <div className="grid gap-6">
                     <div>
                       <label className="block text-sm font-medium">Role*</label>
@@ -5277,7 +5280,7 @@ function InternshipApplyInline(): JSX.Element {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium">GitHub Portfolio URL</label>
+                        <label className="block text-sm font medium">GitHub Portfolio URL</label>
                         <input name="github" type="url" className={`mt-1 w-full rounded-xl px-3 py-2 ${FORM_BORDER_CLASS} focus:outline-none`} />
                       </div>
                       <div>
@@ -5391,6 +5394,7 @@ function InternshipApplyInline(): JSX.Element {
     </div>
   );
 }
+
 
 // ===================== Grow With Technocolabs (Developer/Coding) =====================
 function GrowWithTechnocolabsPage() {
