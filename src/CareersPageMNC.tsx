@@ -140,7 +140,7 @@ export default function CareersPageMNC(): JSX.Element {
                       onClick={() => openJobDescription(r)}
                       className="text-[#1e90ff] font-medium hover:underline"
                     >
-                      View Details →
+                      Job Description →
                     </button>
                     <button
                       type="button"
@@ -191,4 +191,5 @@ export default function CareersPageMNC(): JSX.Element {
     </div>
   );
 }
+
 
