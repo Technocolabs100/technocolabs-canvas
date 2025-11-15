@@ -5934,13 +5934,13 @@ function RoleRotator({
   );
 }
 
-function PartnershipsSection() {
+function PartnershipsSection(): JSX.Element {
   // ---------- Inline form (Google Sheet) ----------
   const [sent, setSent] = React.useState(false);
   const [submitting, setSubmitting] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState("");
   const SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbyk9KRwgUkuT0yWxujEhdN19Yn2uH07VP6hf3zFMM6tJYTavQTBbZy95bW4GBHW_MLsnA/exec";
+    "https://script.google.com/macros/s/AKfycbzDrRQNLg0cBFWBcKzIgx_G2Sn67vSvv4mchocaMnaSvOXL8-OQ_2Ev3l5QACmpBShgkA/exec";
 
   const handleSheetSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -6006,10 +6006,7 @@ function PartnershipsSection() {
     children: React.ReactNode;
     actions?: React.ReactNode;
   }) => (
-    <section
-      id={id}
-      className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-12 py-10 sm:py-14"
-    >
+    <section id={id} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-12 py-10 sm:py-14">
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
           {kicker && <Kicker>{kicker}</Kicker>}
@@ -6377,111 +6374,77 @@ function PartnershipsSection() {
       </Section>
 
       {/* CONTACT FORM (mobile-first, Google Sheet) */}
-<Section id="contact-form" kicker="Get in touch" title="Tell us about your goals">
-  <form
-    onSubmit={handleSheetSubmit}
-    className="grid grid-cols-1 sm:grid-cols-2 gap-4 rounded-2xl border border-[#0b1320]/10 bg-white p-4 sm:p-6 shadow-sm"
-    noValidate
-  >
-    {/* Success / Error */}
-    {sent && (
-      <div className="sm:col-span-2 rounded-lg border border-green-200 bg-green-50 text-green-700 text-sm px-3 py-2">
-        ✅ Thanks! We’ve received your message. We’ll get back within 48 hours.
-      </div>
-    )}
-    {errorMsg && (
-      <div className="sm:col-span-2 rounded-lg border border-red-200 bg-red-50 text-red-700 text-sm px-3 py-2">
-        {errorMsg}
-      </div>
-    )}
+      <Section id="contact-form" kicker="Get in touch" title="Tell us about your goals">
+        <form
+          onSubmit={handleSheetSubmit}
+          className="grid grid-cols-1 sm:grid-cols-2 gap-4 rounded-2xl border border-[#0b1320]/10 bg-white p-4 sm:p-6 shadow-sm"
+          noValidate
+        >
+          {/* Success / Error */}
+          {sent && (
+            <div className="sm:col-span-2 rounded-lg border border-green-200 bg-green-50 text-green-700 text-sm px-3 py-2">
+              ✅ Thanks! We’ve received your message. We’ll get back within 48 hours.
+            </div>
+          )}
+          {errorMsg && (
+            <div className="sm:col-span-2 rounded-lg border border-red-200 bg-red-50 text-red-700 text-sm px-3 py-2">
+              {errorMsg}
+            </div>
+          )}
 
-    {/* Inputs — full width on mobile */}
-    <input
-      name="name"
-      required
-      placeholder="Your name"
-      className="w-full min-w-0 rounded-xl border p-3 h-12 text-base outline-none focus:ring-2 ring-[#0A66C2]/30"
-    />
-    <input
-      name="email"
-      type="email"
-      required
-      placeholder="Work email"
-      className="w-full min-w-0 rounded-xl border p-3 h-12 text-base outline-none focus:ring-2 ring-[#0A66C2]/30"
-    />
-    <input
-      name="company"
-      placeholder="Company"
-      className="w-full min-w-0 rounded-xl border p-3 h-12 text-base outline-none focus:ring-2 ring-[#0A66C2]/30"
-    />
-    <input
-      name="role"
-      placeholder="Role"
-      className="w-full min-w-0 rounded-xl border p-3 h-12 text-base outline-none focus:ring-2 ring-[#0A66C2]/30"
-    />
-
-    {/* Textarea spans both columns on larger screens */}
-    <textarea
-      name="message"
-      required
-      placeholder="What would you like to build?"
-      className="sm:col-span-2 w-full min-w-0 rounded-xl border p-3 h-32 text-base outline-none focus:ring-2 ring-[#0A66C2]/30"
-    />
-
-    {/* Hidden UTM fields */}
-    <input type="hidden" name="utm_source" id="utm_source" />
-    <input type="hidden" name="utm_medium" id="utm_medium" />
-    <input type="hidden" name="utm_campaign" id="utm_campaign" />
-
-    {/* Footer — stacks on mobile */}
-    <div className="sm:col-span-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-      <label className="text-xs text-[#0b1320]/60">
-        By submitting, you agree to our <a className="underline" href="/privacy">Privacy Policy</a>.
-      </label>
-      <button
-        type="submit"
-        disabled={submitting}
-        className="w-full sm:w-auto rounded-xl bg-[#0A66C2] px-5 py-3 text-white font-semibold shadow-sm hover:shadow disabled:opacity-60"
-        aria-busy={submitting}
-      >
-        {submitting ? "Sending…" : "Send"}
-      </button>
-    </div>
-  </form>
-</Section>
-
-
-      {/* FAQ */}
-      <Section
-        id="faq"
-        kicker="Answers"
-        title="Partner FAQs"
-        actions={
+          {/* Inputs — full width on mobile */}
           <input
-            value={faqQuery}
-            onChange={(e) => setFaqQuery(e.target.value)}
-            placeholder="Search FAQs…"
-            className="w-full sm:w-60 rounded-xl border p-3 outline-none focus:ring-2 ring-[#0A66C2]/30"
+            name="name"
+            required
+            placeholder="Your name"
+            className="w-full min-w-0 rounded-xl border p-3 h-12 text-base outline-none focus:ring-2 ring-[#0A66C2]/30"
           />
-        }
-      >
-        <div className="grid gap-4 md:grid-cols-2">
-          {[
-            { q: "How do we start?", a: "Apply below. We'll schedule a 30-minute scoping call and propose the best tier for your goals." },
-            { q: "What are the commercial models?", a: "Referral, rev-share, or fixed SOW. We support NDAs and MSAs for enterprises." },
-            { q: "Do you support universities?", a: "Yes — co-create capstones, map curriculum, and run mentorship cohorts." },
-            { q: "What support do partners get?", a: "From office hours to SLAs and solution architects, depending on tier." },
-            { q: "Can we white-label?", a: "Yes — customized tracks, portals, and certificates under your brand." },
-            { q: "What about data privacy?", a: "We follow best practices for security, access control, and data handling." },
-          ]
-            .filter((item) => (item.q + item.a).toLowerCase().includes(faqQuery.toLowerCase()))
-            .map((f) => (
-              <details key={f.q} className="rounded-2xl border border-[#0b1320]/10 bg-white p-5 shadow-sm">
-                <summary className="cursor-pointer font-semibold text-[#0b1320]">{f.q}</summary>
-                <p className="mt-2 text-sm text-[#0b1320]/70">{f.a}</p>
-              </details>
-            ))}
-        </div>
+          <input
+            name="email"
+            type="email"
+            required
+            placeholder="Work email"
+            className="w-full min-w-0 rounded-xl border p-3 h-12 text-base outline-none focus:ring-2 ring-[#0A66C2]/30"
+          />
+          <input
+            name="company"
+            placeholder="Company"
+            className="w-full min-w-0 rounded-xl border p-3 h-12 text-base outline-none focus:ring-2 ring-[#0A66C2]/30"
+          />
+          <input
+            name="role"
+            placeholder="Role"
+            className="w-full min-w-0 rounded-xl border p-3 h-12 text-base outline-none focus:ring-2 ring-[#0A66C2]/30"
+          />
+
+          {/* Textarea spans both columns on larger screens */}
+          <textarea
+            name="message"
+            required
+            placeholder="What would you like to build?"
+            className="sm:col-span-2 w-full min-w-0 rounded-xl border p-3 h-32 text-base outline-none focus:ring-2 ring-[#0A66C2]/30"
+          />
+
+          {/* Hidden UTM fields */}
+          <input type="hidden" name="utm_source" id="utm_source" />
+          <input type="hidden" name="utm_medium" id="utm_medium" />
+          <input type="hidden" name="utm_campaign" id="utm_campaign" />
+
+          {/* Footer — stacks on mobile */}
+          <div className="sm:col-span-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <label className="text-xs text-[#0b1320]/60">
+              By submitting, you agree to our <a className="underline" href="/privacy">Privacy Policy</a>.
+            </label>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full sm:w-auto rounded-xl bg-[#0A66C2] px-5 py-3 text-white font-semibold shadow-sm hover:shadow disabled:opacity-60"
+              aria-busy={submitting}
+            >
+              {submitting ? "Sending…" : "Send"}
+            </button>
+          </div>
+        </form>
       </Section>
 
       {/* FINAL CTA */}
@@ -6509,7 +6472,7 @@ function PartnershipsSection() {
       {showTop && (
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-6 left-6 h-12 w-12 hidden sm:flex items-center justify-center rounded-full bg-[#0A66C2] text-white shadow-lg hover:shadow-xl transition-all duration-300"
+          className="fixed bottom-6 left-6 hidden sm:flex h-12 w-12 items-center justify-center rounded-full bg-[#0A66C2] text-white shadow-lg hover:shadow-xl transition-all duration-300"
           aria-label="Back to top"
           title="Back to top"
         >
