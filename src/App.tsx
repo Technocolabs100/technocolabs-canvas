@@ -740,7 +740,7 @@ function IndustriesSection() {
 // --------------------------- CONTACT PREVIEW (wired up) ----------------------
 function ContactPreview() {
   // TODO: replace with your deployed Apps Script Web App URL or a form backend
-  const ENDPOINT = "https://script.google.com/macros/s/AKfycbxYDvrDH2wpeB8w-NXYLzZ5oUv9bxlVJDxEesnnrV8ZQk2I51tIO5h48LKSuiPB0pOp2w/exec";
+  const ENDPOINT = "https://script.google.com/macros/s/AKfycbywSUbAZ-rQECTG_Z45jJELy0z2V5QmTBB32cSLB1BeHF8aTYCHF-QcPjQr404alaXbvQ/exec";
 
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
