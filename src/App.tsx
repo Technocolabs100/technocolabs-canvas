@@ -446,10 +446,10 @@ function HomePage() {
                 Proudly ranked #1 in Indore, India & awarded HackerNoon’s Startup of the Year 2024
               </p>
               <h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
-                Empowering the Next Generation of Innovators
+               Build Production Grade AI Systems Faster and With Confidence
               </h1>
               <p className="mt-5 text-lg text-white/80">
-                We are Central India's leading IT Development and Consulting Company - building AI, Data Science, and Software solutions that transform industries.
+                We are Central India's leading IT Development and Consulting Company - building AI, Data Science, and Software solutions that transform industries. Technocolabs Softwares partners with enterprises and startups.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <button
@@ -740,7 +740,7 @@ function IndustriesSection() {
 // --------------------------- CONTACT PREVIEW (wired up) ----------------------
 function ContactPreview() {
   // TODO: replace with your deployed Apps Script Web App URL or a form backend
-  const ENDPOINT = "https://script.google.com/macros/s/AKfycbyAiUMKK7GqNrVfM8jDgfrAEvIDM6lVmaCVHqLfm99bE9Zpo2G6YB2qa-3CMkmHJQDnDA/exec";
+  const ENDPOINT = "https://script.google.com/macros/s/AKfycbxYDvrDH2wpeB8w-NXYLzZ5oUv9bxlVJDxEesnnrV8ZQk2I51tIO5h48LKSuiPB0pOp2w/exec";
 
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
