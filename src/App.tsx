@@ -445,11 +445,11 @@ function HomePage() {
                 <span role="img" aria-label="award">🏆</span>
                 Proudly ranked #1 in Indore, India & awarded HackerNoon’s Startup of the Year 2024
               </p>
-              <h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
-               Build Production Grade AI Systems Faster and With Confidence
-              </h1>
-              <p className="mt-5 text-lg text-white/80">
-                We are Central India's leading IT Development and Consulting Company - building AI, Data Science, and Software solutions that transform industries. We partners with enterprises and startups to design, deliver and run AI & data products that move the needle from prototype to SLA backed production.
+             <h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
+  Build Production Grade 
+<span className="text-sky-400"> AI Systems </span> Faster and With Confidence.</h1>
+              <p className="mt-5 text-lg text-white/80 text-justify">
+                We are Central India's leading IT Development and Consulting Company building AI, Data Science, and Software solutions that transform industries. We partners with enterprises and startups to design, deliver and run AI & data products that move the needle from prototype to SLA backed production.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <button
