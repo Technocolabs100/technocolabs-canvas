@@ -2775,30 +2775,7 @@ function AboutPage() {
         </div>
       </section>
 
-      {/* ========== WHO WE ARE — metrics (mobile stacks) ========== */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 grid gap-6 sm:gap-8">
-        <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-4 sm:p-6 shadow-sm">
-          <h2 className="text-lg sm:text-xl font-semibold">Who we are</h2>
-          <p className="mt-2 text-xs sm:text-sm text-[#0a2540]/80">
-            Founded in Central India, Indore, Technocolabs Softwares Inc. partners with organizations to design,
-            build, and operate production-grade AI and data systems. We align architecture, engineering,
-            and business goals into one measurable roadmap.
-          </p>
-
-          <div className="mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-            {[
-              ["10,000+", "Developers Trained"],
-              ["500+", "Projects Delivered"],
-              ["50+", "Partner Companies"],
-            ].map(([n, l]) => (
-              <div key={l} className="rounded-xl border border-[#0a2540]/10 p-3 sm:p-4 text-center">
-                <div className="text-xl sm:text-2xl font-semibold">{n}</div>
-                <div className="text-[11px] sm:text-xs mt-1 text-[#0a2540]/70">{l}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
+      
         {/* ========== ESTABLISHED 2019 (image scales, text first on mobile) ========== */}
         <div className="w-full rounded-2xl border border-[#0a2540]/10 bg-white p-4 sm:p-6 shadow-sm">
           <div className="grid gap-6 sm:gap-8 sm:grid-cols-[1fr,240px] items-center">
@@ -2836,37 +2813,31 @@ function AboutPage() {
           </div>
         </div>
 
-        {/* ========== WHY CLIENTS CHOOSE (centered, comfortable line-length) ========== */}
-        <section className="w-full bg-white py-10 sm:py-16">
-          <div className="mx-auto max-w-5xl px-4 sm:px-6">
-            <h3 className="text-center text-2xl sm:text-4xl font-bold text-[#0b1320]">
-              Why Clients Choose Technocolabs
-            </h3>
+      {/* ========== WHO WE ARE — metrics (mobile stacks) ========== */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 grid gap-6 sm:gap-8">
+        <div className="rounded-2xl border border-[#0a2540]/10 bg-white p-4 sm:p-6 shadow-sm">
+          <h2 className="text-lg sm:text-xl font-semibold">Who we are</h2>
+          <p className="mt-2 text-xs sm:text-sm text-[#0a2540]/80">
+            Founded in Central India, Indore, Technocolabs Softwares Inc. partners with organizations to design,
+            build, and operate production-grade AI and data systems. We align architecture, engineering,
+            and business goals into one measurable roadmap.
+          </p>
 
-            <div className="mt-10 sm:mt-14 space-y-8 sm:space-y-14">
-              {[
-                [IHands, "Since 2014", "One of the most reliable AI, Data, and ML partners with a decade of experience delivering real business value."],
-                [IGlobe, "Global Experience", "A strong track record across multiple industries and regions with successful Big Data and AI programs."],
-                [IDatabaseCheck, "Value for Results", "Highly qualified teams focus on accuracy, reliability, and quick turnaround — measured against your KPIs."],
-                [IUsers, "Convenient Terms of Cooperation", "Engagement models tailored to your goals — Fixed Price and T&M options with transparent reporting."],
-                [IStars, "High-Quality Results", "Outcome-driven delivery — solutions aligned to your unique requirements and business-specific challenges."],
-              ].map(([Icon, title, desc], i) => (
-                <div key={i} className="flex items-start gap-4 sm:gap-6 max-w-4xl mx-auto">
-                  {/* bigger touch target on phones */}
-                  <div className="shrink-0 grid place-items-center h-10 w-10">
-                    {React.createElement(Icon as any, { className: "text-[#1e90ff] w-8 h-8 sm:w-10 sm:h-10" })}
-                  </div>
-                  <div>
-                    <div className="font-semibold text-base sm:text-lg text-[#0b1320]">{title as string}</div>
-                    <p className="mt-1 text-[#0a2540]/80 text-sm sm:text-base leading-relaxed">{desc as string}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div className="mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            {[
+              ["10,000+", "Developers Trained"],
+              ["500+", "Projects Delivered"],
+              ["50+", "Partner Companies"],
+            ].map(([n, l]) => (
+              <div key={l} className="rounded-xl border border-[#0a2540]/10 p-3 sm:p-4 text-center">
+                <div className="text-xl sm:text-2xl font-semibold">{n}</div>
+                <div className="text-[11px] sm:text-xs mt-1 text-[#0a2540]/70">{l}</div>
+              </div>
+            ))}
           </div>
-        </section>
+        </div>
 
-        {/* ========== Collage + roles (no fixed heights; uses aspect ratios) ========== */}
+          {/* ========== Collage + roles (no fixed heights; uses aspect ratios) ========== */}
         <div className="grid gap-8 sm:gap-10 lg:grid-cols-2 items-center">
           {/* Collage */}
           <div className="grid grid-cols-2 gap-4 sm:gap-6">
@@ -2918,6 +2889,38 @@ function AboutPage() {
             </div>
           </div>
         </div>
+
+        {/* ========== WHY CLIENTS CHOOSE (centered, comfortable line-length) ========== */}
+        <section className="w-full bg-white py-10 sm:py-16">
+          <div className="mx-auto max-w-5xl px-4 sm:px-6">
+            <h3 className="text-center text-2xl sm:text-4xl font-bold text-[#0b1320]">
+              Why Clients Choose Technocolabs
+            </h3>
+
+            <div className="mt-10 sm:mt-14 space-y-8 sm:space-y-14">
+              {[
+                [IHands, "Since 2019", "One of the most reliable AI, Data, and ML partners with a decade of experience delivering real business value."],
+                [IGlobe, "Global Experience", "A strong track record across multiple industries and regions with successful Big Data and AI programs."],
+                [IDatabaseCheck, "Value for Results", "Highly qualified teams focus on accuracy, reliability, and quick turnaround — measured against your KPIs."],
+                [IUsers, "Convenient Terms of Cooperation", "Engagement models tailored to your goals — Fixed Price and T&M options with transparent reporting."],
+                [IStars, "High-Quality Results", "Outcome-driven delivery — solutions aligned to your unique requirements and business-specific challenges."],
+              ].map(([Icon, title, desc], i) => (
+                <div key={i} className="flex items-start gap-4 sm:gap-6 max-w-4xl mx-auto">
+                  {/* bigger touch target on phones */}
+                  <div className="shrink-0 grid place-items-center h-10 w-10">
+                    {React.createElement(Icon as any, { className: "text-[#1e90ff] w-8 h-8 sm:w-10 sm:h-10" })}
+                  </div>
+                  <div>
+                    <div className="font-semibold text-base sm:text-lg text-[#0b1320]">{title as string}</div>
+                    <p className="mt-1 text-[#0a2540]/80 text-sm sm:text-base leading-relaxed">{desc as string}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+      
 
         {/* ========== VALUES + HOW WE DELIVER (cards stack) ========== */}
         <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
