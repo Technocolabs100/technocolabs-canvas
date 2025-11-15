@@ -449,7 +449,7 @@ function HomePage() {
                Build Production Grade AI Systems Faster and With Confidence
               </h1>
               <p className="mt-5 text-lg text-white/80">
-                We are Central India's leading IT Development and Consulting Company - building AI, Data Science, and Software solutions that transform industries. Technocolabs Softwares partners with enterprises and startups.
+                We are Central India's leading IT Development and Consulting Company - building AI, Data Science, and Software solutions that transform industries. We partners with enterprises and startups to design, deliver and run AI & data products that move the needle from prototype to SLA backed production.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <button
@@ -462,7 +462,7 @@ function HomePage() {
                   onClick={() => navigate('careers')}
                   className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold hover:bg-white/10"
                 >
-                  Join Our Internship
+                  Join Our Team
                 </button>
               </div>
             </motion.div>
