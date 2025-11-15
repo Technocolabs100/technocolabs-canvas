@@ -2776,42 +2776,6 @@ function AboutPage() {
       </section>
 
       
-        {/* ========== ESTABLISHED 2019 (image scales, text first on mobile) ========== */}
-        <div className="w-full rounded-2xl border border-[#0a2540]/10 bg-white p-4 sm:p-6 shadow-sm">
-          <div className="grid gap-6 sm:gap-8 sm:grid-cols-[1fr,240px] items-center">
-            {/* Text */}
-            <div>
-              <h3 className="text-xl sm:text-3xl font-bold text-[#0b1320]">Established in 2019</h3>
-              <p className="mt-3 sm:mt-4 text-[#0b1320]/80 text-sm sm:text-base leading-relaxed">
-                Technocolabs was founded in 2019 by industry veterans who brought years of experience
-                in AI & big data to create a company focused on real-world, production-ready solutions.
-              </p>
-              <div className="mt-4 sm:mt-6 flex flex-wrap items-center gap-2 sm:gap-4">
-                <span className="text-[10px] sm:text-xs uppercase tracking-wide text-[#0b1320]/60">Reviewed on</span>
-                <div className="flex items-center gap-3">
-                  <span className="text-xl sm:text-2xl font-black tracking-tight">Google</span>
-                  <Stars count={5} />
-                  <span className="text-xs sm:text-sm text-[#0b1320]/70">100+ reviews</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Portrait (keeps aspect on phones) */}
-            <div className="justify-self-center sm:justify-self-end text-center">
-              <div className="mx-auto h-36 w-36 sm:h-40 sm:w-40 rounded-full overflow-hidden ring-4 ring-[#f0f3f7]">
-                <img
-                  src="/yasin-profile.png"
-                  alt="Founder"
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div className="mt-3">
-                <div className="font-semibold text-[#0b1320] text-sm sm:text-base">Yasin Shah</div>
-                <div className="text-xs sm:text-sm text-[#0b1320]/70">Founder & CEO</div>
-              </div>
-            </div>
-          </div>
-        </div>
 
       {/* ========== WHO WE ARE — metrics (mobile stacks) ========== */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 grid gap-6 sm:gap-8">
@@ -2886,6 +2850,43 @@ function AboutPage() {
                   <p className="text-xs sm:text-sm text-[#0a2540]/80 mt-1">{d}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ========== ESTABLISHED 2019 (image scales, text first on mobile) ========== */}
+        <div className="w-full rounded-2xl border border-[#0a2540]/10 bg-white p-4 sm:p-6 shadow-sm">
+          <div className="grid gap-6 sm:gap-8 sm:grid-cols-[1fr,240px] items-center">
+            {/* Text */}
+            <div>
+              <h3 className="text-xl sm:text-3xl font-bold text-[#0b1320]">Established in 2019</h3>
+              <p className="mt-3 sm:mt-4 text-[#0b1320]/80 text-sm sm:text-base leading-relaxed">
+                Technocolabs was founded in 2019 by industry veterans who brought years of experience
+                in AI & big data to create a company focused on real-world, production-ready solutions.
+              </p>
+              <div className="mt-4 sm:mt-6 flex flex-wrap items-center gap-2 sm:gap-4">
+                <span className="text-[10px] sm:text-xs uppercase tracking-wide text-[#0b1320]/60">Reviewed on</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xl sm:text-2xl font-black tracking-tight">Google</span>
+                  <Stars count={5} />
+                  <span className="text-xs sm:text-sm text-[#0b1320]/70">100+ reviews</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Portrait (keeps aspect on phones) */}
+            <div className="justify-self-center sm:justify-self-end text-center">
+              <div className="mx-auto h-36 w-36 sm:h-40 sm:w-40 rounded-full overflow-hidden ring-4 ring-[#f0f3f7]">
+                <img
+                  src="/yasin-profile.png"
+                  alt="Founder"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div className="mt-3">
+                <div className="font-semibold text-[#0b1320] text-sm sm:text-base">Yasin Shah</div>
+                <div className="text-xs sm:text-sm text-[#0b1320]/70">Founder & CEO</div>
+              </div>
             </div>
           </div>
         </div>
