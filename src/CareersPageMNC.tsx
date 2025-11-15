@@ -54,10 +54,36 @@ export default function CareersPageMNC(): JSX.Element {
     else navigate(`/internship-apply`);
   };
 
+  // === REFS for reliable scrolling ===
+  const heroRef = React.useRef<HTMLElement | null>(null);
+  const internshipsRef = React.useRef<HTMLElement | null>(null);
+  const fulltimeRef = React.useRef<HTMLElement | null>(null);
+
+  function scrollToRef(ref: React.RefObject<HTMLElement>) {
+    // small safety: ensure DOM is present
+    const el = ref.current;
+    if (!el) {
+      // fallback: try querySelector by id if ref not set yet
+      const id = ref === internshipsRef ? "#internships" : ref === fulltimeRef ? "#fulltime" : null;
+      if (id) {
+        const fallback = document.querySelector(id);
+        if (fallback) (fallback as HTMLElement).scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      return;
+    }
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    // for accessibility, move focus so keyboard/screen readers know where we are
+    try { el.setAttribute("tabindex", "-1"); el.focus(); } catch {}
+  }
+
   return (
     <div className="min-h-screen bg-[#f5f7fa] text-[#0a2540]">
       {/* HERO */}
-      <section className="relative bg-white pt-28 pb-20 overflow-hidden">
+      <section
+        ref={heroRef}
+        className="relative bg-white pt-28 pb-20 overflow-hidden"
+        aria-label="Careers hero"
+      >
         <div className="absolute inset-0 bg-gradient-to-br from-[#e0ebff] to-white opacity-60" />
         <div className="relative mx-auto max-w-7xl px-6 text-center">
           <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-[#0a2540]">
@@ -67,25 +93,31 @@ export default function CareersPageMNC(): JSX.Element {
             Join a global team building AI, Data, and Cloud solutions used by enterprises worldwide.
             Learn, grow, and innovate with real impact.
           </p>
+
           <div className="mt-8 flex justify-center gap-4 flex-wrap">
+            {/* Explore Internships -> scrolls to internshipsRef */}
             <button
               type="button"
-              onClick={() => navigate("/careers")}
-              className="px-6 py-3 rounded-xl bg-[#1e90ff] text-white font-semibold shadow hover:shadow-lg"
+              onClick={() => scrollToRef(internshipsRef)}
+              className="px-6 py-3 rounded-full bg-[#1e90ff] text-white font-semibold shadow hover:shadow-lg transition"
             >
               Explore Internships
             </button>
+
+            {/* View Full-Time Roles -> scrolls to fulltimeRef */}
             <button
               type="button"
-              className="px-6 py-3 rounded-xl bg-white border border-[#0a2540]/20 text-[#0a2540] font-semibold shadow hover:shadow-lg"
+              onClick={() => scrollToRef(fulltimeRef)}
+              className="px-6 py-3 rounded-full bg-[#1e90ff] text-white font-semibold shadow hover:shadow-lg transition"
             >
               View Full-Time Roles
             </button>
 
-             <button
+            {/* Employee Spotlight uses routing */}
+            <button
               type="button"
               onClick={() => navigate("/spotlight")}
-              className="px-6 py-3 rounded-xl bg-[#1e90ff] text-white font-semibold shadow hover:shadow-lg"
+              className="px-6 py-3 rounded-full bg-[#1e90ff] text-white font-semibold shadow hover:shadow-lg transition"
             >
               Employee Spotlight
             </button>
@@ -114,7 +146,12 @@ export default function CareersPageMNC(): JSX.Element {
       </section>
 
       {/* INTERNSHIPS */}
-      <section className="bg-white py-20">
+      <section
+        id="internships"
+        ref={internshipsRef}
+        className="bg-white py-20"
+        aria-label="Internship opportunities"
+      >
         <div className="mx-auto max-w-7xl px-6">
           <h2 className="text-3xl sm:text-4xl font-bold">Internship Opportunities</h2>
           <p className="mt-2 text-[#0a2540]/70 max-w-2xl">Explore hands-on internship tracks designed to make you industry ready.</p>
@@ -140,7 +177,7 @@ export default function CareersPageMNC(): JSX.Element {
                       onClick={() => openJobDescription(r)}
                       className="text-[#1e90ff] font-medium hover:underline"
                     >
-                      Job Description →
+                      View Details →
                     </button>
                     <button
                       type="button"
@@ -158,7 +195,12 @@ export default function CareersPageMNC(): JSX.Element {
       </section>
 
       {/* FULL-TIME */}
-      <section className="mx-auto max-w-7xl px-6 py-20">
+      <section
+        id="fulltime"
+        ref={fulltimeRef}
+        className="mx-auto max-w-7xl px-6 py-20"
+        aria-label="Full time roles"
+      >
         <h2 className="text-3xl sm:text-4xl font-bold">Full-Time Roles</h2>
         <p className="mt-2 text-[#0a2540]/70 max-w-2xl">Join our engineering, AI, analytics, and product teams.</p>
 
@@ -171,25 +213,22 @@ export default function CareersPageMNC(): JSX.Element {
         </div>
       </section>
 
-    {/* CTA */}
-<section className="bg-[#0a2540] text-white py-16 border-b-2 border-white">
-  <div className="mx-auto max-w-7xl px-6 text-center">
-    <h3 className="text-3xl font-bold">Ready to Start Your Journey?</h3>
-    <p className="mt-2 text-white/70 max-w-xl mx-auto">
-      Build impactful AI and engineering projects with a world-class team.
-    </p>
-    <button
-      type="button"
-      onClick={() => navigate("/internship-apply")}
-      className="mt-6 px-6 py-3 rounded-xl bg-[#1e90ff] text-white font-semibold shadow hover:shadow-xl"
-    >
-      Apply Now
-    </button>
-  </div>
-</section>
-
+      {/* CTA */}
+      <section className="bg-[#0a2540] text-white py-16 border-b-2 border-white">
+        <div className="mx-auto max-w-7xl px-6 text-center">
+          <h3 className="text-3xl font-bold">Ready to Start Your Journey?</h3>
+          <p className="mt-2 text-white/70 max-w-xl mx-auto">
+            Build impactful AI and engineering projects with a world-class team.
+          </p>
+          <button
+            type="button"
+            onClick={() => navigate("/internship-apply")}
+            className="mt-6 px-6 py-3 rounded-xl bg-[#1e90ff] text-white font-semibold shadow hover:shadow-xl"
+          >
+            Apply Now
+          </button>
+        </div>
+      </section>
     </div>
   );
 }
-
-
